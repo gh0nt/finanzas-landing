@@ -1,0 +1,458 @@
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+    background: var(--white);
+    border-bottom: 1px solid var(--muted-light);
+    padding: 4rem 0 3.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.heroBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(var(--navy-rgb), 0.07);
+    color: var(--navy);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+}
+
+.heroBadgeDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: inline-block;
+}
+
+.heroTitle {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.2;
+    margin: 0 0 1rem;
+}
+
+.heroSubtitle {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0;
+}
+
+/* Decorative circles */
+.heroDecor {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 33%;
+    pointer-events: none;
+    overflow: hidden;
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .heroDecor {
+        display: block;
+    }
+}
+
+.heroDecorCircle1 {
+    position: absolute;
+    right: -100px;
+    top: -100px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    border: 60px solid var(--navy);
+    opacity: 0.05;
+}
+
+.heroDecorCircle2 {
+    position: absolute;
+    right: 100px;
+    top: 200px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 40px solid var(--navy);
+    opacity: 0.05;
+}
+
+/* ── Main grid ────────────────────────────────────────── */
+.mainGrid {
+    display: grid;
+    gap: 3rem;
+    padding: 3rem 0 5rem;
+}
+
+@media (min-width: 1024px) {
+    .mainGrid {
+        grid-template-columns: 5fr 8fr;
+        align-items: start;
+    }
+}
+
+/* ── Sticky sidebar ───────────────────────────────────── */
+.sidebar {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .sidebar {
+        position: sticky;
+        top: 5.5rem;
+    }
+}
+
+/* Identity card */
+.identityCard {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.identityCard h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--muted-light);
+}
+
+.identityRow {
+    display: grid;
+    gap: 1.1rem;
+}
+
+.identityField p:first-child {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    color: var(--muted);
+    margin: 0 0 0.2rem;
+}
+
+.identityField p:last-child {
+    font-size: 0.93rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 0;
+}
+
+/* Contact card */
+.contactCard {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.contactCard h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(var(--white-rgb), 0.15);
+}
+
+.contactRows {
+    display: grid;
+    gap: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.contactRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.contactRow .material-icons-outlined {
+    font-size: 1.05rem;
+    color: rgba(var(--white-rgb), 0.6);
+    margin-top: 2px;
+}
+
+.contactRow p:first-child {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    color: rgba(var(--white-rgb), 0.55);
+    margin: 0 0 0.2rem;
+}
+
+.contactRow p:last-child {
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin: 0;
+    word-break: break-word;
+}
+
+/* bgdecor bubbles */
+.contactCard::before,
+.contactCard::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(var(--white-rgb), 0.05);
+    z-index: 0;
+}
+
+.contactCard::before {
+    width: 140px;
+    height: 140px;
+    right: -28px;
+    bottom: -28px;
+}
+
+.contactCard::after {
+    width: 100px;
+    height: 100px;
+    left: -28px;
+    top: -28px;
+}
+
+/* ── Right content column ─────────────────────────────── */
+.content {
+    display: grid;
+    gap: 2.5rem;
+}
+
+/* Commitment box */
+.commitmentBox {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.commitmentBox h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.9rem;
+}
+
+.commitmentBox p {
+    color: var(--muted);
+    line-height: 1.75;
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+}
+
+.commitmentBox p:last-child {
+    margin-bottom: 0;
+}
+
+/* Section heading */
+.sectionHeading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 1.25rem;
+}
+
+/* Compliance cards */
+.complianceList {
+    display: grid;
+    gap: 1rem;
+}
+
+.complianceItem {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--muted-light);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.complianceItem:hover {
+    border-color: rgba(var(--navy-rgb), 0.25);
+    box-shadow: var(--shadow-md);
+}
+
+.complianceIcon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    background: rgba(var(--navy-rgb), 0.06);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.complianceIcon .material-icons-outlined {
+    color: var(--navy);
+    font-size: 1.3rem;
+}
+
+.complianceItem h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.5rem;
+}
+
+.complianceItem p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0 0 0.6rem;
+}
+
+.complianceLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy);
+    transition: opacity 0.15s;
+}
+
+.complianceLink:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+}
+
+.complianceLink .material-icons-outlined {
+    font-size: 0.95rem;
+}
+
+/* ── Documents ────────────────────────────────────────── */
+.docsGrid {
+    display: grid;
+    gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+    .docsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.docCard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.docCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.docCard .material-icons-outlined {
+    font-size: 2rem;
+    color: var(--danger);
+    flex-shrink: 0;
+}
+
+.docInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.docInfo strong {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.2rem;
+}
+
+.docInfo span {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.docCard .downloadIcon {
+    font-size: 1.1rem;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+/* ── Trust badges ─────────────────────────────────────── */
+.trustSection {
+    padding-top: 2rem;
+    border-top: 1px solid var(--muted-light);
+}
+
+.trustLabel {
+    text-align: center;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+}
+
+.trustBadges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    opacity: 0.6;
+    filter: grayscale(1);
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+.trustBadges:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+.trustBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.trustBadgePlate {
+    height: 48px;
+    width: 128px;
+    background: var(--muted-light);
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.05em;
+}
+
+.trustBadge span:last-child {
+    font-size: 0.65rem;
+    color: var(--muted);
+}

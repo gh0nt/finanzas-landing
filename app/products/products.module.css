@@ -1,0 +1,423 @@
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+    text-align: center;
+    padding: 4rem 0 3rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--muted-light);
+    position: relative;
+    overflow: hidden;
+}
+
+/* faint radial glow behind text */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top,
+            rgba(var(--navy-rgb), 0.04),
+            transparent 60%);
+    pointer-events: none;
+}
+
+.heroInner {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.heroTitle {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.15;
+    margin: 0 0 1rem;
+}
+
+.heroTitle em {
+    font-style: normal;
+    color: var(--accent);
+}
+
+.heroSubtitle {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0 0 2rem;
+}
+
+/* ── Billing toggle ─────────────────────────────────── */
+.toggleWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+}
+
+.toggleLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.toggleLabelActive {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.toggleDiscount {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-left: 0.25rem;
+}
+
+.toggleTrack {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    border-radius: 999px;
+    background: var(--navy);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.toggleKnob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--white);
+    transition: transform 0.2s ease;
+}
+
+.toggleKnobOn {
+    transform: translateX(24px);
+}
+
+/* ── Pricing cards grid ─────────────────────────────── */
+.planGrid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+    .planGrid {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: start;
+    }
+}
+
+/* ── Single plan card ───────────────────────────────── */
+.planCard {
+    background: var(--surface);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: box-shadow 0.25s ease;
+}
+
+.planCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.planCard--highlighted {
+    border: 2px solid var(--navy);
+    box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 768px) {
+    .planCard--highlighted {
+        transform: scale(1.03);
+        z-index: 1;
+    }
+}
+
+.planBadge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 1rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.planName {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.4rem;
+}
+
+.planDesc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    min-height: 2.8rem;
+    margin: 0 0 1.5rem;
+    line-height: 1.55;
+}
+
+.planPrice {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-bottom: 0.3rem;
+}
+
+.planAmount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+}
+
+.planPer {
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.planNote {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0 0 1.75rem;
+}
+
+.planFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    display: grid;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.planFeature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--dark-gray);
+}
+
+.planFeature .material-icons-outlined {
+    font-size: 1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* CTA buttons */
+.btnOutline {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1.25rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--navy);
+    background: transparent;
+    color: var(--navy);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btnOutline:hover {
+    background: var(--navy);
+    color: var(--white);
+}
+
+.btnAccent {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1.25rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--accent);
+    color: var(--white);
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.3);
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btnAccent:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btnNavy {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1.25rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--navy);
+    color: var(--white);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.btnNavy:hover {
+    opacity: 0.85;
+}
+
+/* ── Comparison table ───────────────────────────────── */
+.compareSection {
+    background: var(--white);
+    border-top: 1px solid var(--muted-light);
+    padding: 4rem 0;
+}
+
+.compareWrap {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.compareTable {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.compareTable th {
+    padding: 1rem 1.25rem;
+    background: var(--background);
+    border-bottom: 1px solid var(--muted-light);
+    text-align: center;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.compareTable th:first-child {
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.colHighlight {
+    background: rgba(var(--navy-rgb), 0.03);
+}
+
+.compareTable td {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--muted-light);
+    text-align: center;
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.compareTable td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.compareTable tr:last-child td {
+    border-bottom: none;
+}
+
+.compareTable tbody tr:hover td {
+    background: var(--background);
+}
+
+.checkIcon {
+    color: var(--accent);
+    font-size: 1.2rem !important;
+    vertical-align: middle;
+}
+
+.crossIcon {
+    color: var(--muted-light);
+    font-size: 1.2rem !important;
+    vertical-align: middle;
+}
+
+.ctaRow td {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+}
+
+/* ── FAQ ────────────────────────────────────────────── */
+.faqSection {
+    padding: 4rem 0 5rem;
+}
+
+.faqList {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.faqItem {
+    background: var(--surface);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.faqSummary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.95rem;
+}
+
+.faqSummary::-webkit-details-marker {
+    display: none;
+}
+
+.faqSummary .material-icons-outlined {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    color: var(--muted);
+}
+
+.faqItem[open] .faqSummary .material-icons-outlined {
+    transform: rotate(180deg);
+}
+
+.faqAnswer {
+    padding: 0 1.25rem 1.1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+}

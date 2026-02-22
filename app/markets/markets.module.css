@@ -1,0 +1,316 @@
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+    background: var(--navy);
+    color: var(--white);
+    padding: 3.5rem 0 5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background: radial-gradient(circle at top left,
+            rgba(var(--white-rgb), 0.3),
+            transparent 55%),
+        linear-gradient(140deg,
+            rgba(var(--white-rgb), 0.12),
+            transparent 60%);
+    pointer-events: none;
+}
+
+.heroInner {
+    position: relative;
+    z-index: 1;
+}
+
+.heroTitle {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+}
+
+.heroTitle span {
+    color: var(--accent);
+}
+
+.heroSubtitle {
+    font-size: 1rem;
+    color: rgba(var(--white-rgb), 0.7);
+    max-width: 500px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* live badge dot */
+.liveDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* ── Indicators bar (overlaps hero) ─────────────────── */
+.indicatorsOuter {
+    margin-top: -2.5rem;
+    position: relative;
+    z-index: 3;
+    padding-bottom: 4rem;
+}
+
+.indicatorsGrid {
+    display: grid;
+    gap: 1rem;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+@media (min-width: 480px) {
+    .indicatorsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .indicatorsGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.indicatorItem {
+    padding: 1.4rem 1.5rem;
+    border-bottom: 1px solid var(--muted-light);
+    display: grid;
+    gap: 0.4rem;
+}
+
+@media (min-width: 480px) {
+    .indicatorItem {
+        border-bottom: none;
+        border-right: 1px solid var(--muted-light);
+    }
+
+    .indicatorItem:nth-child(even) {
+        border-right: none;
+    }
+}
+
+@media (min-width: 900px) {
+    .indicatorItem {
+        border-right: 1px solid var(--muted-light);
+        border-bottom: none;
+    }
+
+    .indicatorItem:last-child {
+        border-right: none;
+    }
+}
+
+.indicatorLabel {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+}
+
+.indicatorValue {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+}
+
+.indicatorDesc {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.indicatorChart {
+    height: 32px;
+    margin-top: 0.4rem;
+}
+
+.indicatorChart svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Main data grid ─────────────────────────────────── */
+.mainSection {
+    padding-bottom: 5rem;
+}
+
+.dataGrid {
+    display: grid;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .dataGrid {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+}
+
+/* ── Panel card ─────────────────────────────────────── */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.panelHeader {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--muted-light);
+    background: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.panelTitle {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+}
+
+.panelMeta {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+/* ── Movers table ───────────────────────────────────── */
+.moverRow td {
+    vertical-align: middle;
+}
+
+.ticker {
+    display: inline-block;
+    background: rgba(var(--navy-rgb), 0.07);
+    color: var(--navy);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.04em;
+}
+
+.stockName {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.price {
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.volume {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+/* ── Full-width sections below data grid ────────────── */
+.bottomGrid {
+    display: grid;
+    gap: 2rem;
+    padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+    .bottomGrid {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+}
+
+/* ── Commodity cards ────────────────────────────────── */
+.commodityGrid {
+    display: grid;
+    gap: 0;
+}
+
+.commodityItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--muted-light);
+}
+
+.commodityItem:last-child {
+    border-bottom: none;
+}
+
+.commodityIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: rgba(var(--navy-rgb), 0.06);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.commodityIcon .material-icons-outlined {
+    font-size: 1.15rem;
+    color: var(--navy);
+}
+
+.commodityName {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--navy);
+    flex: 1;
+}
+
+.commodityUnit {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.commodityValue {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+/* ── Disclaimer ─────────────────────────────────────── */
+.disclaimer {
+    background: var(--background);
+    border-top: 1px solid var(--muted-light);
+    padding: 1.5rem 0;
+}
+
+.disclaimerText {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 760px;
+}

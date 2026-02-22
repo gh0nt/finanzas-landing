@@ -1,0 +1,34 @@
+import Link from "next/link";
+import { site } from "@/data/site";
+
+export function Navbar() {
+  return (
+    <nav className="navbar" aria-label="Principal">
+      <div className="container navbar__inner">
+        <Link className="logo" href="/">
+          <span className="logo__icon">
+            <span className="material-icons-outlined" aria-hidden="true">
+              bar_chart
+            </span>
+          </span>
+          <span>
+            Finanzas<span className="logo__light">sinRuido</span>
+          </span>
+        </Link>
+        <div className="nav-links">
+          {site.navLinks.map((link) => (
+            <a key={link.label} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <div className="nav-actions">
+          <a href="#">Iniciar sesion</a>
+          <a className="btn btn--primary" href="#">
+            Registrarse
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
+}
