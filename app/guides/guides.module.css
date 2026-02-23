@@ -1,0 +1,564 @@
+/* ══════════════════════════════════════════════════════
+   GUIDES / EDUCATIONAL HUB  –  guides.module.css
+   Tokens: var(--navy) #0b1f3b | var(--accent) #4caf91
+══════════════════════════════════════════════════════ */
+
+/* ── Hero ─────────────────────────────────────────── */
+.hero {
+    background: var(--navy);
+    color: var(--white);
+    padding: 3.5rem 0 6rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at top right, rgba(76, 175, 145, 0.2), transparent 55%),
+        radial-gradient(ellipse at bottom left, rgba(255, 255, 255, 0.03), transparent 50%);
+    pointer-events: none;
+}
+
+.heroInner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .heroInner {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+    }
+}
+
+.heroBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(76, 175, 145, 0.15);
+    border: 1px solid rgba(76, 175, 145, 0.35);
+    color: var(--accent);
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1.25rem;
+}
+
+.heroTitle {
+    font-size: clamp(1.9rem, 4.5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+}
+
+.heroTitle span {
+    color: var(--accent);
+}
+
+.heroSubtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.68);
+    max-width: 500px;
+    line-height: 1.75;
+    margin: 0;
+}
+
+.heroStats {
+    display: flex;
+    gap: 2rem;
+    flex-shrink: 0;
+}
+
+.heroStat {
+    text-align: center;
+}
+
+.heroStatNumber {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.heroStatLabel {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Filter Bar ───────────────────────────────────── */
+.filtersBar {
+    background: var(--white);
+    border-bottom: 1px solid var(--muted-light);
+    position: sticky;
+    top: 65px;
+    z-index: 40;
+    box-shadow: 0 2px 8px rgba(11, 31, 59, 0.04);
+}
+
+.filtersInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.filtersInner::-webkit-scrollbar {
+    display: none;
+}
+
+.filterTabs {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.filterBtn {
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--muted-light);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+}
+
+.filterBtn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filterBtnActive {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+}
+
+/* ── Featured Guide ───────────────────────────────── */
+.featuredSection {
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2;
+    padding: 0 0 2rem;
+}
+
+.featuredCard {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.25s, transform 0.2s;
+}
+
+.featuredCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 28px 70px rgba(11, 31, 59, 0.18);
+}
+
+@media (min-width: 768px) {
+    .featuredCard {
+        grid-template-columns: 5fr 4fr;
+    }
+}
+
+.featuredImageWrapper {
+    position: relative;
+    min-height: 260px;
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .featuredImageWrapper {
+        min-height: 360px;
+    }
+}
+
+.featuredIconBg {
+    color: rgba(255, 255, 255, 0.08);
+    line-height: 1;
+}
+
+.featuredBadge {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.2rem;
+    background: var(--accent);
+    color: var(--white);
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.featuredLevelBadge {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--white);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+}
+
+.featuredBody {
+    padding: 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.featuredCategoryRow {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.featuredTitle {
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--navy);
+    margin: 0;
+}
+
+.featuredCard:hover .featuredTitle {
+    color: var(--accent);
+}
+
+.featuredExcerpt {
+    color: var(--muted);
+    line-height: 1.75;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.featuredMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.featuredMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.featuredCta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: var(--white);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: background 0.2s, transform 0.15s;
+    width: fit-content;
+}
+
+.featuredCta:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* ── Guides Grid ──────────────────────────────────── */
+.guidesSection {
+    padding: 2.5rem 0 4rem;
+}
+
+.sectionHeading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 2rem;
+}
+
+.sectionHeading::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 1.6rem;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.guidesGrid {
+    display: grid;
+    gap: 1.75rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+    .guidesGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .guidesGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.guideCard {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--muted-light);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s, transform 0.2s;
+}
+
+.guideCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.guideImageWrapper {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.guidePlaceholderIcon {
+    color: rgba(255, 255, 255, 0.18);
+    font-size: 3rem !important;
+    transition: transform 0.4s;
+}
+
+.guideCard:hover .guidePlaceholderIcon {
+    transform: scale(1.15);
+}
+
+.guideBody {
+    padding: 1.35rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.guideMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guideCategory {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(76, 175, 145, 0.1);
+    color: var(--accent);
+}
+
+.guideCategory.blue {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.guideCategory.orange {
+    background: rgba(234, 88, 12, 0.1);
+    color: #c2410c;
+}
+
+.guideCategory.purple {
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
+}
+
+.guideLevel {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.guideLevelDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted-light);
+    display: inline-block;
+}
+
+.guideLevelDot.filled {
+    background: var(--accent);
+}
+
+.guideTitle {
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.38;
+    color: var(--navy);
+    margin: 0;
+    transition: color 0.2s;
+}
+
+.guideCard:hover .guideTitle {
+    color: var(--accent);
+}
+
+.guideExcerpt {
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+    margin: 0;
+}
+
+.guideFooter {
+    padding: 0.9rem 1.35rem;
+    border-top: 1px solid var(--muted-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guideStats {
+    display: flex;
+    gap: 1rem;
+}
+
+.guideStat {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.77rem;
+    color: var(--muted);
+}
+
+.guideArrow {
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.guideCard:hover .guideArrow {
+    transform: translateX(4px);
+}
+
+/* ── Paths Section ────────────────────────────────── */
+.pathsSection {
+    padding: 0 0 4rem;
+}
+
+.pathsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .pathsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.pathCard {
+    background: var(--surface);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.pathCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.pathIconWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.15rem;
+    font-size: 1.4rem !important;
+}
+
+.pathTitle {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.5rem;
+}
+
+.pathDesc {
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0 0 1.25rem;
+}
+
+.pathLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent);
+    transition: gap 0.2s;
+}
+
+.pathCard:hover .pathLink {
+    gap: 0.55rem;
+}
