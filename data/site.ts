@@ -7,7 +7,7 @@ export const site = {
   navLinks: [
     { label: "Servicios", href: "/services" },
     { label: "Mercados", href: "/markets" },
-    { label: "Educación", href: "/education" },
+    { label: "Educación", href: "/guides" },
     { label: "Blog", href: "/news" },
     {
       label: "Contacto",
