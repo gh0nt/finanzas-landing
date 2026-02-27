@@ -2,7 +2,7 @@
  * Banco de la República (BanRep) / Datos Abiertos Colombia provider.
  *
  * Data sources used:
- *   - TRM: Alpha Vantage USD/COP (more reliable than BanRep scraping)
+ *   - USD/EUR: CDN (fxCdn provider)
  *   - UVR: datos.gov.co Socrata API (SFC dataset)
  *   - IBR: datos.gov.co Socrata API (BanRep dataset)
  *
@@ -56,12 +56,12 @@ export async function fetchUVR(maxPoints = 90): Promise<IndicatorData> {
     return {
       indicatorId: "uvr",
       label: "UVR",
-      unit: "COP",
+      unit: "EUR",
       lastUpdated,
       points,
     };
   } catch (err) {
-    return errorResult("uvr", "UVR", "COP", String(err));
+    return errorResult("uvr", "UVR", "EUR", String(err));
   }
 }
 

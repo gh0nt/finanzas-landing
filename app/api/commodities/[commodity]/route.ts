@@ -7,10 +7,10 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { fetchCommodity, fetchGold } from "@/lib/providers/alphaVantage";
+import { fetchFredCommodity } from "@/lib/providers/fred";
 
-// 6 hours — must be a static literal for Next.js segment config
-export const revalidate = 21600;
+// 12 hours — static literal required for Next.js segment config
+export const revalidate = 43200;
 
 export async function GET(
   _req: NextRequest,
@@ -19,7 +19,7 @@ export async function GET(
   const { commodity } = await params;
   const slug = commodity.toLowerCase();
 
-  const data = slug === "gold" ? await fetchGold() : await fetchCommodity(slug);
+  const data = await fetchFredCommodity(slug);
 
   // If the provider explicitly says it's unsupported, return 404
   if (data.stale && data.error?.includes("no soportado")) {

@@ -22,12 +22,6 @@ export function Navbar() {
             </a>
           ))}
         </div>
-        <div className="nav-actions">
-          <a href="#">Iniciar sesion</a>
-          <a className="btn btn--primary" href="#">
-            Registrarse
-          </a>
-        </div>
       </div>
     </nav>
   );

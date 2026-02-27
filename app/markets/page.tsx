@@ -10,11 +10,8 @@ import { Footer } from "@/components/Footer";
 import { IndicatorCard } from "@/components/charts/IndicatorCard";
 import { FxTable } from "@/components/charts/FxTable";
 import { CommodityGrid } from "@/components/charts/CommodityGrid";
-import {
-  fetchFxDaily,
-  fetchCommodity,
-  fetchGold,
-} from "@/lib/providers/alphaVantage";
+import { fetchFxHistory } from "@/lib/providers/fxCdn";
+import { fetchFredCommodity } from "@/lib/providers/fred";
 import { fetchUVR, fetchIBR } from "@/lib/providers/banrep";
 import type { IndicatorData } from "@/lib/indicators";
 import styles from "./markets.module.css";
@@ -22,7 +19,7 @@ import styles from "./markets.module.css";
 export const metadata = {
   title: "Mercados Financieros | Finanzas Sin Ruido",
   description:
-    "TRM, COLCAP, acciones de la BVC, tasas de cambio y materias primas en tiempo real. Datos del mercado colombiano y global.",
+    "EUR/USD, GBP/EUR, tasas de cambio y materias primas en tiempo real. Datos del mercado europeo y global.",
 };
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -52,62 +49,57 @@ function fallbackIndicator(
 export default async function MarketsPage() {
   // Fetch all data in parallel; individual failures don't break the page
   const [
-    trmRes,
-    eurCopRes,
-    gbpCopRes,
-    brlCopRes,
+    usdEurRes,
+    eurUsdRes,
+    gbpEurRes,
+    brlEurRes,
     wtiRes,
-    coffeeRes,
     goldRes,
     uvrRes,
     ibrRes,
   ] = await Promise.allSettled([
-    fetchFxDaily("USD", "COP"),
-    fetchFxDaily("EUR", "COP"),
-    fetchFxDaily("GBP", "COP"),
-    fetchFxDaily("BRL", "COP"),
-    fetchCommodity("wti"),
-    fetchCommodity("coffee"),
-    fetchGold(),
+    fetchFxHistory("USD", "EUR", 60),
+    fetchFxHistory("EUR", "USD", 60),
+    fetchFxHistory("GBP", "EUR", 60),
+    fetchFxHistory("BRL", "EUR", 60),
+    fetchFredCommodity("wti"),
+    fetchFredCommodity("gold"),
     fetchUVR(),
     fetchIBR(),
   ]);
 
-  const trm: IndicatorData = {
-    ...settled(trmRes, fallbackIndicator("trm", "TRM (USD/COP)", "COP")),
-    indicatorId: "trm",
-    label: "TRM (USD/COP)",
-    unit: "COP",
+  const usdEur: IndicatorData = {
+    ...settled(usdEurRes, fallbackIndicator("usd-eur", "USD/EUR", "EUR")),
+    indicatorId: "usd-eur",
+    label: "USD/EUR",
+    unit: "EUR",
   };
-  const eurCop = settled(
-    eurCopRes,
-    fallbackIndicator("eur-cop", "EUR/COP", "COP"),
+  const eurUsd = settled(
+    eurUsdRes,
+    fallbackIndicator("eur-usd", "EUR/USD", "USD"),
   );
-  const gbpCop = settled(
-    gbpCopRes,
-    fallbackIndicator("gbp-cop", "GBP/COP", "COP"),
+  const gbpEur = settled(
+    gbpEurRes,
+    fallbackIndicator("gbp-eur", "GBP/EUR", "EUR"),
   );
-  const brlCop = settled(
-    brlCopRes,
-    fallbackIndicator("brl-cop", "BRL/COP", "COP"),
+  const brlEur = settled(
+    brlEurRes,
+    fallbackIndicator("brl-eur", "BRL/EUR", "EUR"),
   );
   const wti = settled(
     wtiRes,
     fallbackIndicator("wti", "Petróleo WTI", "USD/barril"),
   );
-  const coffee = settled(
-    coffeeRes,
-    fallbackIndicator("coffee", "Café", "USD/libra"),
-  );
   const gold = settled(goldRes, fallbackIndicator("gold", "Oro", "USD/oz"));
-  const uvr = settled(uvrRes, fallbackIndicator("uvr", "UVR", "COP"));
+  const uvr = settled(uvrRes, fallbackIndicator("uvr", "UVR", "EUR"));
   const ibr = settled(ibrRes, fallbackIndicator("ibr", "IBR O/N", "%"));
-
-  // COLCAP is not available from Alpha Vantage free tier → show stale card
+  // Coffee: not on FRED; show informative placeholder
+  const coffee = fallbackIndicator("coffee", "Café (ICO)", "USD/libra");
+  // COLCAP: no free public API
   const colcap = fallbackIndicator("colcap", "MSCI COLCAP", "puntos");
 
   const keyIndicators: Array<{ data: IndicatorData; description: string }> = [
-    { data: trm, description: "Tasa Representativa del Mercado" },
+    { data: usdEur, description: "Tipo de Cambio USD/EUR" },
     {
       data: colcap,
       description: "Índice Principal BVC – sin datos API gratuita",
@@ -116,7 +108,7 @@ export default async function MarketsPage() {
     { data: ibr, description: "Indicador Bancario de Referencia" },
   ];
 
-  const fxRatesLive: IndicatorData[] = [trm, eurCop, gbpCop, brlCop];
+  const fxRatesLive: IndicatorData[] = [usdEur, eurUsd, gbpEur, brlEur];
 
   const commoditiesLive = [
     { ...wti, icon: "water_drop" },
@@ -150,7 +142,7 @@ export default async function MarketsPage() {
               Datos actualizados (ISR)
             </div>
             <h1 className={styles.heroTitle}>
-              Mercados <span>Colombianos</span>
+              Mercados <span>Europeos</span>
             </h1>
             <p className={styles.heroSubtitle}>
               TRM, COLCAP, tasas de cambio y materias primas. Información
@@ -190,7 +182,7 @@ export default async function MarketsPage() {
             <div className={styles.panel}>
               <div className={styles.panelHeader}>
                 <h2 className={styles.panelTitle}>Acciones BVC</h2>
-                <span className={styles.panelMeta}>Precio en COP</span>
+                <span className={styles.panelMeta}>Precio en EUR</span>
               </div>
               <div
                 style={{
@@ -212,8 +204,8 @@ export default async function MarketsPage() {
                   show_chart
                 </span>
                 <p style={{ margin: 0, fontSize: "0.9rem" }}>
-                  Los precios de acciones de la BVC no están disponibles con la
-                  clave gratuita de Alpha Vantage.
+                  Los precios de acciones de la BVC no tienen fuente de datos
+                  gratuita disponible.
                 </p>
                 <p style={{ margin: 0, fontSize: "0.8rem" }}>
                   Consulta directamente en{" "}
@@ -224,15 +216,6 @@ export default async function MarketsPage() {
                     style={{ color: "var(--accent)" }}
                   >
                     bvc.com.co
-                  </a>{" "}
-                  o actualiza al plan premium de{"  "}
-                  <a
-                    href="https://www.alphavantage.co/premium/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "var(--accent)" }}
-                  >
-                    Alpha Vantage
                   </a>
                   .
                 </p>
@@ -244,9 +227,7 @@ export default async function MarketsPage() {
               <div className={styles.panel}>
                 <div className={styles.panelHeader}>
                   <h2 className={styles.panelTitle}>Tasas de Cambio</h2>
-                  <span className={styles.panelMeta}>
-                    Alpha Vantage / BanRep
-                  </span>
+                  <span className={styles.panelMeta}>Fawazahmed0 / BanRep</span>
                 </div>
                 <FxTable rates={fxRatesLive} />
               </div>
@@ -270,13 +251,13 @@ export default async function MarketsPage() {
         <div className="container">
           <p className={styles.disclaimerText}>
             <strong>Aviso Legal:</strong> Los datos presentados en esta página
-            son meramente informativos y provienen de fuentes públicas (Alpha
-            Vantage, BanRep / Datos Abiertos Colombia). Los datos se actualizan
-            periódicamente mediante ISR; no representan precios en tiempo real.
-            Finanzas Sin Ruido no garantiza la exactitud, completitud o
-            puntualidad de la información. Consulta fuentes oficiales —Banco de
-            la República, SFC, BVC— antes de tomar decisiones de inversión. Este
-            contenido no constituye asesoría financiera.
+            son meramente informativos y provienen de fuentes públicas
+            (fawazahmed0/exchange-api, FRED / St. Louis Fed). Los datos se
+            actualizan periódicamente mediante ISR; no representan precios en
+            tiempo real. Finanzas Sin Ruido no garantiza la exactitud,
+            completitud o puntualidad de la información. Consulta fuentes
+            oficiales antes de tomar decisiones de inversión. Este contenido no
+            constituye asesoría financiera.
           </p>
         </div>
       </div>

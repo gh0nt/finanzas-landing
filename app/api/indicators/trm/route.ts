@@ -1,29 +1,23 @@
 /**
  * /api/indicators/trm
  *
- * Tasa Representativa del Mercado (USD/COP)
- * Source: Alpha Vantage FX_DAILY
- * Revalidate: 4 hours
+ * USD/EUR Exchange Rate
+ * Source: fxCdn (fawazahmed0/currency-api via jsDelivr)
+ * Revalidate: 12 hours
  */
 
 import { NextResponse } from "next/server";
-import { fetchFxDaily } from "@/lib/providers/alphaVantage";
+import { fetchFxHistory } from "@/lib/providers/fxCdn";
 
-// 4 hours — must be a static literal for Next.js segment config
-export const revalidate = 14400;
+// 12 hours — static literal required for Next.js segment config
+export const revalidate = 43200;
 
 export async function GET() {
-  const data = await fetchFxDaily("USD", "COP");
-  const trm = {
-    ...data,
-    indicatorId: "trm",
-    label: "TRM (USD/COP)",
-    unit: "COP",
-  };
+  const trm = await fetchFxHistory("USD", "EUR", 60);
 
   return NextResponse.json(trm, {
     headers: {
-      "Cache-Control": "s-maxage=14400, stale-while-revalidate",
+      "Cache-Control": "s-maxage=43200, stale-while-revalidate",
     },
   });
 }

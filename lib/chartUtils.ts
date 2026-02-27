@@ -54,7 +54,7 @@ export function formatValue(
   locale: string = "es-CO",
 ): string {
   // Currency-like units
-  if (unit && /cop/i.test(unit)) {
+  if (unit && /eur/i.test(unit)) {
     return new Intl.NumberFormat(locale, {
       style: "decimal",
       minimumFractionDigits: 2,

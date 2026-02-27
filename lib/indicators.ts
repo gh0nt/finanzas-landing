@@ -13,7 +13,7 @@ export interface IndicatorPoint {
 export interface IndicatorData {
   indicatorId: string;
   label: string;
-  /** Unit string, e.g. "COP/USD", "USD/barril", "%" – or null */
+  /** Unit string, e.g. "EUR/USD", "USD/barril", "%" – or null */
   unit: string | null;
   /** ISO-8601 timestamp of the latest data point */
   lastUpdated: string;

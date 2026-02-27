@@ -6,8 +6,8 @@ export const heroTrust = [
 
 export const marketWidgets = [
   {
-    label: "TRM (USD/COP)",
-    value: "$3,950.20",
+    label: "USD/EUR",
+    value: "0.92",
     change: "+0.5%",
     trend: "up",
     chart: "M0,15 Q20,5 40,10 T80,5 T100,2",
@@ -104,7 +104,7 @@ export const pricingPlans = [
       "Para empezar a organizar tus finanzas personales sin complicaciones.",
     priceMonthly: 0,
     priceAnnual: 0,
-    currency: "COP",
+    currency: "EUR",
     priceNote: "Siempre gratuito",
     highlighted: false,
     badge: null as string | null,
@@ -120,9 +120,9 @@ export const pricingPlans = [
     id: "estandar",
     name: "Estándar",
     description: "Ideal para quienes buscan crecimiento y análisis detallado.",
-    priceMonthly: 50000,
-    priceAnnual: 40000,
-    currency: "COP",
+    priceMonthly: 50,
+    priceAnnual: 40,
+    currency: "EUR",
     priceNote: "Facturado anualmente",
     highlighted: true,
     badge: "Más Popular" as string | null,
@@ -139,9 +139,9 @@ export const pricingPlans = [
     id: "completo",
     name: "Completo",
     description: "La solución definitiva para gestión patrimonial experta.",
-    priceMonthly: 120000,
-    priceAnnual: 96000,
-    currency: "COP",
+    priceMonthly: 120,
+    priceAnnual: 96,
+    currency: "EUR",
     priceNote: "Facturado anualmente",
     highlighted: false,
     badge: null as string | null,
@@ -267,7 +267,7 @@ export const serviceProducts: ServiceProduct[] = [
     iconBg: "indigo",
     badge: "Moderado",
     badgeVariant: "warning",
-    features: ["Gestión profesional", "Desde $50.000 COP"],
+    features: ["Gestión profesional", "Desde €50"],
     category: "Renta Variable",
     ctaLabel: "Ver Fondos",
   },
@@ -319,7 +319,7 @@ export const serviceProducts: ServiceProduct[] = [
     iconBg: "emerald",
     badge: "Innovación",
     badgeVariant: "neutral",
-    features: ["Supervisado por la SFC", "Depósito y retiro en COP"],
+    features: ["Supervisado por la CNMV", "Depósito y retiro en EUR"],
     category: "Renta Variable",
     ctaLabel: "Más Información",
   },
@@ -344,7 +344,7 @@ export const processSteps = [
     number: "3",
     title: "Fondea tu Cuenta",
     description:
-      "Realiza tu primera inversión desde $50.000 COP mediante PSE, transferencia bancaria o billetera digital.",
+      "Realiza tu primera inversión desde €50 mediante transferencia bancaria, tarjeta o cartera digital.",
     variant: "accent",
   },
 ];
@@ -361,11 +361,11 @@ export const eligibilityItems = [
 ═══════════════════════════════════════════ */
 export const marketIndicators = [
   {
-    label: "TRM USD/COP",
-    value: "$3,950.20",
+    label: "USD/EUR",
+    value: "0.92",
     change: "+0.50%",
     trend: "up" as const,
-    description: "Tasa Representativa del Mercado",
+    description: "Tipo de Cambio USD/EUR",
     chart: "M0,15 Q20,5 40,10 T80,5 T100,2",
   },
   {
@@ -447,26 +447,26 @@ export const marketMovers = [
 
 export const fxRates = [
   {
-    pair: "USD / COP",
-    rate: "3,950.20",
+    pair: "USD / EUR",
+    rate: "0.92",
     change: "+0.50%",
     trend: "up" as const,
   },
   {
-    pair: "EUR / COP",
-    rate: "4,280.50",
+    pair: "EUR / USD",
+    rate: "1.09",
     change: "+0.30%",
     trend: "up" as const,
   },
   {
-    pair: "GBP / COP",
-    rate: "5,011.80",
+    pair: "GBP / EUR",
+    rate: "1.18",
     change: "-0.20%",
     trend: "down" as const,
   },
   {
-    pair: "BRL / COP",
-    rate: "797.40",
+    pair: "BRL / EUR",
+    rate: "0.17",
     change: "-0.10%",
     trend: "down" as const,
   },

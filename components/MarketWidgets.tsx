@@ -6,64 +6,58 @@
  * each provider). No API keys are ever sent to the browser.
  */
 
-import { fetchFxDaily } from "@/lib/providers/alphaVantage";
-import { fetchUVR } from "@/lib/providers/banrep";
+import { fetchFxHistory } from "@/lib/providers/fxCdn";
 import { SparklineWidget } from "@/components/charts/SparklineWidget";
 import type { IndicatorData } from "@/lib/indicators";
 
 export async function MarketWidgets() {
-  // Fetch all three widgets in parallel; each settles independently
-  const [trmResult, eurCopResult, uvrResult] = await Promise.allSettled([
-    fetchFxDaily("USD", "COP"),
-    fetchFxDaily("EUR", "COP"),
-    fetchUVR(),
+  // Free CDN provider — no API key, no rate limits
+  const [usdEurResult, eurUsdResult, gbpEurResult] = await Promise.allSettled([
+    fetchFxHistory("USD", "EUR", 30),
+    fetchFxHistory("EUR", "USD", 30),
+    fetchFxHistory("GBP", "EUR", 30),
   ]);
 
-  const trm: IndicatorData =
-    trmResult.status === "fulfilled"
-      ? {
-          ...trmResult.value,
-          indicatorId: "trm",
-          label: "TRM (USD/COP)",
-          unit: "COP",
-        }
+  const usdEur: IndicatorData =
+    usdEurResult.status === "fulfilled"
+      ? usdEurResult.value
       : {
-          indicatorId: "trm",
-          label: "TRM (USD/COP)",
-          unit: "COP",
+          indicatorId: "usd-eur",
+          label: "USD/EUR",
+          unit: "EUR",
           lastUpdated: new Date().toISOString(),
           points: [],
           stale: true,
-          error: "Error al obtener TRM",
+          error: "Error al obtener USD/EUR",
         };
 
-  const eurCop: IndicatorData =
-    eurCopResult.status === "fulfilled"
-      ? eurCopResult.value
+  const eurUsd: IndicatorData =
+    eurUsdResult.status === "fulfilled"
+      ? eurUsdResult.value
       : {
-          indicatorId: "eur-cop",
-          label: "EUR/COP",
-          unit: "COP",
+          indicatorId: "eur-usd",
+          label: "EUR/USD",
+          unit: "USD",
           lastUpdated: new Date().toISOString(),
           points: [],
           stale: true,
-          error: "Error al obtener EUR/COP",
+          error: "Error al obtener EUR/USD",
         };
 
-  const uvr: IndicatorData =
-    uvrResult.status === "fulfilled"
-      ? uvrResult.value
+  const gbpEur: IndicatorData =
+    gbpEurResult.status === "fulfilled"
+      ? gbpEurResult.value
       : {
-          indicatorId: "uvr",
-          label: "UVR",
-          unit: "COP",
+          indicatorId: "gbp-eur",
+          label: "GBP/EUR",
+          unit: "EUR",
           lastUpdated: new Date().toISOString(),
           points: [],
           stale: true,
-          error: "Error al obtener UVR",
+          error: "Error al obtener GBP/EUR",
         };
 
-  const widgets = [trm, eurCop, uvr];
+  const widgets = [usdEur, eurUsd, gbpEur];
 
   return (
     <section className="market-widgets">

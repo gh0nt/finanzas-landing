@@ -7,14 +7,17 @@ export const site = {
   navLinks: [
     { label: "Servicios", href: "/services" },
     { label: "Mercados", href: "/markets" },
-    { label: "Educacion", href: "/guides" },
-    { label: "Noticias", href: "/news" },
+    { label: "Educación", href: "/education" },
+    { label: "Blog", href: "/news" },
+    {
+      label: "Contacto",
+      href: "/contact",
+    },
   ],
   footer: {
     company: [
       { label: "Sobre nosotros", href: "/company" },
       { label: "Precios", href: "/products" },
-      { label: "Carreras", href: "#" },
     ],
     legal: [
       { label: "Terminos y condiciones", href: "/legal/terms" },

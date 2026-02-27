@@ -12,7 +12,7 @@ export function Hero() {
             >
               fiber_manual_record
             </span>
-            Datos actualizados: Mercado Colombiano
+            Datos actualizados: Mercado Europeo
           </span>
           <h1 className="hero__title">
             Tome el control de sus finanzas con datos,{" "}
@@ -46,21 +46,6 @@ export function Hero() {
                 {item.label}
               </span>
             ))}
-          </div>
-        </div>
-        <div className="hero__visual" aria-hidden="true">
-          <div className="hero-card">
-            <div className="hero-card__bars">
-              <div className="hero-card__bar bar-40" />
-              <div className="hero-card__bar bar-60" />
-              <div className="hero-card__bar bar-30" />
-              <div className="hero-card__bar bar-75" />
-              <div className="hero-card__bar bar-50" />
-            </div>
-            <div className="hero-card__tag">
-              <span>Rendimiento Cartera</span>
-              <span className="accent-text">+12.4%</span>
-            </div>
           </div>
         </div>
       </div>

@@ -2,26 +2,26 @@
  * /api/fx/[pair]
  *
  * Internal endpoint that exposes FX daily series data.
- * Pair format: "usd-cop", "eur-cop", "gbp-cop", "brl-cop", etc.
+ * Pair format: "usd-eur", "eur-usd", "gbp-eur", "brl-eur", etc.
  *
  * Cache: revalidated every 4 hours server-side via fetch cache.
  * The route itself has no additional caching — callers use the provider cache.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { fetchFxDaily } from "@/lib/providers/alphaVantage";
+import { fetchFxHistory } from "@/lib/providers/fxCdn";
 
 // 4 hours — must be a static literal for Next.js segment config
 export const revalidate = 14400;
 
 /** Map slug → Alpha Vantage symbol pair */
 const PAIR_MAP: Record<string, { from: string; to: string }> = {
-  "usd-cop": { from: "USD", to: "COP" },
-  "eur-cop": { from: "EUR", to: "COP" },
-  "gbp-cop": { from: "GBP", to: "COP" },
-  "brl-cop": { from: "BRL", to: "COP" },
   "usd-eur": { from: "USD", to: "EUR" },
   "eur-usd": { from: "EUR", to: "USD" },
+  "gbp-eur": { from: "GBP", to: "EUR" },
+  "brl-eur": { from: "BRL", to: "EUR" },
+  "gbp-usd": { from: "GBP", to: "USD" },
+  "usd-jpy": { from: "USD", to: "JPY" },
 };
 
 export async function GET(
@@ -38,7 +38,7 @@ export async function GET(
     );
   }
 
-  const data = await fetchFxDaily(symbols.from, symbols.to);
+  const data = await fetchFxHistory(symbols.from, symbols.to, 60);
 
   return NextResponse.json(data, {
     headers: {
