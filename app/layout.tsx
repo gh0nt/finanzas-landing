@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -28,6 +29,9 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">{children}</body>
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+      )}
     </html>
   );
 }
