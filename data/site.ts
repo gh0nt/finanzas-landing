@@ -8,7 +8,7 @@ export const site = {
     { label: "Servicios", href: "/services" },
     { label: "Mercados", href: "/markets" },
     { label: "Educación", href: "/guides" },
-    { label: "Blog", href: "/news" },
+    { label: "Comparador", href: "/comparators" },
     {
       label: "Contacto",
       href: "/contact",
