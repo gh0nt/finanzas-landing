@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
@@ -6,6 +7,70 @@ import styles from "./article.module.css";
 type BlogPostPageProps = {
   params: { slug: string };
 };
+
+// Lookup map for known posts — expand as content grows
+const postMeta: Record<string, { title: string; description: string }> = {
+  "como-afectara-la-inflacion-sus-inversiones-2025": {
+    title: "¿Cómo afectará la inflación sus inversiones en 2025?",
+    description:
+      "Expertos analizan el panorama económico colombiano y dan recomendaciones clave para proteger su patrimonio ante la volatilidad del mercado.",
+  },
+  "10-trucos-para-ahorrar-mas": {
+    title: "10 trucos para ahorrar más cada mes sin sacrificar calidad de vida",
+    description:
+      "Pequeños cambios de hábito que generan grandes diferencias en su bolsillo al final del año.",
+  },
+  "como-mejorar-historial-crediticio": {
+    title: "Cómo mejorar su historial crediticio en Colombia: guía paso a paso",
+    description:
+      "Desde pagar a tiempo hasta diversificar su perfil de crédito, le explicamos qué le reportan las centrales de riesgo.",
+  },
+  "fintechs-colombianas-ronda-inversion": {
+    title: "Fintechs colombianas lideran ronda de inversión en Latinoamérica",
+    description:
+      "El ecosistema fintech de Colombia consolida su posición regional con más de USD 120 millones captados en 2024.",
+  },
+  "dolar-baja-momento-comprar": {
+    title: "El dólar cierra a la baja: ¿Es el momento de comprar divisas?",
+    description:
+      "Analizamos el comportamiento de la TRM en la última semana y proyecciones para el cierre de trimestre.",
+  },
+  "nuevas-regulaciones-billeteras-digitales": {
+    title: "Nuevas regulaciones para billeteras digitales en Colombia 2025",
+    description:
+      "La Superintendencia Financiera anuncia límites de transacciones y requisitos de seguridad para Nequi, Daviplata y similares.",
+  },
+  "cdts-mejor-rentabilidad-2025": {
+    title: "CDTs: ¿Cuál banco ofrece la mejor rentabilidad en 2025?",
+    description:
+      "Comparamos las tasas de 15 entidades financieras y le explicamos cuándo conviene un CDT más que una cuenta de ahorros.",
+  },
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = postMeta[slug];
+  const title = post?.title ?? slug.replace(/-/g, " ");
+  const description =
+    post?.description ??
+    "Artículo sobre finanzas personales e inversiones en Colombia — Finanzas sin Ruido.";
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://www.finanzassinruido.co/blog/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.finanzassinruido.co/blog/${slug}`,
+      type: "article",
+    },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 const tocItems = [
   { id: "intro", label: "Introducción", icon: "info" },

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
@@ -6,6 +7,70 @@ import styles from "./guide.module.css";
 type GuidePageProps = {
   params: { slug: string };
 };
+
+// Lookup map for known guides — expand as content grows
+const guideMeta: Record<string, { title: string; description: string }> = {
+  "guia-completa-cuentas-de-ahorro-colombia": {
+    title: "Guía Completa de Cuentas de Ahorro en Colombia",
+    description:
+      "Aprende cómo funcionan las cuentas de ahorro en Colombia, cómo se calcula la tasa E.A. y cuál banco ofrece las mejores condiciones.",
+  },
+  "como-funcionan-los-cdts": {
+    title: "CDTs: Todo lo que necesita saber antes de invertir",
+    description:
+      "Guía completa sobre los Certificados de Depósito a Término (CDT) en Colombia: tasas, plazos, riesgos y cómo elegir el mejor.",
+  },
+  "solicitar-credito-hipotecario-colombia": {
+    title: "Cómo solicitar un crédito hipotecario en Colombia paso a paso",
+    description:
+      "Conoce los requisitos, documentos y pasos para solicitar un crédito de vivienda en Colombia. Compara tasas VIS y no VIS.",
+  },
+  "seguros-indispensables-familia-colombia": {
+    title: "Seguros indispensables para su familia en Colombia",
+    description:
+      "Descubra qué seguros de vida, salud y hogar son esenciales para proteger a su familia en Colombia y cómo compararlos.",
+  },
+  "declarar-renta-empleado-colombia": {
+    title: "Cómo declarar renta siendo empleado en Colombia",
+    description:
+      "Guía práctica para declarar renta en Colombia: quién está obligado, qué deducir y cómo evitar errores ante la DIAN.",
+  },
+  "invertir-acciones-bvc-principiantes": {
+    title: "Cómo invertir en acciones de la BVC siendo principiante",
+    description:
+      "Aprende a invertir en la Bolsa de Valores de Colombia (BVC) desde cero: cómo abrir una cuenta, qué acciones comprar y cómo gestionar el riesgo.",
+  },
+  "pensiones-en-colombia-todo-lo-que-debe-saber": {
+    title: "Pensiones en Colombia: RPM vs RAIS, todo lo que debe saber",
+    description:
+      "Compara el Régimen de Prima Media (Colpensiones) y el Régimen de Ahorro Individual (AFP). Descubre cuál conviene más según su perfil.",
+  },
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const guide = guideMeta[slug];
+  const title = guide?.title ?? slug.replace(/-/g, " ");
+  const description =
+    guide?.description ??
+    "Guía educativa sobre finanzas personales en Colombia — Finanzas sin Ruido.";
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://www.finanzassinruido.co/guides/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.finanzassinruido.co/guides/${slug}`,
+      type: "article",
+    },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 const tocItems = [
   { id: "intro", label: "¿Qué es una cuenta de ahorros?" },
