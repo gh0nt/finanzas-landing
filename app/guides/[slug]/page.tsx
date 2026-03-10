@@ -186,7 +186,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                 <div className={styles.articleByline}>
                   <div className={styles.authorChip}>
                     <div className={styles.authorAvatar}>MR</div>
-                    <span className={styles.authorName}>María Rodríguez</span>
+                    <span className={styles.authorName}>Deiby Rodríguez</span>
                   </div>
                   <span className={styles.bylineItem}>
                     <span
@@ -261,7 +261,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                       Actualizamos las tasas de cuentas de ahorro cada 24 horas.
                     </p>
                   </div>
-                  <Link href="/comparators/accounts">
+                  <Link href="/comparators">
                     <button className={styles.inlineCtaBtn}>
                       Ver comparador →
                     </button>

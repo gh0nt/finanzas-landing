@@ -18,6 +18,9 @@ type InFlight<T> = Promise<T>;
 // Global singletons so they survive hot-reload in dev (Next.js edge caveat)
 const store = new Map<string, CacheEntry<unknown>>();
 const inFlight = new Map<string, InFlight<unknown>>();
+// Extended stale store: keeps the last successful value for 24 h so we can
+// return it when a fresh fetch fails (stale-while-error pattern).
+const staleStore = new Map<string, CacheEntry<unknown>>();
 
 /**
  * Get a value from the cache.
@@ -75,11 +78,21 @@ export async function cacheFetch<T>(
   const promise = fetcher()
     .then((value) => {
       cacheSet(key, value, ttlSeconds);
+      // Also keep a 24-h stale copy so we can fall back on API errors
+      staleStore.set(key, { value, expiresAt: Date.now() + 86_400_000 });
       inFlight.delete(key);
       return value;
     })
     .catch((err: unknown) => {
       inFlight.delete(key);
+      // Return last-known-good value instead of propagating the error
+      const stale = staleStore.get(key) as CacheEntry<T> | undefined;
+      if (stale) {
+        console.warn(`[cache] stale-while-error for key="${key}":`, err);
+        // Re-add to fresh cache for 60 s so we retry rather than hammering
+        store.set(key, { value: stale.value, expiresAt: Date.now() + 60_000 });
+        return stale.value;
+      }
       throw err;
     });
 

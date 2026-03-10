@@ -126,6 +126,119 @@ export async function fetchFredCommodity(
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Comparator adapter — returns InstrumentQuote for Spain 10Y bond yield
+// FRED series: IRLTLT01ESM156N  (monthly, % per annum)
+// ─────────────────────────────────────────────────────────────────────────────
+
+import type { InstrumentQuote, InstrumentMeta } from "@/lib/comparator/types";
+import { cacheFetch } from "@/lib/comparator/cache";
+
+const FRED_COMPARATOR_SERIES: Record<string, { seriesId: string }> = {
+  // Indicators
+  ES10Y: { seriesId: "IRLTLT01ESM156N" }, // Spain 10Y government bond yield (monthly %)
+  EURIBOR12M_FRED: { seriesId: "EUR12MD156N" }, // 12-month EURIBOR (monthly %)
+  DE10Y: { seriesId: "IRLTLT01DEM156N" }, // Germany 10Y government bond yield (monthly %)
+  // Energy
+  BRENT: { seriesId: "DCOILBRENTEU" }, // Brent Crude (USD/barrel, daily)
+  WTI: { seriesId: "DCOILWTICO" }, // WTI Crude (USD/barrel, daily)
+  NATURAL_GAS: { seriesId: "DHHNGSP" }, // Henry Hub Natural Gas (USD/MMBtu, daily)
+  ALUMINUM: { seriesId: "PALUMUSDM" }, // Global Price of Aluminum (USD/MT, monthly)
+  // Metals — only Copper via FRED; precious metals via Alpha Vantage FX_DAILY
+  COPPER: { seriesId: "PCOPPUSDM" }, // Global Price of Copper (USD/MT, monthly)
+  // Agriculture
+  COFFEE: { seriesId: "PCOFFOTMUSDM" }, // Global Price of Coffee, Other Milds (USD/lb, monthly)
+  WHEAT: { seriesId: "PWHEAMTUSDM" }, // Global Price of Wheat (USD/MT, monthly)
+  CORN: { seriesId: "PMAIZMTUSDM" }, // Global Price of Corn (USD/MT, monthly)
+  SUGAR: { seriesId: "PSUGAISAUSDM" }, // Global Price of Sugar No.11 (USD/lb, monthly)
+};
+
+export async function fetchFredQuote(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  const series = FRED_COMPARATOR_SERIES[meta.providerSymbol];
+  if (!series) {
+    return fredErrorQuote(
+      meta,
+      `FRED: serie "${meta.providerSymbol}" no soportada`,
+    );
+  }
+
+  const key = getKey();
+  if (!key) {
+    return fredErrorQuote(
+      meta,
+      "FRED_API_KEY no configurada. Regístrate gratis en fred.stlouisfed.org",
+    );
+  }
+
+  const cacheKey = `fred_comparator:${meta.providerSymbol}`;
+  // Monthly series — cache for 24 h
+  return cacheFetch(cacheKey, 86_400, async () => {
+    const endDate = toYMD(new Date());
+    const startDate = toYMD(new Date(Date.now() - 150 * 24 * 60 * 60 * 1000));
+    const url =
+      `${FRED_BASE}?series_id=${series.seriesId}` +
+      `&observation_start=${startDate}` +
+      `&observation_end=${endDate}` +
+      `&sort_order=asc&file_type=json&api_key=${key}`;
+
+    const res = await fetch(url, { next: { revalidate: 86_400 } });
+    if (!res.ok) throw new Error(`FRED HTTP ${res.status}`);
+    const json = await res.json();
+    if (json.error_message) throw new Error(json.error_message);
+
+    const obs: Array<{ date: string; value: string }> = json.observations ?? [];
+    const valid = obs.filter(
+      (o) => o.value !== "." && !isNaN(parseFloat(o.value)),
+    );
+    if (valid.length === 0) throw new Error("FRED: sin datos en el rango");
+
+    const latest = valid[valid.length - 1];
+    const prev = valid.length > 1 ? valid[valid.length - 2] : null;
+    const value = parseFloat(latest.value);
+    const prevValue = prev ? parseFloat(prev.value) : null;
+    const change_24h = prevValue !== null ? value - prevValue : null;
+    const change_24h_pct =
+      change_24h !== null && prevValue !== null && prevValue !== 0
+        ? (change_24h / prevValue) * 100
+        : null;
+
+    return {
+      id: meta.id,
+      category: meta.category,
+      name: meta.name,
+      symbol: meta.symbol,
+      unit: meta.unit,
+      currency: meta.currency,
+      value,
+      change_24h,
+      change_24h_pct,
+      timestamp: `${latest.date}T00:00:00Z`,
+      source: "fred" as const,
+      stale: false,
+    };
+  });
+}
+
+function fredErrorQuote(meta: InstrumentMeta, error: string): InstrumentQuote {
+  return {
+    id: meta.id,
+    category: meta.category,
+    name: meta.name,
+    symbol: meta.symbol,
+    unit: meta.unit,
+    currency: meta.currency,
+    value: null,
+    change_24h: null,
+    change_24h_pct: null,
+    timestamp: new Date().toISOString(),
+    source: "fred" as const,
+    stale: true,
+    error,
+  };
+}
+
 function errorResult(
   indicatorId: string,
   label: string,

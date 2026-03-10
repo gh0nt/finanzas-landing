@@ -94,6 +94,53 @@ export const newsList = [
 ];
 
 /* ═══════════════════════════════════════════
+   GUIDES (home section)
+═══════════════════════════════════════════ */
+export const guideFeatured = {
+  slug: "guia-completa-cuentas-de-ahorro-colombia",
+  category: "Ahorro",
+  title: "Guía completa: Cómo elegir la mejor cuenta de ahorros en Colombia",
+  excerpt:
+    "Analizamos tasas E.A., cuotas de manejo, coberturas del Fogafín y beneficios adicionales de los 20 bancos más grandes del país para que su dinero rinda más.",
+  readTime: "10 min",
+  chapters: 5,
+  level: "Principiante",
+  levelDots: 1,
+  gradient: "linear-gradient(135deg,#0f4c75,#1b6ca8)",
+  icon: "savings",
+};
+
+export const guidesList = [
+  {
+    slug: "como-funcionan-los-cdts",
+    category: "Inversión",
+    title: "CDTs: Todo lo que necesita saber antes de invertir",
+    readTime: "8 min",
+    chapters: 6,
+    gradient: "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
+    icon: "account_balance",
+  },
+  {
+    slug: "solicitar-credito-hipotecario-colombia",
+    category: "Crédito",
+    title: "Cómo solicitar un crédito hipotecario paso a paso en Colombia",
+    readTime: "12 min",
+    chapters: 7,
+    gradient: "linear-gradient(135deg,#3b0764,#6d28d9)",
+    icon: "real_estate_agent",
+  },
+  {
+    slug: "invertir-acciones-bvc-principiantes",
+    category: "Inversión",
+    title: "Guía del inversionista principiante: Acciones en la BVC",
+    readTime: "11 min",
+    chapters: 8,
+    gradient: "linear-gradient(135deg,#1e1b4b,#4338ca)",
+    icon: "candlestick_chart",
+  },
+];
+
+/* ═══════════════════════════════════════════
    PRICING / PRODUCTS
 ═══════════════════════════════════════════ */
 export const pricingPlans = [
@@ -354,6 +401,574 @@ export const eligibilityItems = [
   { icon: "badge", text: "Cédula colombiana vigente" },
   { icon: "account_balance", text: "Cuenta bancaria en Colombia" },
   { icon: "smartphone", text: "Correo y celular activos" },
+];
+
+/* ═══════════════════════════════════════════
+   SERVICE ARTICLES (rich detail pages)
+═══════════════════════════════════════════ */
+export type ServiceArticle = {
+  id: string;
+  headline: string;
+  tagline: string;
+  intro: string;
+  stats: { label: string; value: string; icon: string }[];
+  sections: { title: string; body: string }[];
+  howItWorks: { step: string; title: string; description: string }[];
+  benefits: { icon: string; title: string; description: string }[];
+  considerations: string[];
+  forWhom: string;
+};
+
+export const serviceArticles: ServiceArticle[] = [
+  {
+    id: "cdts",
+    headline: "CDTs Digitales: La Inversión Más Segura para tu Patrimonio",
+    tagline: "Rendimientos predecibles, capital protegido por Fogafín",
+    intro:
+      "Los Certificados de Depósito a Término (CDTs) son el instrumento de renta fija más popular de Colombia. Con tasas que pueden alcanzar hasta el 14% E.A. y la garantía del Fondo de Garantías de Instituciones Financieras (Fogafín) de hasta $50 millones de pesos, son la opción ideal para inversores que buscan seguridad y rendimientos competitivos.",
+    stats: [
+      { label: "Rentabilidad máx.", value: "14% E.A.", icon: "trending_up" },
+      { label: "Plazo mínimo", value: "30 días", icon: "schedule" },
+      { label: "Inversión mínima", value: "$500.000 COP", icon: "payments" },
+      { label: "Garantía Fogafín", value: "$50M COP", icon: "security" },
+    ],
+    sections: [
+      {
+        title: "¿Qué es un CDT?",
+        body: "Un Certificado de Depósito a Término es un producto financiero ofrecido por bancos y entidades financieras vigiladas por la Superintendencia Financiera de Colombia (SFC). Al constituir un CDT, le prestas tu dinero a la entidad financiera por un plazo pactado (30, 60, 90, 180, 360 días o más), y a cambio recibes una tasa de interés fija o variable acordada desde el inicio. Al vencimiento, recuperas tu capital más los intereses pactados.",
+      },
+      {
+        title: "¿Cómo se calcula el rendimiento?",
+        body: "La rentabilidad de un CDT se expresa en tasa Efectiva Anual (E.A.). Por ejemplo, si inviertes $10.000.000 COP en un CDT al 12% E.A. a 180 días, recibirás aproximadamente $10.566.300 al vencimiento, antes de retención en la fuente. Es importante comparar tasas entre entidades, ya que pueden variar significativamente. En Finanzas Sin Ruido te mostramos en tiempo real las mejores tasas del mercado.",
+      },
+      {
+        title: "Tributación y retención en la fuente",
+        body: "Los rendimientos de los CDTs están sujetos a una retención en la fuente del 7% sobre los intereses generados. Sin embargo, si el monto total de rendimientos en el año gravable no supera 1.090 UVT (~$46 millones), estás exento de declarar renta por estos ingresos (aplican condiciones). Siempre es recomendable consultar a un asesor tributario según tu situación particular.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Compara tasas",
+        description:
+          "Usa nuestra tabla comparativa para identificar la entidad con mejor tasa según el plazo que necesitas.",
+      },
+      {
+        step: "2",
+        title: "Elige y aplica",
+        description:
+          "Selecciona la entidad y completa el proceso de vinculación digital. La mayoría toma menos de 10 minutos.",
+      },
+      {
+        step: "3",
+        title: "Deposita tu capital",
+        description:
+          "Transfiere el monto mediante PSE, transferencia bancaria o desde tu cuenta en la misma entidad.",
+      },
+      {
+        step: "4",
+        title: "Recibe tus intereses",
+        description:
+          "Al vencimiento, recibes tu capital más los intereses acordados. Puedes reinvertir automáticamente.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "shield",
+        title: "Capital protegido",
+        description:
+          "Fogafín garantiza hasta $50 millones COP por entidad en caso de liquidación.",
+      },
+      {
+        icon: "trending_up",
+        title: "Rentabilidad superior",
+        description:
+          "Tasas sistemáticamente mayores que cuentas de ahorro, hasta 14% E.A.",
+      },
+      {
+        icon: "event",
+        title: "Plazos flexibles",
+        description:
+          "Desde 30 días hasta 5 años, adaptado a tu horizonte de inversión.",
+      },
+      {
+        icon: "phone_android",
+        title: "100% Digital",
+        description:
+          "Constitución, renovación y liquidación sin salir de casa.",
+      },
+    ],
+    considerations: [
+      "El dinero queda bloqueado hasta el vencimiento; la liquidación anticipada puede implicar penalidades.",
+      "La retención en la fuente del 7% sobre intereses reduce el rendimiento neto.",
+      "No es una alternativa para fondos de emergencia por la iliquidez.",
+      "Compara siempre el rendimiento efectivo neto, descontando impuestos y comisiones.",
+    ],
+    forWhom:
+      "Ideal para personas con un horizonte de inversión definido (3 meses a 2 años), perfil de riesgo conservador y que buscan tasas superiores a las cuentas de ahorro tradicionales.",
+  },
+  {
+    id: "fics",
+    headline:
+      "Fondos de Inversión Colectiva: Diversificación Profesional desde $100.000 COP",
+    tagline: "Accede a portafolios diversificados gestionados por expertos",
+    intro:
+      "Los Fondos de Inversión Colectiva (FICs) te permiten invertir junto con miles de personas en portafolios diversificados, gestionados por profesionales certificados y regulados por la Superintendencia Financiera. Desde fondos de renta fija hasta acciones internacionales, hay un FIC para cada perfil de inversor.",
+    stats: [
+      { label: "Inversión mínima", value: "$100.000 COP", icon: "payments" },
+      { label: "Diversificación", value: "Desde día 1", icon: "pie_chart" },
+      {
+        label: "Liquidez",
+        value: "Alta (fondos abiertos)",
+        icon: "account_balance_wallet",
+      },
+      {
+        label: "Gestión",
+        value: "Profesional certificada",
+        icon: "manage_accounts",
+      },
+    ],
+    sections: [
+      {
+        title: "¿Qué es un Fondo de Inversión Colectiva?",
+        body: "Un FIC es un vehículo de inversión donde múltiples inversores aportan capital, el cual es administrado colectivamente por una Sociedad Administradora de Inversión (SAI) o comisionista de bolsa. El fondo invierte en una cartera diversificada de activos según su política de inversión: renta fija local, acciones BVC, divisas, activos internacionales o una combinación.",
+      },
+      {
+        title: "Tipos de FICs disponibles en Colombia",
+        body: "Los FICs se clasifican por liquidez (abiertos vs. cerrados) y tipo de activo. Los fondos del mercado monetario ofrecen alta liquidez con rentabilidades similares al DTF/IBR. Los fondos de renta fija invierten en TES, bonos y CDTs. Los fondos de renta variable toman exposición a acciones. Los fondos balanceados mezclan renta fija y variable según el perfil. Finanzas Sin Ruido te muestra comisiones y rendimiento histórico de cada fondo.",
+      },
+      {
+        title: "Comisiones y costos",
+        body: "Los FICs cobran una comisión de administración anual (generalmente entre 0.3% y 2.5% según el tipo) que se descuenta del valor de la unidad. Algunos fondos también cobran comisión de entrada o salida. Es fundamental comparar el rendimiento neto después de comisiones, no solo el rendimiento bruto.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Define tu perfil",
+        description:
+          "Responde nuestro cuestionario de perfil de riesgo para identificar los fondos adecuados para ti.",
+      },
+      {
+        step: "2",
+        title: "Compara fondos",
+        description:
+          "Analiza rentabilidades históricas, comisiones y políticas de inversión de cada FIC.",
+      },
+      {
+        step: "3",
+        title: "Abre tu cuenta",
+        description:
+          "Vincula con la sociedad administradora elegida. Proceso 100% digital en minutos.",
+      },
+      {
+        step: "4",
+        title: "Invierte y monitorea",
+        description:
+          "Realiza aportes periódicos y monitorea el desempeño desde app o web.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "pie_chart",
+        title: "Diversificación inmediata",
+        description:
+          "Tu capital está distribuido en decenas de activos desde el primer peso invertido.",
+      },
+      {
+        icon: "manage_accounts",
+        title: "Gestión profesional",
+        description:
+          "Gestores certificados optimizan el portafolio de forma continua y sistemática.",
+      },
+      {
+        icon: "account_balance_wallet",
+        title: "Alta liquidez",
+        description:
+          "Los fondos abiertos permiten redenciones en 24-72 horas hábiles.",
+      },
+      {
+        icon: "bar_chart",
+        title: "Acceso a mercados",
+        description:
+          "Invierte en activos que de otra forma requerirían montos mínimos muy altos.",
+      },
+    ],
+    considerations: [
+      "El rendimiento pasado no garantiza rendimiento futuro.",
+      "Las comisiones de administración reducen el retorno neto; compáralas cuidadosamente.",
+      "Los fondos cerrados tienen menor liquidez y plazos mínimos de permanencia.",
+      "En fondos de renta variable, el capital está expuesto a volatilidad del mercado.",
+    ],
+    forWhom:
+      "Adecuado para inversores con perfil moderado a alto que buscan diversificación y gestión profesional, con horizonte de mediano a largo plazo (1 año en adelante).",
+  },
+  {
+    id: "acciones",
+    headline:
+      "Acciones BVC: Sé Copropietario de las Mejores Empresas de Colombia",
+    tagline: "Dividendos, valorización y análisis en tiempo real incluido",
+    intro:
+      "Invertir en acciones de la Bolsa de Valores de Colombia (BVC) significa convertirte en copropietario de empresas líderes como Ecopetrol, Bancolombia, ISA o Grupo Nutresa. A diferencia de la renta fija, las acciones ofrecen potencial de valorización ilimitado y distribución de dividendos, a cambio de asumir la volatilidad del mercado.",
+    stats: [
+      { label: "Empresas en BVC", value: "+70 listadas", icon: "domain" },
+      {
+        label: "Dividendo histórico",
+        value: "Hasta 8% anual",
+        icon: "payments",
+      },
+      { label: "Liquidez", value: "Alta (horario BVC)", icon: "bolt" },
+      { label: "Inversión mínima", value: "1 acción", icon: "star" },
+    ],
+    sections: [
+      {
+        title: "¿Cómo funciona el mercado accionario colombiano?",
+        body: "La BVC opera de lunes a viernes de 9:30 a.m. a 4:00 p.m. (hora Bogotá). Los precios fluctúan según la oferta y demanda, impulsados por resultados corporativos, indicadores macroeconómicos y flujos de capital extranjero. Para comprar acciones necesitas abrir una cuenta con una comisionista de bolsa inscrita en la BVC. Finanzas Sin Ruido compara comisiones de corretaje y plataformas para que elijas la mejor opción.",
+      },
+      {
+        title: "Dividendos: ingresos pasivos por tus acciones",
+        body: "Muchas empresas listadas en la BVC distribuyen dividendos entre sus accionistas, generalmente una o dos veces al año. La rentabilidad por dividendo (dividend yield) varía según la empresa: Ecopetrol ha distribuido yields históricos superiores al 6% en algunos períodos. Es fundamental analizar la política de dividendos y la sostenibilidad del negocio antes de invertir.",
+      },
+      {
+        title: "El índice COLCAP: termómetro del mercado",
+        body: "El COLCAP es el índice bursátil principal de Colombia, que agrupa las 20 acciones más líquidas de la BVC. Su comportamiento refleja la salud del mercado accionario colombiano. Puedes construir un portafolio pasivo replicando este índice, o elegir acciones individuales con análisis fundamental y técnico.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Abre cuenta comisionista",
+        description:
+          "Regístrate en una comisionista de bolsa vinculada a la BVC. Proceso digital en 15 minutos.",
+      },
+      {
+        step: "2",
+        title: "Analiza y selecciona",
+        description:
+          "Usa nuestras herramientas de análisis para evaluar empresas por valoración, dividendos y sector.",
+      },
+      {
+        step: "3",
+        title: "Ejecuta tu orden",
+        description:
+          "Compra acciones durante el horario bursátil con órdenes de mercado o límite.",
+      },
+      {
+        step: "4",
+        title: "Gestiona tu portafolio",
+        description:
+          "Monitorea posiciones, recibe dividendos y ajusta según tus objetivos de largo plazo.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "trending_up",
+        title: "Potencial de valorización",
+        description:
+          "Las acciones han superado históricamente la inflación en horizontes de largo plazo.",
+      },
+      {
+        icon: "payments",
+        title: "Dividendos periódicos",
+        description:
+          "Empresas como Bancolombia y Ecopetrol distribuyen dividendos anuales a sus accionistas.",
+      },
+      {
+        icon: "bolt",
+        title: "Alta liquidez",
+        description:
+          "Puedes vender tus acciones en cualquier momento del horario bursátil de la BVC.",
+      },
+      {
+        icon: "bar_chart",
+        title: "Análisis en tiempo real",
+        description:
+          "Finanzas Sin Ruido te ofrece datos del mercado y análisis para decisiones informadas.",
+      },
+    ],
+    considerations: [
+      "Las acciones son activos de renta variable: el capital puede disminuir por debajo del valor invertido.",
+      "La volatilidad puede ser alta a corto plazo; se recomienda horizonte de mínimo 3-5 años.",
+      "Las comisiones de corretaje impactan el rendimiento, especialmente en operaciones frecuentes.",
+      "Diversifica entre sectores y empresas para reducir el riesgo específico de cada emisor.",
+    ],
+    forWhom:
+      "Apropiado para inversores con perfil moderado a agresivo, horizonte de largo plazo (3+ años) y tolerancia a la volatilidad de mercado.",
+  },
+  {
+    id: "pensiones",
+    headline:
+      "Pensiones Voluntarias: Construye tu Jubilación con Ventajas Fiscales",
+    tagline:
+      "Ahorra en impuestos hasta el 30% de tu ingreso, construye patrimonio",
+    intro:
+      "Las Pensiones Voluntarias son uno de los vehículos de ahorro con mejor beneficio fiscal disponibles en Colombia. Puedes deducir hasta el 30% de tus ingresos anuales en renta, combinando aportes voluntarios a pensión con aportes a AFC. Además, tus recursos crecen con gestión profesional en un horizonte de largo plazo.",
+    stats: [
+      { label: "Deducción fiscal", value: "Hasta 30%", icon: "percent" },
+      {
+        label: "Retención diferida",
+        value: "Hasta el retiro",
+        icon: "schedule",
+      },
+      { label: "Inversión mínima", value: "$50.000 COP/mes", icon: "payments" },
+      { label: "Horizonte ideal", value: "10+ años", icon: "calendar_month" },
+    ],
+    sections: [
+      {
+        title: "¿Qué son los Aportes Voluntarios a Pensión?",
+        body: "Los Aportes Voluntarios a Pensión (AVP) son contribuciones adicionales que realizas a tu fondo de pensiones obligatorio (AFP) o a patrimonios autónomos, más allá del 16% obligatorio. Estos aportes gozan de exención de retención en la fuente en el momento del aporte, lo que significa que el Estado te devuelve anticipadamente los impuestos que habrías pagado sobre ese ingreso.",
+      },
+      {
+        title: "El beneficio fiscal explicado",
+        body: "Si ganas $10.000.000 mensuales ($120M anuales) y aportas $3.000.000 al mes en pensiones voluntarias + AFC ($36M anuales = 30%), reduces tu base gravable de $120M a $84M. En la tarifa de renta de persona natural, este ahorro puede representar entre $5M y $12M menos en impuestos al año, dependiendo de tu nivel de ingresos. Es el escudo fiscal más potente disponible para personas naturales en Colombia.",
+      },
+      {
+        title: "Condiciones para retirar sin penalidades",
+        body: "Para acceder a los recursos sin perder el beneficio fiscal debes: (1) esperar 10 años desde el aporte, (2) alcanzar la edad de jubilación, o (3) usarlos para compra de vivienda. Si retiras antes, deberás pagar los impuestos diferidos más intereses de mora. Por eso, estos recursos son estrictamente para ahorro de largo plazo.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Calcula tu beneficio",
+        description:
+          "Usa nuestra calculadora para estimar el ahorro en impuestos según tu nivel de ingresos.",
+      },
+      {
+        step: "2",
+        title: "Elige tu entidad",
+        description:
+          "Compara fondos de pensiones voluntarias (AFPs, aseguradoras) por rentabilidad y comisiones.",
+      },
+      {
+        step: "3",
+        title: "Define tu portafolio",
+        description:
+          "Selecciona entre fondos conservadores, moderados o de mayor riesgo según tu horizonte.",
+      },
+      {
+        step: "4",
+        title: "Programa aportes periódicos",
+        description:
+          "Automatiza aportes mensuales para construir el hábito y aprovechar el costo promedio.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "savings",
+        title: "Ahorro fiscal inmediato",
+        description:
+          "Reduce tu retención en la fuente mensual desde el primer aporte realizado.",
+      },
+      {
+        icon: "calendar_month",
+        title: "Crecimiento compuesto",
+        description:
+          "Décadas de interés compuesto generan un patrimonio significativo al momento del retiro.",
+      },
+      {
+        icon: "manage_accounts",
+        title: "Gestión profesional",
+        description:
+          "AFP y entidades administradoras invierten tus recursos en portafolios diversificados.",
+      },
+      {
+        icon: "home",
+        title: "Retiro para vivienda",
+        description:
+          "Puedes usar los fondos para comprar tu primera vivienda sin perder el beneficio fiscal.",
+      },
+    ],
+    considerations: [
+      "Los recursos están bloqueados por 10 años; el retiro anticipado genera impuestos retroactivos.",
+      "La rentabilidad depende de la subfondo elegida (conservador, moderado, mayor riesgo).",
+      "Para empleados, el aporte voluntario complementa el obligatorio; para independientes es aún más relevante.",
+      "Consulta con un asesor tributario para optimizar la estrategia junto con tus obligaciones fiscales.",
+    ],
+    forWhom:
+      "Fundamental para personas naturales con ingresos superiores a $5M mensuales que buscan reducir la carga tributaria y construir un ahorro disciplinado para el retiro.",
+  },
+  {
+    id: "crowdfunding",
+    headline:
+      "Crowdfunding Empresarial: Financia el Crecimiento Colombiano y Obtén Retornos Atractivos",
+    tagline:
+      "Inversión alternativa regulada por la SFC en empresas colombianas",
+    intro:
+      "El crowdfunding empresarial te permite prestar dinero directamente a pequeñas y medianas empresas colombianas a través de plataformas autorizadas por la Superintendencia Financiera (Resolución SFC No. 0317 de 2021). A cambio, recibes intereses que generalmente superan los CDTs, asumiendo un mayor riesgo de crédito.",
+    stats: [
+      { label: "Tasas típicas", value: "12% – 24% E.A.", icon: "trending_up" },
+      { label: "Inversión mínima", value: "$500.000 COP", icon: "payments" },
+      { label: "Plazo típico", value: "3 – 36 meses", icon: "schedule" },
+      { label: "Regulación", value: "SFC Colombia", icon: "verified" },
+    ],
+    sections: [
+      {
+        title: "¿Cómo funciona el Crowdfunding Financiero en Colombia?",
+        body: "Las plataformas de crowdfunding financiero actúan como intermediarias entre inversores (prestamistas) y empresas que necesitan capital. El proceso es digital: la empresa publica su solicitud, los inversores analizan el perfil crediticio y eligen participar con el monto deseado. Los flujos de pago (capital + intereses) se realizan según el cronograma pactado directamente en la plataforma.",
+      },
+      {
+        title: "Marco regulatorio: Resolución SFC No. 0317 de 2021",
+        body: "Colombia fue uno de los primeros países de Latinoamérica en regular formalmente el crowdfunding financiero. Las plataformas deben estar inscritas en la SFC, cumplir requisitos de capital, transparencia y gestión de riesgo. Sin embargo, la regulación no garantiza el retorno del capital: el inversor asume el riesgo de impago de la empresa financiada.",
+      },
+      {
+        title: "Diversificación: la clave del crowdfunding exitoso",
+        body: "La estrategia recomendada es distribuir la inversión en múltiples proyectos para diluir el riesgo de crédito. Por ejemplo, en lugar de invertir $5.000.000 en una sola empresa, invierte $500.000 en 10 empresas diferentes. Si una empresa incumple, el impacto sobre tu portafolio es limitado. Las mejores plataformas ofrecen herramientas de diversificación automática.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Regístrate en la plataforma",
+        description:
+          "Abre cuenta en una plataforma autorizada por la SFC y completa tu perfil de inversor.",
+      },
+      {
+        step: "2",
+        title: "Analiza proyectos",
+        description:
+          "Revisa el score crediticio, historial financiero y propuesta de cada empresa solicitante.",
+      },
+      {
+        step: "3",
+        title: "Invierte y diversifica",
+        description:
+          "Distribuye tu capital en múltiples proyectos para minimizar el riesgo de crédito.",
+      },
+      {
+        step: "4",
+        title: "Recibe pagos mensuales",
+        description:
+          "Cobra cuotas de capital + intereses mensualmente en tu cuenta vinculada.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "trending_up",
+        title: "Tasas superiores",
+        description:
+          "Rendimientos entre 12% y 24% E.A., significativamente por encima de CDTs y cuentas de ahorro.",
+      },
+      {
+        icon: "verified",
+        title: "Plataformas reguladas",
+        description:
+          "Las plataformas autorizadas por la SFC cumplen estrictos estándares de transparencia.",
+      },
+      {
+        icon: "handshake",
+        title: "Impacto real",
+        description:
+          "Tu dinero financia el crecimiento de empresas colombianas reales, generando empleo local.",
+      },
+      {
+        icon: "account_balance_wallet",
+        title: "Flujos mensuales",
+        description:
+          "Recibe pagos mensuales de capital e intereses, generando flujo de caja recurrente.",
+      },
+    ],
+    considerations: [
+      "Riesgo de impago: las empresas pueden incumplir total o parcialmente sus obligaciones.",
+      "No hay garantía equivalente a Fogafín; el capital no está asegurado.",
+      "Liquidez limitada: generalmente no puedes vender tu posición antes del vencimiento.",
+      "Diversifica siempre entre múltiples proyectos para gestionar el riesgo crediticio.",
+    ],
+    forWhom:
+      "Adecuado para inversores con perfil moderado a alto, capital destinado a mediano plazo (6-36 meses) y tolerancia al riesgo de crédito empresarial.",
+  },
+  {
+    id: "crypto",
+    headline:
+      "Criptoactivos en Colombia: Innovación Supervisada por la Superintendencia Financiera",
+    tagline: "Accede al ecosistema cripto en las plataformas del Sandbox SFC",
+    intro:
+      "Colombia avanza en la regulación del ecosistema cripto a través del Sandbox Regulatorio de la Superintendencia Financiera (SFC), que permite a plataformas seleccionadas ofrecer servicios de compra, venta y custodia de criptoactivos bajo supervisión directa. Esta es la forma más segura y regulada de acceder al mercado cripto en Colombia.",
+    stats: [
+      { label: "Plataformas activas", value: "Sandbox SFC", icon: "verified" },
+      {
+        label: "Activos disponibles",
+        value: "BTC, ETH, USDT…",
+        icon: "currency_bitcoin",
+      },
+      { label: "Volatilidad", value: "Alta", icon: "show_chart" },
+      { label: "Mercado", value: "24/7 global", icon: "public" },
+    ],
+    sections: [
+      {
+        title: "El Sandbox Regulatorio de la SFC",
+        body: "En 2021, la SFC lanzó el programa de criptoactivos dentro de su Sandbox Regulatorio, permitiendo a entidades vigiladas ofrecer servicios de criptoactivos de forma supervisada y con límites de exposición. Las plataformas participantes deben reportar transacciones, cumplir normas SARLAFT y proteger al consumidor financiero. Esto difiere fundamentalmente de los exchanges no regulados que operan sin supervisión en Colombia.",
+      },
+      {
+        title: "Bitcoin, Ethereum y stablecoins: ¿cuál elegir?",
+        body: "Bitcoin (BTC) es el activo cripto más maduro, utilizado frecuentemente como reserva de valor y con menor volatilidad relativa dentro del ecosistema. Ethereum (ETH) es la plataforma líder de contratos inteligentes, con mayor dinamismo. Las stablecoins como USDT o USDC mantienen paridad con el dólar, útiles para preservar valor cripto sin exposición a volatilidad. Cada activo tiene un perfil de riesgo distinto.",
+      },
+      {
+        title: "Declaración de activos digitales en Colombia",
+        body: "Desde el año gravable 2022, la DIAN requiere que los contribuyentes con patrimonio en criptomonedas los declaren en su renta anual bajo la categoría de 'otros activos'. Las ganancias por venta o intercambio de criptoactivos son ingresos gravables a tarifa ordinaria. Lleva un registro detallado de tus transacciones para facilitar la declaración.",
+      },
+    ],
+    howItWorks: [
+      {
+        step: "1",
+        title: "Elige plataforma supervisada",
+        description:
+          "Selecciona una plataforma dentro del Sandbox SFC para máxima protección regulatoria.",
+      },
+      {
+        step: "2",
+        title: "Completa tu KYC",
+        description:
+          "Verifica tu identidad con cédula y selfie. Las plataformas reguladas exigen verificación completa.",
+      },
+      {
+        step: "3",
+        title: "Deposita en pesos colombianos",
+        description:
+          "Transfiere via PSE o transferencia bancaria directamente a tu cuenta en la plataforma.",
+      },
+      {
+        step: "4",
+        title: "Gestiona tu posición",
+        description:
+          "Compra, vende o mantén activos. Activa alertas de precio para gestionar la volatilidad.",
+      },
+    ],
+    benefits: [
+      {
+        icon: "trending_up",
+        title: "Alto potencial",
+        description:
+          "Los criptoactivos han generado retornos muy superiores a activos tradicionales en ciclos alcistas.",
+      },
+      {
+        icon: "verified",
+        title: "Supervisión SFC",
+        description:
+          "Operar en plataformas del Sandbox garantiza supervisión regulatoria y protección al consumidor.",
+      },
+      {
+        icon: "public",
+        title: "Mercado global 24/7",
+        description:
+          "Accede a un sistema financiero global que opera sin interrupciones, los 7 días de la semana.",
+      },
+      {
+        icon: "account_balance_wallet",
+        title: "Alta liquidez",
+        description:
+          "Convierte tus criptoactivos a pesos colombianos en cualquier momento del día.",
+      },
+    ],
+    considerations: [
+      "Volatilidad extrema: el valor puede caer un 50-80% en períodos cortos sin previo aviso.",
+      "Riesgo regulatorio: el marco normativo en Colombia está en evolución y puede cambiar.",
+      "No hay garantía de capital ni cobertura por Fogafín para este tipo de activos.",
+      "El tamaño de la posición no debe superar el porcentaje de tu portafolio que estás dispuesto a perder totalmente.",
+    ],
+    forWhom:
+      "Exclusivo para inversores con perfil de riesgo alto que comprenden la volatilidad extrema, destinan una pequeña fracción de su portafolio (<5-10%) y tienen horizonte de inversión flexible.",
+  },
 ];
 
 /* ═══════════════════════════════════════════

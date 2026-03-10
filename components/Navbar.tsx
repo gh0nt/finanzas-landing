@@ -7,9 +7,7 @@ export function Navbar() {
       <div className="container navbar__inner">
         <Link className="logo" href="/">
           <span className="logo__icon">
-            <span className="material-icons-outlined" aria-hidden="true">
-              bar_chart
-            </span>
+            <img src="/finanzas-logo.png" alt="Finanzas sin Ruido logo" />
           </span>
           <span>
             Finanzas<span className="logo__light">sinRuido</span>

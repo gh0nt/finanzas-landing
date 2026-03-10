@@ -19,12 +19,11 @@ export function Hero() {
             <span>no con ruido.</span>
           </h1>
           <p className="hero__lead">
-            Somos la plataforma lider en Colombia para la comparacion de
-            productos financieros y educacion economica. Decisiones claras para
-            un futuro solido.
+            Somos la plataforma para la comparacion de productos financieros y
+            educacion economica. Decisiones claras para un futuro solido.
           </p>
           <div className="hero__actions">
-            <a className="btn btn--primary" href="#">
+            <a className="btn btn--primary" href="/contact">
               Agendar diagnostico gratuito
               <span className="material-icons-outlined" aria-hidden="true">
                 arrow_forward

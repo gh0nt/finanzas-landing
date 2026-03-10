@@ -16,15 +16,15 @@ interface CategoryItem {
 
 const CATEGORIES: CategoryItem[] = [
   { id: "energy", label: "Energía", icon: "bolt", count: 4 },
-  { id: "metals", label: "Metales", icon: "diamond", count: 4 },
+  { id: "metals", label: "Metales", icon: "diamond", count: 3 },
   { id: "agriculture", label: "Agricultura", icon: "grass", count: 4 },
   { id: "fx", label: "Divisas (FX)", icon: "currency_exchange", count: 4 },
   { id: "crypto", label: "Criptoactivos", icon: "currency_bitcoin", count: 5 },
   {
     id: "indicators",
-    label: "Indicadores España",
+    label: "Indicadores Europa",
     icon: "bar_chart",
-    count: 3,
+    count: 6,
   },
 ];
 

@@ -1,0 +1,257 @@
+/* ══════════════════════════════════════════════════════
+   SERVICE CONTACT FORM  –  ServiceContactForm.module.css
+   Tokens: var(--navy) #0b1f3b | var(--accent) #4caf91
+══════════════════════════════════════════════════════ */
+
+.form {
+    background: var(--white);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ── Form header ─────────────────────────────────── */
+.formHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--muted-light);
+}
+
+.formHeaderIcon {
+    font-size: 1.6rem;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.formHeaderLabel {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--navy);
+    margin: 0 0 0.15rem;
+}
+
+.formHeaderSub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* ── Field ───────────────────────────────────────── */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.required {
+    color: var(--danger);
+}
+
+.optional {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* ── Inputs ──────────────────────────────────────── */
+.input,
+.textarea {
+    background: var(--background);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 0.875rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--navy);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+}
+
+.input:focus,
+.textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+.inputError {
+    border-color: var(--danger);
+}
+
+.inputError:focus {
+    box-shadow: 0 0 0 3px rgba(var(--danger-rgb), 0.15);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ── Select ──────────────────────────────────────── */
+.selectWrapper {
+    position: relative;
+}
+
+.select {
+    appearance: none;
+    background: var(--background);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 2.5rem 0.65rem 0.875rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--navy);
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+.selectChevron {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.15rem;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+/* ── Error message ───────────────────────────────── */
+.errorMsg {
+    font-size: 0.8rem;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ── Submit button ───────────────────────────────── */
+.submitBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 25px rgba(var(--accent-rgb), 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(var(--accent-rgb), 0.35);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.submitBtn .material-icons-outlined {
+    font-size: 1.1rem;
+}
+
+/* ── Spinning icon ───────────────────────────────── */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    display: inline-block;
+    animation: spin 0.9s linear infinite;
+    font-size: 1.1rem;
+}
+
+/* ── Disclaimer ──────────────────────────────────── */
+.disclaimer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin: 0;
+}
+
+.disclaimer .material-icons-outlined {
+    font-size: 0.9rem;
+}
+
+/* ── Success state ───────────────────────────────── */
+.success {
+    background: var(--white);
+    border: 1px solid #d1fae5;
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+}
+
+.successIcon {
+    font-size: 3rem;
+    color: var(--success);
+}
+
+.successTitle {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0;
+}
+
+.successText {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+    max-width: 320px;
+}
+
+.resetBtn {
+    margin-top: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.resetBtn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}

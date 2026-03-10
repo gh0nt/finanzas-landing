@@ -1,3 +1,24 @@
+/* ── Comparator category link card ───────────────────── */
+.comparatorCatLink {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--muted-light);
+    background: var(--background);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.comparatorCatLink:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+}
+
 /* ── Hero ─────────────────────────────────────────────── */
 .hero {
     background: var(--navy);
@@ -299,6 +320,48 @@
     color: var(--navy);
     font-size: 0.95rem;
     text-align: right;
+}
+
+/* ── Full-markets section ────────────────────────────── */
+.marketsSection {
+    padding: 0 0 5rem;
+}
+
+.marketsSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.marketsSectionTitle {
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0 0 0.25rem;
+}
+
+.marketsSectionSubtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.liveChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+    background: rgba(var(--accent-rgb), 0.08);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-hover);
+    white-space: nowrap;
 }
 
 /* ── Disclaimer ─────────────────────────────────────── */

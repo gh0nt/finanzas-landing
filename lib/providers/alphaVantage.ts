@@ -100,6 +100,25 @@ const COMMODITY_AV_FUNCTION: Record<string, string> = {
   corn: "CORN",
   wheat: "WHEAT",
   cotton: "COTTON",
+  aluminum: "ALUMINUM",
+};
+
+/**
+ * Interval supported by each AV commodity function.
+ * Energy (WTI, BRENT, NATURAL_GAS) → daily/weekly/monthly.
+ * Agriculture & metals (WHEAT, CORN, SUGAR, COFFEE, COPPER, ALUMINUM…) → monthly only.
+ */
+const COMMODITY_AV_INTERVAL: Record<string, "daily" | "monthly"> = {
+  WTI: "monthly",
+  BRENT: "monthly",
+  NATURAL_GAS: "monthly",
+  COPPER: "monthly",
+  ALUMINUM: "monthly",
+  COFFEE: "monthly",
+  SUGAR: "monthly",
+  CORN: "monthly",
+  WHEAT: "monthly",
+  COTTON: "monthly",
 };
 
 /** Friendly labels and units for our slugs */
@@ -128,7 +147,8 @@ export async function fetchCommodity(
 
   try {
     const key = getKey();
-    const url = `${AV_BASE}?function=${avFunction}&interval=daily&apikey=${key}`;
+    const interval = COMMODITY_AV_INTERVAL[avFunction] ?? "monthly";
+    const url = `${AV_BASE}?function=${avFunction}&interval=${interval}&apikey=${key}`;
 
     const res = await fetch(url, {
       next: { revalidate: COMMODITY_REVALIDATE },
@@ -182,6 +202,296 @@ export async function fetchGold(maxPoints = 90): Promise<IndicatorData> {
     label: "Oro",
     unit: "USD/oz",
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helper – build a stale/error result
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Comparator adapters — return InstrumentQuote instead of IndicatorData
+// These are called by lib/comparator/service.ts for energy/metals/agriculture
+// and for the IBEX 35 indicator.
+// ─────────────────────────────────────────────────────────────────────────────
+
+import type { InstrumentQuote, InstrumentMeta } from "@/lib/comparator/types";
+import { cacheFetch } from "@/lib/comparator/cache";
+
+export const AV_COMPARATOR_TTL = 21_600; // 6 h — stays within 25 req/day budget
+
+/** AV commodity function names (used as providerSymbol in catalog) */
+const AV_COMMODITY_FUNCTIONS = new Set([
+  "WTI",
+  "BRENT",
+  "NATURAL_GAS",
+  "COPPER",
+  "COFFEE",
+  "CORN",
+  "WHEAT",
+  "SUGAR",
+  "COTTON",
+  "ALUMINUM",
+]);
+
+/** Precious-metal tickers served via GOLD_SILVER_SPOT endpoint */
+const AV_SPOT_METALS = new Set(["XAU", "XAG"]);
+
+function avErrorQuote(meta: InstrumentMeta, error: string): InstrumentQuote {
+  return {
+    id: meta.id,
+    category: meta.category,
+    name: meta.name,
+    symbol: meta.symbol,
+    unit: meta.unit,
+    currency: meta.currency,
+    value: null,
+    change_24h: null,
+    change_24h_pct: null,
+    timestamp: new Date().toISOString(),
+    source: "alpha_vantage",
+    stale: true,
+    error,
+  };
+}
+
+/** Precious metals via GOLD_SILVER_SPOT (XAU, XAG) */
+async function fetchAVGoldSilverSpot(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  const symbol = meta.providerSymbol; // "XAU" or "XAG"
+  const cacheKey = `av_comparator:spot:${symbol}`;
+
+  return cacheFetch(cacheKey, AV_COMPARATOR_TTL, async () => {
+    const key = getKey();
+    const url =
+      `${AV_BASE}?function=GOLD_SILVER_SPOT` +
+      `&symbol=${symbol}&apikey=${key}`;
+    const res = await fetch(url, { next: { revalidate: AV_COMPARATOR_TTL } });
+    if (!res.ok) throw new Error(`AV HTTP ${res.status}`);
+    const json = await res.json();
+
+    if (json["Note"] || json["Information"] || json["Error Message"]) {
+      const msg: string =
+        json["Note"] ?? json["Information"] ?? json["Error Message"];
+      throw new Error(msg);
+    }
+
+    // Response shape: { "Realtime Gold/Silver Spot Price": { "2. Price": "...", "4. Last Updated": "..." } }
+    const spot =
+      json["Realtime Gold/Silver Spot Price"] ??
+      json["Realtime Metals Spot Price"];
+    if (!spot || !spot["2. Price"])
+      throw new Error("GOLD_SILVER_SPOT: unexpected response shape");
+
+    const value = parseFloat(spot["2. Price"]);
+    if (isNaN(value)) throw new Error("GOLD_SILVER_SPOT: non-numeric price");
+
+    return {
+      id: meta.id,
+      category: meta.category,
+      name: meta.name,
+      symbol: meta.symbol,
+      unit: meta.unit,
+      currency: meta.currency,
+      value,
+      change_24h: null,
+      change_24h_pct: null,
+      timestamp: spot["4. Last Updated"]
+        ? new Date(spot["4. Last Updated"]).toISOString()
+        : new Date().toISOString(),
+      source: "alpha_vantage" as const,
+      stale: false,
+    };
+  });
+}
+
+/** Commodity endpoint (WTI, BRENT, NATURAL_GAS, COPPER, COFFEE, CORN, WHEAT…) */
+async function fetchAVCommodityQuote(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  const fn = meta.providerSymbol; // e.g. "WTI", "BRENT"
+  const cacheKey = `av_comparator:commodity:${fn}`;
+
+  return cacheFetch(cacheKey, AV_COMPARATOR_TTL, async () => {
+    const key = getKey();
+    const interval = COMMODITY_AV_INTERVAL[fn] ?? "monthly";
+    const url = `${AV_BASE}?function=${fn}&interval=${interval}&apikey=${key}`;
+    const res = await fetch(url, { next: { revalidate: AV_COMPARATOR_TTL } });
+    if (!res.ok) throw new Error(`AV HTTP ${res.status}`);
+    const json = await res.json();
+
+    if (json["Note"] || json["Information"] || json["Error Message"]) {
+      const msg: string =
+        json["Note"] ?? json["Information"] ?? json["Error Message"];
+      throw new Error(msg);
+    }
+
+    const data: Array<{ date: string; value: string }> = json["data"];
+    if (!Array.isArray(data) || data.length === 0)
+      throw new Error("No data in AV commodity response");
+
+    // Filter out placeholder "." entries (current month not yet published by EIA)
+    const valid = data.filter(
+      (d) => d.value !== "." && d.value !== "" && !isNaN(parseFloat(d.value)),
+    );
+    if (valid.length === 0) throw new Error("All data points are placeholders");
+    const latestRaw = valid[0];
+    const prevRaw = valid.length > 1 ? valid[1] : null;
+
+    const value = parseFloat(latestRaw.value);
+    const prevValue = prevRaw ? parseFloat(prevRaw.value) : null;
+
+    const change_24h = prevValue !== null ? value - prevValue : null;
+    const change_24h_pct =
+      change_24h !== null && prevValue !== null && prevValue !== 0
+        ? (change_24h / prevValue) * 100
+        : null;
+
+    return {
+      id: meta.id,
+      category: meta.category,
+      name: meta.name,
+      symbol: meta.symbol,
+      unit: meta.unit,
+      currency: meta.currency,
+      value,
+      change_24h,
+      change_24h_pct,
+      timestamp: `${latestRaw.date}T00:00:00Z`,
+      source: "alpha_vantage" as const,
+      stale: false,
+    };
+  });
+}
+
+/** Precious metals via FX_DAILY (XAU/USD, XAG/USD, XPT/USD) */
+async function fetchAVMetalQuote(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  const metalSymbol = meta.providerSymbol; // e.g. "XAU"
+  const cacheKey = `av_comparator:metal:${metalSymbol}`;
+
+  return cacheFetch(cacheKey, AV_COMPARATOR_TTL, async () => {
+    const key = getKey();
+    const url =
+      `${AV_BASE}?function=FX_DAILY` +
+      `&from_symbol=${metalSymbol}&to_symbol=USD` +
+      `&outputsize=compact&apikey=${key}`;
+    const res = await fetch(url, { next: { revalidate: AV_COMPARATOR_TTL } });
+    if (!res.ok) throw new Error(`AV HTTP ${res.status}`);
+    const json = await res.json();
+
+    if (json["Note"] || json["Information"] || json["Error Message"]) {
+      const msg: string =
+        json["Note"] ?? json["Information"] ?? json["Error Message"];
+      throw new Error(msg);
+    }
+
+    const series: Record<string, Record<string, string>> = json[
+      "Time Series FX (Daily)"
+    ];
+    if (!series) throw new Error("Unexpected AV FX response shape");
+
+    const dates = Object.keys(series).sort().reverse(); // newest first
+    if (dates.length === 0) throw new Error("No data in AV FX response");
+
+    const latest = dates[0];
+    const prev = dates.length > 1 ? dates[1] : null;
+
+    const value = parseFloat(series[latest]["4. close"]);
+    const prevValue = prev ? parseFloat(series[prev]["4. close"]) : null;
+
+    const change_24h = prevValue !== null ? value - prevValue : null;
+    const change_24h_pct =
+      change_24h !== null && prevValue !== null && prevValue !== 0
+        ? (change_24h / prevValue) * 100
+        : null;
+
+    return {
+      id: meta.id,
+      category: meta.category,
+      name: meta.name,
+      symbol: meta.symbol,
+      unit: meta.unit,
+      currency: meta.currency,
+      value,
+      change_24h,
+      change_24h_pct,
+      timestamp: `${latest}T00:00:00Z`,
+      source: "alpha_vantage" as const,
+      stale: false,
+    };
+  });
+}
+
+/** Index / equity via GLOBAL_QUOTE (e.g. IBEX 35 → ^IBEX) */
+async function fetchAVGlobalQuote(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  const symbol = meta.providerSymbol;
+  const cacheKey = `av_comparator:global:${symbol}`;
+
+  return cacheFetch(cacheKey, 300, async () => {
+    const key = getKey();
+    const url =
+      `${AV_BASE}?function=GLOBAL_QUOTE` +
+      `&symbol=${encodeURIComponent(symbol)}&apikey=${key}`;
+    const res = await fetch(url, { next: { revalidate: 300 } });
+    if (!res.ok) throw new Error(`AV HTTP ${res.status}`);
+    const json = await res.json();
+
+    if (json["Note"] || json["Information"] || json["Error Message"]) {
+      const msg: string =
+        json["Note"] ?? json["Information"] ?? json["Error Message"];
+      throw new Error(msg);
+    }
+
+    const q = json["Global Quote"];
+    if (!q || !q["05. price"])
+      throw new Error("GLOBAL_QUOTE: no price in response");
+
+    const value = parseFloat(q["05. price"]);
+    const prev = parseFloat(q["08. previous close"]);
+    const change_24h = value - prev;
+    const change_24h_pct = prev !== 0 ? (change_24h / prev) * 100 : null;
+
+    return {
+      id: meta.id,
+      category: meta.category,
+      name: meta.name,
+      symbol: meta.symbol,
+      unit: meta.unit,
+      currency: meta.currency,
+      value,
+      change_24h,
+      change_24h_pct,
+      timestamp: `${q["07. latest trading day"]}T00:00:00Z`,
+      source: "alpha_vantage" as const,
+      stale: false,
+    };
+  });
+}
+
+/**
+ * Public dispatch: routes to the correct AV sub-adapter
+ * based on providerSymbol.
+ */
+export async function fetchAlphaVantageQuote(
+  meta: InstrumentMeta,
+): Promise<InstrumentQuote> {
+  try {
+    if (AV_SPOT_METALS.has(meta.providerSymbol)) {
+      return await fetchAVGoldSilverSpot(meta);
+    }
+    if (AV_COMMODITY_FUNCTIONS.has(meta.providerSymbol)) {
+      return await fetchAVCommodityQuote(meta);
+    }
+    // Fallback: GLOBAL_QUOTE (indices, equities)
+    return await fetchAVGlobalQuote(meta);
+  } catch (err) {
+    console.error(`[alpha_vantage:comparator] error for ${meta.id}`, err);
+    return avErrorQuote(meta, String(err));
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

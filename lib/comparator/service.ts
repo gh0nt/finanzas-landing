@@ -25,6 +25,9 @@ import { fetchCoinGecko } from "@/lib/providers/coingecko";
 import { fetchCommoditiesApi } from "@/lib/providers/commoditiesApi";
 import { fetchMetalsApi } from "@/lib/providers/metalsApi";
 import { fetchYahoo } from "@/lib/providers/yahoo";
+import { fetchAlphaVantageQuote } from "@/lib/providers/alphaVantage";
+import { fetchFredQuote } from "@/lib/providers/fred";
+import { cacheFetch } from "@/lib/comparator/cache";
 
 // Pre-built sublists passed to batching adapters
 const ALL_COINGECKO = ALL_INSTRUMENTS.filter((m) => m.source === "coingecko");
@@ -53,6 +56,12 @@ export async function fetchQuote(
 
     case "metals_api":
       return fetchMetalsApi(meta, ALL_METALS);
+
+    case "alpha_vantage":
+      return fetchAlphaVantageQuote(meta);
+
+    case "fred":
+      return fetchFredQuote(meta);
 
     case "yahoo":
       return fetchYahoo(meta);
@@ -110,11 +119,26 @@ export async function fetchQuotes(
 
 // ─── category-level fetch ────────────────────────────────────────────────────
 
+const CATEGORY_TTL: Record<AssetCategory, number> = {
+  fx: 43_200,
+  energy: 21_600,
+  metals: 21_600,
+  agriculture: 21_600,
+  crypto: 300,
+  indicators: 14_400,
+};
+
 export async function fetchCategory(
   category: AssetCategory,
 ): Promise<InstrumentQuote[]> {
-  const metas = findByCategory(category as keyof typeof CATALOG);
-  return fetchQuotes(metas);
+  return cacheFetch(
+    `comparator:category:${category}`,
+    CATEGORY_TTL[category],
+    async () => {
+      const metas = findByCategory(category as keyof typeof CATALOG);
+      return fetchQuotes(metas);
+    },
+  );
 }
 
 // ─── ids-level fetch ─────────────────────────────────────────────────────────

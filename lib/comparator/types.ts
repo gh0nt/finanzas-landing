@@ -16,6 +16,8 @@ export type ProviderName =
   | "coingecko"
   | "commodities_api"
   | "metals_api"
+  | "alpha_vantage"
+  | "fred"
   | "yahoo"
   | "bde"; // Banco de España
 

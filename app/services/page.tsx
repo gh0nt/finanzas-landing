@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import {
@@ -108,10 +109,8 @@ export default function ServicesPage() {
                     {product.badge}
                   </span>
                 </div>
-
                 <h3 className={styles.prodName}>{product.name}</h3>
                 <p className={styles.prodDesc}>{product.description}</p>
-
                 <ul className={styles.prodFeatures}>
                   {product.features.map((f, i) => (
                     <li key={i} className={styles.prodFeature}>
@@ -120,11 +119,13 @@ export default function ServicesPage() {
                     </li>
                   ))}
                 </ul>
-
-                <button className={styles.prodCta}>
+                <Link
+                  href={`/services/${product.id}`}
+                  className={styles.prodCta}
+                >
                   {product.ctaLabel}
                   <span className="material-icons-outlined">arrow_forward</span>
-                </button>
+                </Link>{" "}
               </article>
             ))}
           </div>

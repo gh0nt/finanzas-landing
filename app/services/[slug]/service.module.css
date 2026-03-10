@@ -1,0 +1,471 @@
+/* ══════════════════════════════════════════════════════
+   SERVICE DETAIL PAGE  –  service.module.css
+   Tokens: var(--navy) #0b1f3b | var(--accent) #4caf91
+══════════════════════════════════════════════════════ */
+
+/* ── Hero ─────────────────────────────────────────── */
+.hero {
+    background: var(--navy);
+    padding: 4rem 0 4.5rem;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at bottom right,
+            rgba(76, 175, 145, 0.2) 0%,
+            transparent 55%);
+    pointer-events: none;
+}
+
+.heroInner {
+    position: relative;
+    z-index: 1;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.75rem;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: var(--accent);
+}
+
+.backLink .material-icons-outlined {
+    font-size: 1rem;
+}
+
+.heroBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(76, 175, 145, 0.15);
+    border: 1px solid rgba(76, 175, 145, 0.35);
+    color: var(--accent);
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 1.25rem;
+}
+
+.heroIcon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+}
+
+.heroIcon .material-icons-outlined {
+    font-size: 1.5rem;
+}
+
+/* icon color variants */
+.iconBlue {
+    background: rgba(219, 234, 254, 0.15);
+    color: #93c5fd;
+}
+
+.iconIndigo {
+    background: rgba(224, 231, 255, 0.15);
+    color: #a5b4fc;
+}
+
+.iconTeal {
+    background: rgba(204, 251, 241, 0.15);
+    color: #5eead4;
+}
+
+.iconPurple {
+    background: rgba(243, 232, 255, 0.15);
+    color: #c4b5fd;
+}
+
+.iconOrange {
+    background: rgba(255, 237, 213, 0.15);
+    color: #fdba74;
+}
+
+.iconEmerald {
+    background: rgba(209, 250, 229, 0.15);
+    color: #6ee7b7;
+}
+
+.heroTitle {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+    max-width: 700px;
+}
+
+.heroTagline {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 600px;
+}
+
+/* ── Stats bar ────────────────────────────────────── */
+.statsBar {
+    background: var(--white);
+    border-bottom: 1px solid var(--muted-light);
+    padding: 1.5rem 0;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .statsGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.statItemIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.statItemIcon .material-icons-outlined {
+    font-size: 1.15rem;
+}
+
+.statValue {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.15;
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+}
+
+/* ── Main content layout ──────────────────────────── */
+.mainSection {
+    padding: 3.5rem 0 5rem;
+    background: var(--background);
+}
+
+.contentGrid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .contentGrid {
+        grid-template-columns: 1fr 380px;
+        gap: 3rem;
+    }
+}
+
+/* ── Article column ───────────────────────────────── */
+.article {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* intro paragraph */
+.intro {
+    background: var(--white);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+}
+
+.introText {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--dark-gray);
+    margin: 0;
+}
+
+/* article sections */
+.sectionBlock {
+    background: var(--white);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--muted-light);
+}
+
+.sectionBody {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--dark-gray);
+    margin: 0;
+}
+
+/* ── How it works ─────────────────────────────────── */
+.howBlock {
+    background: var(--white);
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+}
+
+.blockLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.blockTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 1.5rem;
+}
+
+.stepsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.stepItem {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.stepBullet {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.stepContent {
+    flex: 1;
+}
+
+.stepTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.3rem;
+}
+
+.stepDesc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ── Benefits ─────────────────────────────────────── */
+.benefitsBlock {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    color: var(--white);
+}
+
+.benefitsTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0 0 1.5rem;
+}
+
+.benefitsGrid {
+    display: grid;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .benefitsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.benefitItem {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+}
+
+.benefitIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: rgba(76, 175, 145, 0.18);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.benefitIcon .material-icons-outlined {
+    font-size: 1.1rem;
+}
+
+.benefitTitle {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0 0 0.25rem;
+}
+
+.benefitDesc {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.62);
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ── Considerations ───────────────────────────────── */
+.considerationsBlock {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+}
+
+.considerationsTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.considerationsTitle .material-icons-outlined {
+    font-size: 1.15rem;
+    color: #d97706;
+}
+
+.considerationsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.considerationsItem {
+    display: flex;
+    gap: 0.65rem;
+    font-size: 0.875rem;
+    color: #78350f;
+    line-height: 1.6;
+}
+
+.considerationsItem .material-icons-outlined {
+    font-size: 1rem;
+    color: #d97706;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+/* ── For whom ──────────────────────────────────────── */
+.forWhomBlock {
+    background: rgba(var(--accent-rgb), 0.06);
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+}
+
+.forWhomIcon {
+    font-size: 1.4rem;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.forWhomLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-hover);
+    margin-bottom: 0.3rem;
+}
+
+.forWhomText {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ── Sticky sidebar / form column ────────────────── */
+.formColumn {
+    position: sticky;
+    top: 1.5rem;
+}
+
+.formColumnLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}

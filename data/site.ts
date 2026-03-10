@@ -9,10 +9,7 @@ export const site = {
     { label: "Mercados", href: "/markets" },
     { label: "Educación", href: "/guides" },
     { label: "Comparador", href: "/comparators" },
-    {
-      label: "Contacto",
-      href: "/contact",
-    },
+    { label: "Contacto", href: "/contact" },
   ],
   footer: {
     company: [

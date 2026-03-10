@@ -4,3 +4,4 @@ export { SparklineWidget } from "./SparklineWidget";
 export { IndicatorCard } from "./IndicatorCard";
 export { FxTable } from "./FxTable";
 export { CommodityGrid } from "./CommodityGrid";
+export { EuropeanIndicatorsWidget } from "./EuropeanIndicatorsWidget";

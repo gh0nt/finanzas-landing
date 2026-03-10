@@ -168,7 +168,7 @@ export default function ContactPage() {
                     ))}
                   </div>
                   <p className={styles.socialProofText}>
-                    <strong>+1.200 personas</strong> ya recibieron asesoría este
+                    <strong>+600 personas</strong> ya recibieron asesoría este
                     año
                   </p>
                 </div>

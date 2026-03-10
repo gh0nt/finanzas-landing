@@ -24,13 +24,15 @@ const CATEGORY_TITLES: Record<AssetCategory, string> = {
 
 const CATEGORY_DESCRIPTIONS: Record<AssetCategory, string> = {
   energy:
-    "Precios internacionales del Brent, WTI, Gas Natural y Carbón Rotterdam. Fuente: Commodities-API.",
-  metals: "Oro, Plata y Platino desde Metals-API; Cobre desde Commodities-API.",
-  agriculture: "Café Arábica, Trigo, Maíz y Cacao. Fuente: Commodities-API.",
+    "Precios internacionales del Brent, WTI, Gas Natural y Aluminio. Fuente: FRED (St. Louis Fed).",
+  metals:
+    "Oro y Plata vía Alpha Vantage (spot); Cobre desde FRED (St. Louis Fed).",
+  agriculture:
+    "Café Arábica, Trigo, Maíz y Azúcar. Fuente: FRED (St. Louis Fed).",
   fx: "Tipos de cambio EUR/USD, EUR/GBP, EUR/CHF, EUR/JPY publicados por el BCE.",
-  crypto:
-    "Precios en EUR con variación 24h. Fuente: CoinGecko (sin necesidad de clave API).",
-  indicators: "IBEX 35, Euríbor 12 meses y Bono del Estado español a 10 años.",
+  crypto: "Precios en EUR con variación 24h. Fuente: CoinGecko.",
+  indicators:
+    "IBEX 35, Euríbor 12M, Bono España 10A, Euro Stoxx 50, DAX y Bono Alemán 10A.",
 };
 
 function useQuotes(category: AssetCategory) {

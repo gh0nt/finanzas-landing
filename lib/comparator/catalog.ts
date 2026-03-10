@@ -13,8 +13,8 @@
 import type { InstrumentMeta, CatalogResponse } from "./types";
 
 // ─── ENERGY ──────────────────────────────────────────────────────────────────
-// Source: Commodities-API  https://commodities-api.com
-// Symbols match the Commodities-API spec exactly.
+// Source: FRED (St. Louis Fed) — free, 120 req/min, no daily limit
+// Series: DCOILBRENTEU | DCOILWTICO | DHHNGSP | PALUMUSDM
 
 const ENERGY: InstrumentMeta[] = [
   {
@@ -24,7 +24,7 @@ const ENERGY: InstrumentMeta[] = [
     symbol: "BRENT",
     unit: "USD/barril",
     currency: "USD",
-    source: "commodities_api",
+    source: "fred",
     providerSymbol: "BRENT",
   },
   {
@@ -34,7 +34,7 @@ const ENERGY: InstrumentMeta[] = [
     symbol: "WTI",
     unit: "USD/barril",
     currency: "USD",
-    source: "commodities_api",
+    source: "fred",
     providerSymbol: "WTI",
   },
   {
@@ -44,26 +44,24 @@ const ENERGY: InstrumentMeta[] = [
     symbol: "NG",
     unit: "USD/MMBtu",
     currency: "USD",
-    source: "commodities_api",
-    providerSymbol: "NG",
+    source: "fred",
+    providerSymbol: "NATURAL_GAS",
   },
   {
-    id: "energy:API2",
+    id: "energy:ALUMINUM",
     category: "energy",
-    name: "Carbón Rotterdam (API2)",
-    symbol: "API2",
-    unit: "USD/ton",
+    name: "Aluminio",
+    symbol: "ALUMINUM",
+    unit: "USD/TM",
     currency: "USD",
-    source: "commodities_api",
-    providerSymbol: "API2",
+    source: "fred",
+    providerSymbol: "ALUMINUM",
   },
 ];
 
 // ─── METALS ──────────────────────────────────────────────────────────────────
-// Gold/Silver/Platinum → Metals-API  https://metals-api.com
-//   Symbols: XAU (Gold), XAG (Silver), XPT (Platinum)
-// Copper → Commodities-API
-//   Symbol: COPPER
+// XAU, XAG, XPT → Alpha Vantage FX_DAILY (current, confirmed working)
+// COPPER        → FRED PCOPPUSDM (World Bank monthly, confirmed working)
 
 const METALS: InstrumentMeta[] = [
   {
@@ -73,8 +71,8 @@ const METALS: InstrumentMeta[] = [
     symbol: "XAU",
     unit: "USD/oz",
     currency: "USD",
-    source: "metals_api",
-    providerSymbol: "XAU", // Metals-API symbol
+    source: "alpha_vantage",
+    providerSymbol: "XAU", // routed via AV GOLD_SILVER_SPOT
   },
   {
     id: "metals:XAG",
@@ -83,36 +81,25 @@ const METALS: InstrumentMeta[] = [
     symbol: "XAG",
     unit: "USD/oz",
     currency: "USD",
-    source: "metals_api",
-    providerSymbol: "XAG",
-  },
-  {
-    id: "metals:XPT",
-    category: "metals",
-    name: "Platino",
-    symbol: "XPT",
-    unit: "USD/oz",
-    currency: "USD",
-    source: "metals_api",
-    providerSymbol: "XPT",
+    source: "alpha_vantage",
+    providerSymbol: "XAG", // routed via AV GOLD_SILVER_SPOT
   },
   {
     id: "metals:COPPER",
     category: "metals",
     name: "Cobre",
     symbol: "COPPER",
-    unit: "USD/libra",
+    unit: "USD/TM",
     currency: "USD",
-    source: "commodities_api",
-    providerSymbol: "COPPER", // Commodities-API symbol
+    source: "fred",
+    providerSymbol: "COPPER", // FRED PCOPPUSDM
   },
 ];
 
 // ─── AGRICULTURE ─────────────────────────────────────────────────────────────
-// Source: Commodities-API
-// Symbols match Commodities-API spec.
-//   COFFEE → "CC" in some providers; we use Commodities-API which accepts COFFEE.
-//   Arabica coffee is commonly coded COFFEE on Commodities-API.
+// Source: FRED (St. Louis Fed) — free, 120 req/min, no daily limit
+// COFFEE → PCOFFOTMUSDM (USD/lb) | WHEAT → PWHEAMTUSDM (USD/MT)
+// CORN → PMAIZMTUSDM (USD/MT)   | SUGAR → PSUGAISAUSDM (USD/lb)
 
 const AGRICULTURE: InstrumentMeta[] = [
   {
@@ -122,7 +109,7 @@ const AGRICULTURE: InstrumentMeta[] = [
     symbol: "COFFEE",
     unit: "USD/libra",
     currency: "USD",
-    source: "commodities_api",
+    source: "fred",
     providerSymbol: "COFFEE",
   },
   {
@@ -130,9 +117,9 @@ const AGRICULTURE: InstrumentMeta[] = [
     category: "agriculture",
     name: "Trigo",
     symbol: "WHEAT",
-    unit: "USD/bushel",
+    unit: "USD/TM",
     currency: "USD",
-    source: "commodities_api",
+    source: "fred",
     providerSymbol: "WHEAT",
   },
   {
@@ -140,20 +127,20 @@ const AGRICULTURE: InstrumentMeta[] = [
     category: "agriculture",
     name: "Maíz",
     symbol: "CORN",
-    unit: "USD/bushel",
+    unit: "USD/TM",
     currency: "USD",
-    source: "commodities_api",
+    source: "fred",
     providerSymbol: "CORN",
   },
   {
-    id: "agriculture:COCOA",
+    id: "agriculture:SUGAR",
     category: "agriculture",
-    name: "Cacao",
-    symbol: "COCOA",
-    unit: "USD/ton",
+    name: "Azúcar",
+    symbol: "SUGAR",
+    unit: "USD/libra",
     currency: "USD",
-    source: "commodities_api",
-    providerSymbol: "COCOA",
+    source: "fred",
+    providerSymbol: "SUGAR",
   },
 ];
 
@@ -273,19 +260,15 @@ const CRYPTO: InstrumentMeta[] = [
   },
 ];
 
-// ─── INDICATORS ───────────────────────────────────────────────────────────────
-// IBEX 35        → Yahoo Finance, ticker: ^IBEX
-//                  Limitations: unofficial API, may rate-limit.
-// Euribor 12M    → ECB SDW series: FM/B.U2.EUR.RT0.MM.EURIBOR12MD_.HSTA
-//                  Free, official, daily.
-// Spain 10Y bond → Yahoo Finance, ticker: ^TNX is US; Spain 10Y: ESPAGNE10YT=RR
-//                  (Yahoo shortname varies by region; we use ESP10Y as fallback)
-//                  Documented as best-effort MVP.
+// ─── INDICATORS ─────────────────────────────────────────────────────────────
+// IBEX 35       → Yahoo Finance ^IBEX
+// Euribor 12M   → FRED EUR12MD156N (12-month EURIBOR, monthly)
+// Spain 10Y bond → FRED IRLTLT01ESM156N
+// Euro Stoxx 50 → Yahoo Finance ^STOXX50E
+// DAX           → Yahoo Finance ^GDAXI
+// German Bund   → FRED IRLTLT01DEM156N
 
-export const YAHOO_TICKER_MAP: Record<string, string> = {
-  IBEX35: "^IBEX",
-  ES10Y: "^ES10YT=RR", // Spain 10-year bond yield — Yahoo unofficial ticker
-};
+export const YAHOO_TICKER_MAP: Record<string, string> = {};
 
 const INDICATORS: InstrumentMeta[] = [
   {
@@ -305,8 +288,8 @@ const INDICATORS: InstrumentMeta[] = [
     symbol: "EURIBOR12M",
     unit: "%",
     currency: "EUR",
-    source: "ecb",
-    providerSymbol: "FM/B.U2.EUR.RT0.MM.EURIBOR12MD_.HSTA", // full ECB flow key
+    source: "fred",
+    providerSymbol: "EURIBOR12M_FRED",
   },
   {
     id: "indicators:ES10Y",
@@ -315,8 +298,38 @@ const INDICATORS: InstrumentMeta[] = [
     symbol: "ES10Y",
     unit: "%",
     currency: "EUR",
+    source: "fred",
+    providerSymbol: "ES10Y",
+  },
+  {
+    id: "indicators:STOXX50",
+    category: "indicators",
+    name: "Euro Stoxx 50",
+    symbol: "STOXX50",
+    unit: "puntos",
+    currency: "EUR",
     source: "yahoo",
-    providerSymbol: "^ES10YT=RR",
+    providerSymbol: "^STOXX50E",
+  },
+  {
+    id: "indicators:DAX",
+    category: "indicators",
+    name: "DAX (Alemania)",
+    symbol: "DAX",
+    unit: "puntos",
+    currency: "EUR",
+    source: "yahoo",
+    providerSymbol: "^GDAXI",
+  },
+  {
+    id: "indicators:DE10Y",
+    category: "indicators",
+    name: "Bono Alemán 10 Años",
+    symbol: "DE10Y",
+    unit: "%",
+    currency: "EUR",
+    source: "fred",
+    providerSymbol: "DE10Y",
   },
 ];
 

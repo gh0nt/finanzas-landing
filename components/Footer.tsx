@@ -72,7 +72,10 @@ export function Footer() {
               Financiera de Colombia.
             </p>
           </div>
-          <p>© 2024 Finanzas sin Ruido SAS. Todos los derechos reservados.</p>
+          <p>
+            ©{new Date().getFullYear()} Finanzas sin Ruido SAS. Todos los
+            derechos reservados.
+          </p>
         </div>
       </div>
     </footer>

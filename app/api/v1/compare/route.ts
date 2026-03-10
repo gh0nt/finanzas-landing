@@ -33,6 +33,16 @@ const VALID_CATEGORIES = new Set<AssetCategory>([
   "indicators",
 ]);
 
+const RESPONSE_MAX_AGE: Record<string, number> = {
+  fx: 43_200,
+  energy: 21_600,
+  metals: 21_600,
+  agriculture: 21_600,
+  crypto: 300,
+  indicators: 14_400,
+  all: 300,
+};
+
 export async function GET(req: NextRequest) {
   // ── Rate limit ────────────────────────────────────────────────────────────
   const ip = getClientIp(req.headers);
@@ -104,7 +114,7 @@ export async function GET(req: NextRequest) {
         status: 200,
         headers: {
           ...rlHeaders,
-          "Cache-Control": "no-store", // We manage caching ourselves
+          "Cache-Control": `s-maxage=${RESPONSE_MAX_AGE[categoryParam ?? "all"] ?? 300}, stale-while-revalidate=60`,
         },
       },
     );
