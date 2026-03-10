@@ -61,17 +61,6 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="regulator">
-            <div className="regulator__badge">
-              <strong>VIGILADO</strong>
-              <span>Superintendencia Financiera</span>
-            </div>
-            <p>
-              Finanzas sin Ruido no capta dinero del publico. Las entidades
-              financieras listadas estan vigiladas por la Superintendencia
-              Financiera de Colombia.
-            </p>
-          </div>
           <p>
             ©{new Date().getFullYear()} Finanzas sin Ruido SAS. Todos los
             derechos reservados.

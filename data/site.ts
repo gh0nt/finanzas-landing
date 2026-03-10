@@ -14,12 +14,12 @@ export const site = {
   footer: {
     company: [
       { label: "Sobre nosotros", href: "/company" },
-      { label: "Precios", href: "/products" },
+      { label: "Preсios", href: "/products" },
     ],
     legal: [
-      { label: "Terminos y condiciones", href: "/legal/terms" },
-      { label: "Politica de privacidad", href: "/legal/privacy" },
-      { label: "Habeas Data", href: "/legal/privacy" },
+      { label: "Términos y condiciones", href: "/legal/terms" },
+      { label: "Política de privacidad", href: "/legal/privacy" },
+      { label: "Aviso legal", href: "/legal/disclaimer" },
     ],
   },
 };
