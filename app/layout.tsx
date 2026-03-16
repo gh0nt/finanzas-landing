@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { CookieConsent } from "@/components/CookieConsent";
 import "./globals.css";
-import { GoogleAnalytics } from "@next/third-parties/google";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -92,10 +92,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
-      {process.env.NODE_ENV === "production" && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
-      )}
+      <body className="antialiased">
+        {children}
+        <CookieConsent
+          analyticsEnabled={process.env.NODE_ENV === "production"}
+          gaId={process.env.NEXT_PUBLIC_GA_ID}
+        />
+      </body>
     </html>
   );
 }
