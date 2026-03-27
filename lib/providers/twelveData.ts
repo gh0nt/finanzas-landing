@@ -5,6 +5,7 @@
  *   - Euro Stoxx 50  (symbol: EUSTX50)
  *   - DAX Germany    (symbol: DAX)
  *   - German Bund 10Y (symbol: DE10Y)
+ *   - Bitcoin (ticker: BTC-USD from Yahoo Finance)
  *
  * Free tier: 800 requests/day.  Two fetch calls are made per indicator
  * (quote + time_series), so the caller MUST cache at the route level.
@@ -92,6 +93,13 @@ export const EUROPEAN_INDICATORS: Record<string, EuropeanIndicatorConfig> = {
     label: "Bono Alemán 10A",
     description: "European Benchmark Bond",
     unit: "%",
+  },
+  bitcoin: {
+    indicatorId: "bitcoin",
+    symbol: "BTC-USD",
+    label: "Bitcoin",
+    description: "Precio spot BTC/USD",
+    unit: "USD",
   },
 };
 
@@ -262,15 +270,17 @@ async function fetchFredBondIndicator(
 }
 
 /**
- * Fetch all 3 European indicators in parallel using the most reliable free sources:
+ * Fetch all European indicators in parallel using the most reliable free sources:
  *   Euro Stoxx 50 → Yahoo Finance ^STOXX50E
  *   DAX           → Yahoo Finance ^GDAXI
  *   German Bund   → FRED IRLTLT01DEM156N
+ *   Bitcoin       → Yahoo Finance BTC-USD
  */
 export async function fetchAllEuropeanIndicators(): Promise<IndicatorData[]> {
   const cfgEuroStoxx = EUROPEAN_INDICATORS["euro-stoxx-50"];
   const cfgDax = EUROPEAN_INDICATORS["dax"];
   const cfgBond = EUROPEAN_INDICATORS["german-bund-10y"];
+  const cfgBitcoin = EUROPEAN_INDICATORS["bitcoin"];
 
   return Promise.all([
     fetchYahooEquityIndicator(cfgEuroStoxx, "^STOXX50E").catch((e) =>
@@ -281,6 +291,9 @@ export async function fetchAllEuropeanIndicators(): Promise<IndicatorData[]> {
     ),
     fetchFredBondIndicator(cfgBond, "IRLTLT01DEM156N").catch((e) =>
       makeFallback(cfgBond, e instanceof Error ? e.message : String(e)),
+    ),
+    fetchYahooEquityIndicator(cfgBitcoin, "BTC-USD").catch((e) =>
+      makeFallback(cfgBitcoin, e instanceof Error ? e.message : String(e)),
     ),
   ]);
 }

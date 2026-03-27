@@ -1,0 +1,578 @@
+.loginMain {
+    padding: 3.5rem 0 5rem;
+}
+
+.loginCard {
+    width: min(100%, 560px);
+    margin: 0 auto;
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+}
+
+.loginEyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.loginTitle {
+    margin: 0.6rem 0 0;
+    color: var(--navy);
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    line-height: 1.2;
+}
+
+.loginSubtitle {
+    color: var(--muted);
+    margin: 0.75rem 0 1.25rem;
+    line-height: 1.6;
+}
+
+.loginForm {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.fieldLabel {
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.fieldLabelRow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.fieldRequiredBadge,
+.fieldOptionalBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.12rem 0.52rem;
+    min-width: 84px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.fieldRequiredBadge {
+    background: rgba(var(--danger-rgb), 0.12);
+    color: var(--danger-dark);
+}
+
+.fieldOptionalBadge {
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent-hover);
+}
+
+.textField,
+.textArea,
+.editorArea {
+    width: 100%;
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--dark-gray);
+    padding: 0.7rem 0.85rem;
+    font: inherit;
+}
+
+.textField {
+    min-height: 48px;
+}
+
+.textArea {
+    resize: vertical;
+}
+
+.editorArea {
+    min-height: 320px;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.helperText {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.primaryButton,
+.secondaryButton {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.72rem 1rem;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    cursor: pointer;
+}
+
+.primaryButton {
+    background: var(--accent);
+    color: var(--white);
+}
+
+.primaryButton:hover {
+    background: var(--accent-hover);
+}
+
+.secondaryButton {
+    background: rgba(11, 31, 59, 0.07);
+    color: var(--navy);
+}
+
+.secondaryButton:hover {
+    background: rgba(11, 31, 59, 0.11);
+}
+
+.loginError {
+    margin: 0 0 1rem;
+    border-radius: var(--radius-sm);
+    background: rgba(var(--danger-rgb), 0.1);
+    border: 1px solid rgba(var(--danger-rgb), 0.25);
+    color: var(--danger-dark);
+    padding: 0.65rem 0.8rem;
+    font-size: 0.84rem;
+}
+
+.loginHint {
+    margin: 1rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.cmsMain {
+    padding: 2rem 0 4rem;
+}
+
+.cmsHeaderRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.cmsTitle {
+    margin: 0.35rem 0 0;
+    color: var(--navy);
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+}
+
+.cmsSubtitle {
+    margin: 0.5rem 0 0;
+    color: var(--muted);
+}
+
+.cmsStatus {
+    margin: 0 0 1rem;
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.8rem;
+    border: 1px solid transparent;
+    font-size: 0.84rem;
+}
+
+.cmsStatusOk {
+    color: var(--success-dark);
+    background: rgba(var(--success-rgb), 0.1);
+    border-color: rgba(var(--success-rgb), 0.22);
+}
+
+.cmsStatusError {
+    color: var(--danger-dark);
+    background: rgba(var(--danger-rgb), 0.1);
+    border-color: rgba(var(--danger-rgb), 0.22);
+}
+
+.editorShell {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.sidebarPanel {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+}
+
+@media (min-width: 1180px) {
+    .editorShell {
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+
+    .sidebarPanel {
+        max-height: 78vh;
+        overflow-y: auto;
+    }
+}
+
+.editorPanel,
+.previewPanel {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 1.15rem;
+}
+
+.sectionHeader h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.2rem;
+}
+
+.sectionHeader p {
+    margin: 0.4rem 0 1rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.postsListCard {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    background: var(--background);
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.postsListHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.postsListHeader h3 {
+    margin: 0;
+    font-size: 0.96rem;
+    color: var(--navy);
+}
+
+.postsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.postListItem {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+}
+
+.postListItemActive {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+}
+
+.postListButton {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0.6rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.postListTitle {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--navy);
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.postListMeta {
+    margin: 0.1rem 0 0;
+    font-size: 0.74rem;
+    color: var(--muted);
+}
+
+.fieldGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.coverUploadBox {
+    margin: 0.8rem 0;
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    padding: 0.8rem;
+    background: var(--background);
+}
+
+.coverFileInput {
+    width: 100%;
+    border: 1px dashed var(--muted-light);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--dark-gray);
+    padding: 0.65rem;
+    font: inherit;
+}
+
+.coverFileInput::file-selector-button {
+    border: none;
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    margin-right: 0.7rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.coverFileInput:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.coverFileInput:disabled::file-selector-button {
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.coverDimensionHint {
+    display: block;
+    margin-top: 0.1rem;
+    color: var(--accent-hover);
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.coverPreviewBox {
+    margin-top: 0.7rem;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.coverPreviewImage {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--muted-light);
+}
+
+.coverPreviewLink {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    width: fit-content;
+}
+
+.coverPreviewLink:hover {
+    text-decoration: underline;
+}
+
+.coverRemoveButton {
+    border: 1px solid rgba(var(--danger-rgb), 0.38);
+    border-radius: var(--radius-sm);
+    background: rgba(var(--danger-rgb), 0.08);
+    color: var(--danger-dark);
+    padding: 0.42rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.coverRemoveButton:hover {
+    background: rgba(var(--danger-rgb), 0.14);
+}
+
+.coverRemoveButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.optionalFieldsToggleRow {
+    margin: 0.85rem 0 0.65rem;
+}
+
+.optionalSection {
+    border: 1px dashed var(--muted-light);
+    border-radius: var(--radius-md);
+    padding: 0.85rem;
+    background: var(--background);
+}
+
+.editorModeRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+}
+
+.editorModeButton {
+    border: 1px solid var(--muted-light);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--navy);
+    padding: 0.35rem 0.8rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.editorModeButtonActive {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent-hover);
+}
+
+.editorAssistBox {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    background: var(--background);
+    padding: 0.75rem;
+}
+
+.formatToolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.formatButton {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--navy);
+    padding: 0.32rem 0.65rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.formatButton:hover {
+    border-color: var(--accent);
+    color: var(--accent-hover);
+}
+
+.formatHint {
+    margin: 0.55rem 0 0.65rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+}
+
+@media (min-width: 860px) {
+    .fieldGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1179px) and (min-width: 861px) {
+    .editorShell {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sidebarPanel {
+        grid-column: 1 / -1;
+    }
+}
+
+.checkboxRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--navy);
+    margin: 0.4rem 0 0.8rem;
+    font-size: 0.88rem;
+}
+
+.metricsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 0.7rem;
+}
+
+.actionRow {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.feedback {
+    margin: 0.9rem 0 0;
+    font-size: 0.86rem;
+    color: var(--muted);
+}
+
+.feedbackOk {
+    color: var(--success-dark);
+}
+
+.feedbackError {
+    color: var(--danger-dark);
+}
+
+.previewTitle {
+    margin: 0.4rem 0 0;
+    color: var(--navy);
+    font-size: 1.45rem;
+    line-height: 1.25;
+}
+
+.previewExcerpt {
+    margin: 0.6rem 0 1rem;
+    color: var(--muted);
+}
+
+.seoBox {
+    border: 1px solid var(--muted-light);
+    border-radius: var(--radius-md);
+    background: var(--background);
+    padding: 0.8rem;
+    font-size: 0.82rem;
+    color: var(--dark-gray);
+}
+
+.previewBody {
+    margin-top: 1rem;
+    border-top: 1px solid var(--muted-light);
+    padding-top: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--dark-gray);
+}
+
+.previewBody h2,
+.previewBody h3 {
+    color: var(--navy);
+}
+
+.previewBody table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.previewBody th,
+.previewBody td {
+    border: 1px solid var(--muted-light);
+    padding: 0.35rem 0.5rem;
+}

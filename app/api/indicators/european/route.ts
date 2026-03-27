@@ -1,10 +1,11 @@
 /**
  * GET /api/indicators/european
  *
- * Returns current data for the 3 European market indicators:
+ * Returns current data for market indicators used in home widgets:
  *   - EURO STOXX 50  (EUSTX50)
  *   - DAX Germany    (DAX)
  *   - German Bund 10Y (DE10Y)
+ *   - Bitcoin        (BTC-USD)
  *
  * Rate-limit protection: responses are held in an in-memory cache for
  * CACHE_TTL seconds (15 min).  All concurrent requests within the same

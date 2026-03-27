@@ -2,31 +2,13 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
 import styles from "./guides.module.css";
+import { categoryToStyle, levelToDots } from "@/lib/cms/utils";
+import { getPublishedGuides } from "@/lib/cms/guides";
 
 export const metadata = {
   title: "Guías Educativas | Finanzas sin Ruido",
   description:
     "Guías completas y tutoriales para aprender finanzas personales e inversiones en Colombia.",
-};
-
-const CATEGORIES = [
-  "Todas",
-  "Ahorro",
-  "Inversión",
-  "Crédito",
-  "Seguros",
-  "Impuestos",
-];
-
-const featuredGuide = {
-  slug: "guia-completa-cuentas-de-ahorro-colombia",
-  category: "Ahorro",
-  title: "Guía completa: Cómo elegir la mejor cuenta de ahorros en Colombia",
-  excerpt:
-    "Analizamos tasas E.A., cuotas de manejo, coberturas del Fogafín y beneficios adicionales de los 20 bancos más grandes del país para que su dinero rinda más.",
-  readTime: "10 min",
-  chapters: 5,
-  level: "Principiante",
 };
 
 const learningPaths = [
@@ -62,100 +44,13 @@ interface Guide {
   categoryStyle: string;
   title: string;
   excerpt: string;
-  readTime: string;
+  readTime: number;
   chapters: number;
   level: "Principiante" | "Intermedio" | "Avanzado";
   levelDots: number;
   gradient: string;
   icon: string;
 }
-
-const guides: Guide[] = [
-  {
-    slug: "como-funcionan-los-cdts",
-    category: "Inversión",
-    categoryStyle: "blue",
-    title: "CDTs: Todo lo que necesita saber antes de invertir",
-    excerpt:
-      "Tasas, plazos, riesgos, garantías del Fogafín y cuándo conviene más un CDT que una cuenta de ahorros.",
-    readTime: "8 min",
-    chapters: 6,
-    level: "Principiante",
-    levelDots: 1,
-    gradient: "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
-    icon: "account_balance",
-  },
-  {
-    slug: "solicitar-credito-hipotecario-colombia",
-    category: "Crédito",
-    categoryStyle: "purple",
-    title: "Cómo solicitar un crédito hipotecario paso a paso en Colombia",
-    excerpt:
-      "Desde la preaprobación hasta el desembolso: documentos necesarios, tasas UVR vs tasa fija y simulador incluido.",
-    readTime: "12 min",
-    chapters: 7,
-    level: "Intermedio",
-    levelDots: 2,
-    gradient: "linear-gradient(135deg,#3b0764,#6d28d9)",
-    icon: "real_estate_agent",
-  },
-  {
-    slug: "seguros-indispensables-familia-colombia",
-    category: "Seguros",
-    categoryStyle: "orange",
-    title: "Los 5 seguros indispensables para proteger a su familia",
-    excerpt:
-      "Seguro de vida, salud complementaria, hogar y desempleo: comparamos primas y coberturas de las aseguradoras más grandes.",
-    readTime: "7 min",
-    chapters: 5,
-    level: "Principiante",
-    levelDots: 1,
-    gradient: "linear-gradient(135deg,#431407,#9a3412)",
-    icon: "shield",
-  },
-  {
-    slug: "declarar-renta-empleado-colombia",
-    category: "Impuestos",
-    categoryStyle: "",
-    title: "Cómo declarar renta siendo empleado en Colombia 2025",
-    excerpt:
-      "Guía paso a paso para la declaración de renta: quién debe declarar, deducciones permitidas y cómo evitar sanciones.",
-    readTime: "9 min",
-    chapters: 6,
-    level: "Intermedio",
-    levelDots: 2,
-    gradient: "linear-gradient(135deg,#064e3b,#047857)",
-    icon: "receipt_long",
-  },
-  {
-    slug: "invertir-acciones-bvc-principiantes",
-    category: "Inversión",
-    categoryStyle: "blue",
-    title: "Guía del inversionista principiante: Acciones en la BVC",
-    excerpt:
-      "Cómo abrir una cuenta en un comisionista, qué acciones colombianas analizar y cómo construir un portafolio diversificado.",
-    readTime: "11 min",
-    chapters: 8,
-    level: "Intermedio",
-    levelDots: 2,
-    gradient: "linear-gradient(135deg,#1e1b4b,#4338ca)",
-    icon: "candlestick_chart",
-  },
-  {
-    slug: "pensiones-en-colombia-todo-lo-que-debe-saber",
-    category: "Ahorro",
-    categoryStyle: "",
-    title: "Pensiones en Colombia: RPM vs RAIS y qué conviene más",
-    excerpt:
-      "Analizamos Colpensiones vs los fondos privados: cuánto ahorra, cuándo se pensiona y cómo maximizar su mesada.",
-    readTime: "14 min",
-    chapters: 9,
-    level: "Avanzado",
-    levelDots: 3,
-    gradient: "linear-gradient(135deg,#0f2027,#2c5364)",
-    icon: "elderly",
-  },
-];
 
 function LevelDots({ count, max = 3 }: { count: number; max?: number }) {
   return (
@@ -170,7 +65,43 @@ function LevelDots({ count, max = 3 }: { count: number; max?: number }) {
   );
 }
 
-export default function GuidesPage() {
+type GuidesPageProps = {
+  searchParams: Promise<{ cat?: string }>;
+};
+
+export default async function GuidesPage({ searchParams }: GuidesPageProps) {
+  const params = await searchParams;
+  const selectedCategory = params.cat ?? "Todas";
+
+  const allGuidesData = await getPublishedGuides();
+
+  const categories = [
+    "Todas",
+    ...new Set(allGuidesData.map((guide) => guide.category).filter(Boolean)),
+  ];
+
+  const featuredGuideData =
+    allGuidesData.find((guide) => guide.featured) ?? allGuidesData[0] ?? null;
+
+  const visibleGuidesData =
+    selectedCategory === "Todas"
+      ? allGuidesData
+      : allGuidesData.filter((guide) => guide.category === selectedCategory);
+
+  const guides: Guide[] = visibleGuidesData.map((guide) => ({
+    slug: guide.slug,
+    category: guide.category,
+    categoryStyle: categoryToStyle(guide.category),
+    title: guide.title,
+    excerpt: guide.excerpt,
+    readTime: guide.reading_minutes,
+    chapters: guide.chapters,
+    level: guide.level,
+    levelDots: levelToDots(guide.level),
+    gradient: guide.cover_gradient,
+    icon: guide.cover_icon,
+  }));
+
   return (
     <div>
       <Navbar />
@@ -219,73 +150,77 @@ export default function GuidesPage() {
         {/* ── Featured Guide ── */}
         <section className={styles.featuredSection}>
           <div className="container">
-            <Link
-              href={`/guides/${featuredGuide.slug}`}
-              className={styles.featuredCard}
-            >
-              <div className={styles.featuredImageWrapper}>
-                <span
-                  className={`material-icons-outlined ${styles.featuredIconBg}`}
-                  style={{ fontSize: "8rem" }}
-                >
-                  savings
-                </span>
-                <span className={styles.featuredBadge}>Guía Destacada</span>
-                <span className={styles.featuredLevelBadge}>
+            {featuredGuideData ? (
+              <Link
+                href={`/guides/${featuredGuideData.slug}`}
+                className={styles.featuredCard}
+              >
+                <div className={styles.featuredImageWrapper}>
                   <span
-                    className="material-icons-outlined"
-                    style={{ fontSize: "0.85rem" }}
+                    className={`material-icons-outlined ${styles.featuredIconBg}`}
+                    style={{ fontSize: "8rem" }}
                   >
-                    school
+                    {featuredGuideData.cover_icon}
                   </span>
-                  Principiante
-                </span>
-              </div>
-              <div className={styles.featuredBody}>
-                <div className={styles.featuredCategoryRow}>
-                  <span
-                    className="material-icons-outlined"
-                    style={{ fontSize: "1rem" }}
-                  >
-                    savings
-                  </span>
-                  {featuredGuide.category}
-                </div>
-                <h2 className={styles.featuredTitle}>{featuredGuide.title}</h2>
-                <p className={styles.featuredExcerpt}>
-                  {featuredGuide.excerpt}
-                </p>
-                <div className={styles.featuredMeta}>
-                  <span className={styles.featuredMetaItem}>
+                  <span className={styles.featuredBadge}>Guía Destacada</span>
+                  <span className={styles.featuredLevelBadge}>
                     <span
                       className="material-icons-outlined"
-                      style={{ fontSize: "0.9rem" }}
+                      style={{ fontSize: "0.85rem" }}
                     >
-                      schedule
+                      school
                     </span>
-                    {featuredGuide.readTime} de lectura
-                  </span>
-                  <span className={styles.featuredMetaItem}>
-                    <span
-                      className="material-icons-outlined"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      list
-                    </span>
-                    {featuredGuide.chapters} capítulos
+                    {featuredGuideData.level}
                   </span>
                 </div>
-                <span className={styles.featuredCta}>
-                  Empezar guía
-                  <span
-                    className="material-icons-outlined"
-                    style={{ fontSize: "1rem" }}
-                  >
-                    arrow_forward
+                <div className={styles.featuredBody}>
+                  <div className={styles.featuredCategoryRow}>
+                    <span
+                      className="material-icons-outlined"
+                      style={{ fontSize: "1rem" }}
+                    >
+                      savings
+                    </span>
+                    {featuredGuideData.category}
+                  </div>
+                  <h2 className={styles.featuredTitle}>
+                    {featuredGuideData.title}
+                  </h2>
+                  <p className={styles.featuredExcerpt}>
+                    {featuredGuideData.excerpt}
+                  </p>
+                  <div className={styles.featuredMeta}>
+                    <span className={styles.featuredMetaItem}>
+                      <span
+                        className="material-icons-outlined"
+                        style={{ fontSize: "0.9rem" }}
+                      >
+                        schedule
+                      </span>
+                      {featuredGuideData.reading_minutes} min de lectura
+                    </span>
+                    <span className={styles.featuredMetaItem}>
+                      <span
+                        className="material-icons-outlined"
+                        style={{ fontSize: "0.9rem" }}
+                      >
+                        list
+                      </span>
+                      {featuredGuideData.chapters} capítulos
+                    </span>
+                  </div>
+                  <span className={styles.featuredCta}>
+                    Empezar guía
+                    <span
+                      className="material-icons-outlined"
+                      style={{ fontSize: "1rem" }}
+                    >
+                      arrow_forward
+                    </span>
                   </span>
-                </span>
-              </div>
-            </Link>
+                </div>
+              </Link>
+            ) : null}
           </div>
         </section>
 
@@ -294,13 +229,18 @@ export default function GuidesPage() {
           <div className="container">
             <div className={styles.filtersInner}>
               <div className={styles.filterTabs}>
-                {CATEGORIES.map((cat, i) => (
-                  <button
+                {categories.map((cat) => (
+                  <Link
                     key={cat}
-                    className={`${styles.filterBtn} ${i === 0 ? styles.filterBtnActive : ""}`}
+                    href={
+                      cat === "Todas"
+                        ? "/guides"
+                        : `/guides?cat=${encodeURIComponent(cat)}`
+                    }
+                    className={`${styles.filterBtn} ${selectedCategory === cat ? styles.filterBtnActive : ""}`}
                   >
                     {cat}
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -353,7 +293,7 @@ export default function GuidesPage() {
                         >
                           schedule
                         </span>
-                        {guide.readTime}
+                        {guide.readTime} min
                       </span>
                       <span className={styles.guideStat}>
                         <span
@@ -373,6 +313,17 @@ export default function GuidesPage() {
                   </div>
                 </Link>
               ))}
+
+              {!guides.length ? (
+                <div className={styles.pathCard}>
+                  <h4 className={styles.pathTitle}>
+                    No hay guias en esta categoria
+                  </h4>
+                  <p className={styles.pathDesc}>
+                    Crea una nueva guia desde /cms y publícala para verla aquí.
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>

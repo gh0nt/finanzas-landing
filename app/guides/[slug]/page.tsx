@@ -1,110 +1,110 @@
 import type { Metadata } from "next";
+import { Children, isValidElement, type ReactNode } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import styles from "./guide.module.css";
+import { extractMarkdownHeadings, slugify } from "@/lib/cms/utils";
+import {
+  getGuideBySlug,
+  getPublishedGuides,
+  getRelatedGuides,
+} from "@/lib/cms/guides";
 
 type GuidePageProps = {
-  params: { slug: string };
-};
-
-// Lookup map for known guides — expand as content grows
-const guideMeta: Record<string, { title: string; description: string }> = {
-  "guia-completa-cuentas-de-ahorro-colombia": {
-    title: "Guía Completa de Cuentas de Ahorro en Colombia",
-    description:
-      "Aprende cómo funcionan las cuentas de ahorro en Colombia, cómo se calcula la tasa E.A. y cuál banco ofrece las mejores condiciones.",
-  },
-  "como-funcionan-los-cdts": {
-    title: "CDTs: Todo lo que necesita saber antes de invertir",
-    description:
-      "Guía completa sobre los Certificados de Depósito a Término (CDT) en Colombia: tasas, plazos, riesgos y cómo elegir el mejor.",
-  },
-  "solicitar-credito-hipotecario-colombia": {
-    title: "Cómo solicitar un crédito hipotecario en Colombia paso a paso",
-    description:
-      "Conoce los requisitos, documentos y pasos para solicitar un crédito de vivienda en Colombia. Compara tasas VIS y no VIS.",
-  },
-  "seguros-indispensables-familia-colombia": {
-    title: "Seguros indispensables para su familia en Colombia",
-    description:
-      "Descubra qué seguros de vida, salud y hogar son esenciales para proteger a su familia en Colombia y cómo compararlos.",
-  },
-  "declarar-renta-empleado-colombia": {
-    title: "Cómo declarar renta siendo empleado en Colombia",
-    description:
-      "Guía práctica para declarar renta en Colombia: quién está obligado, qué deducir y cómo evitar errores ante la DIAN.",
-  },
-  "invertir-acciones-bvc-principiantes": {
-    title: "Cómo invertir en acciones de la BVC siendo principiante",
-    description:
-      "Aprende a invertir en la Bolsa de Valores de Colombia (BVC) desde cero: cómo abrir una cuenta, qué acciones comprar y cómo gestionar el riesgo.",
-  },
-  "pensiones-en-colombia-todo-lo-que-debe-saber": {
-    title: "Pensiones en Colombia: RPM vs RAIS, todo lo que debe saber",
-    description:
-      "Compara el Régimen de Prima Media (Colpensiones) y el Régimen de Ahorro Individual (AFP). Descubre cuál conviene más según su perfil.",
-  },
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: GuidePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const guide = guideMeta[slug];
-  const title = guide?.title ?? slug.replace(/-/g, " ");
-  const description =
-    guide?.description ??
-    "Guía educativa sobre finanzas personales en Colombia — Finanzas sin Ruido.";
+
+  const guide = await getGuideBySlug(slug);
+
+  if (!guide) {
+    return {
+      title: "Guia no encontrada",
+      description: "La guia solicitada no existe o no esta publicada.",
+    };
+  }
+
+  const title = guide.seo_title || guide.title;
+  const description = guide.seo_description || guide.excerpt;
+  const canonical =
+    guide.canonical_url || `https://www.finanzassinruido.co/guides/${slug}`;
+
   return {
     title,
     description,
-    alternates: { canonical: `https://www.finanzassinruido.co/guides/${slug}` },
+    alternates: { canonical },
     openGraph: {
       title,
       description,
-      url: `https://www.finanzassinruido.co/guides/${slug}`,
+      url: canonical,
       type: "article",
+      images: guide.og_image_url ? [{ url: guide.og_image_url }] : undefined,
     },
     twitter: { card: "summary_large_image", title, description },
   };
 }
 
-const tocItems = [
-  { id: "intro", label: "¿Qué es una cuenta de ahorros?" },
-  { id: "tasas", label: "Las tasas de interés E.A." },
-  { id: "comparativa", label: "Bancos vs Neobancos" },
-  { id: "fogafin", label: "Protección del Fogafín" },
-  { id: "consejos", label: "Consejos para elegir" },
-];
+function authorInitials(name: string) {
+  return name
+    .split(" ")
+    .map((piece) => piece[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
 
-const relatedGuides = [
-  {
-    slug: "como-funcionan-los-cdts",
-    category: "Inversión",
-    title: "CDTs: Todo lo que necesita saber antes de invertir",
-    gradient: "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
-    icon: "account_balance",
-  },
-  {
-    slug: "pensiones-en-colombia-todo-lo-que-debe-saber",
-    category: "Ahorro",
-    title: "Pensiones en Colombia: RPM vs RAIS",
-    gradient: "linear-gradient(135deg,#0f2027,#2c5364)",
-    icon: "elderly",
-  },
-  {
-    slug: "solicitar-credito-hipotecario-colombia",
-    category: "Crédito",
-    title: "Cómo solicitar un crédito hipotecario paso a paso",
-    gradient: "linear-gradient(135deg,#3b0764,#6d28d9)",
-    icon: "real_estate_agent",
-  },
-];
+function reactNodeToText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
 
-export default function GuidePage({ params }: GuidePageProps) {
+  if (!node) {
+    return "";
+  }
+
+  if (Array.isArray(node)) {
+    return node.map((child) => reactNodeToText(child)).join(" ");
+  }
+
+  if (isValidElement(node)) {
+    const element = node as { props?: { children?: ReactNode } };
+    return reactNodeToText(element.props?.children);
+  }
+
+  return "";
+}
+
+export default async function GuidePage({ params }: GuidePageProps) {
+  const { slug } = await params;
+  const guide = await getGuideBySlug(slug);
+
+  if (!guide) {
+    notFound();
+  }
+
+  const tocItems = extractMarkdownHeadings(guide.content_markdown);
+  const relatedGuides = await getRelatedGuides(guide.slug, guide.category, 3);
+  const publishedDate = guide.published_at
+    ? new Date(guide.published_at).toLocaleDateString("es-CO", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : "Sin fecha";
+
+  const allGuides = await getPublishedGuides();
+  const sideContent = relatedGuides.length
+    ? relatedGuides
+    : allGuides.filter((item) => item.slug !== guide.slug).slice(0, 3);
+
   return (
     <div>
       {/* ── Progress Bar ── */}
@@ -132,7 +132,7 @@ export default function GuidePage({ params }: GuidePageProps) {
             >
               chevron_right
             </span>
-            <span className={styles.current}>Guía: Cuentas de Ahorro</span>
+            <span className={styles.current}>Guia: {guide.title}</span>
           </nav>
 
           <div className={styles.guideLayout}>
@@ -145,13 +145,11 @@ export default function GuidePage({ params }: GuidePageProps) {
                     className="material-icons-outlined"
                     style={{ fontSize: "4.5rem" }}
                   >
-                    savings
+                    {guide.cover_icon}
                   </span>
                 </div>
                 <div className={styles.guideInfoBody}>
-                  <p className={styles.guideInfoTitle}>
-                    Cómo elegir la mejor cuenta de ahorros en Colombia
-                  </p>
+                  <p className={styles.guideInfoTitle}>{guide.title}</p>
                   <div className={styles.guideInfoStats}>
                     <span className={styles.guideInfoStat}>
                       <span
@@ -159,7 +157,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                       >
                         schedule
                       </span>
-                      10 min de lectura
+                      {guide.reading_minutes} min de lectura
                     </span>
                     <span className={styles.guideInfoStat}>
                       <span
@@ -167,7 +165,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                       >
                         list
                       </span>
-                      5 capítulos
+                      {guide.chapters} capitulos
                     </span>
                     <span className={styles.guideInfoStat}>
                       <span
@@ -175,7 +173,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                       >
                         school
                       </span>
-                      Nivel: Principiante
+                      Nivel: {guide.level}
                     </span>
                     <span className={styles.guideInfoStat}>
                       <span
@@ -202,6 +200,13 @@ export default function GuidePage({ params }: GuidePageProps) {
                       <a href={`#${item.id}`}>{item.label}</a>
                     </li>
                   ))}
+
+                  {!tocItems.length ? (
+                    <li className={styles.tocItem}>
+                      <span className={styles.tocNum}>1</span>
+                      <a href="#contenido">Contenido principal</a>
+                    </li>
+                  ) : null}
                 </ul>
               </div>
 
@@ -229,9 +234,9 @@ export default function GuidePage({ params }: GuidePageProps) {
                       className="material-icons-outlined"
                       style={{ fontSize: "0.85rem" }}
                     >
-                      savings
+                      {guide.cover_icon}
                     </span>
-                    Ahorro
+                    {guide.category}
                   </div>
                   <div className={styles.levelBadge}>
                     <span
@@ -240,18 +245,20 @@ export default function GuidePage({ params }: GuidePageProps) {
                     >
                       school
                     </span>
-                    Principiante
+                    {guide.level}
                   </div>
                 </div>
 
-                <h1 className={styles.articleTitle}>
-                  Cómo elegir la mejor cuenta de ahorros en Colombia
-                </h1>
+                <h1 className={styles.articleTitle}>{guide.title}</h1>
 
                 <div className={styles.articleByline}>
                   <div className={styles.authorChip}>
-                    <div className={styles.authorAvatar}>MR</div>
-                    <span className={styles.authorName}>Deiby Rodríguez</span>
+                    <div className={styles.authorAvatar}>
+                      {authorInitials(guide.author_name)}
+                    </div>
+                    <span className={styles.authorName}>
+                      {guide.author_name}
+                    </span>
                   </div>
                   <span className={styles.bylineItem}>
                     <span
@@ -260,7 +267,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                     >
                       calendar_today
                     </span>
-                    24 de Mayo, 2024
+                    {publishedDate}
                   </span>
                   <span className={styles.bylineItem}>
                     <span
@@ -269,7 +276,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                     >
                       schedule
                     </span>
-                    10 min de lectura
+                    {guide.reading_minutes} min de lectura
                   </span>
                   <span className={styles.bylineVerified}>
                     <span
@@ -278,7 +285,7 @@ export default function GuidePage({ params }: GuidePageProps) {
                     >
                       verified
                     </span>
-                    Revisado por expertos
+                    {guide.author_role ?? "Revisado por expertos"}
                   </span>
                 </div>
               </header>
@@ -289,177 +296,55 @@ export default function GuidePage({ params }: GuidePageProps) {
                   className="material-icons-outlined"
                   style={{ fontSize: "6rem" }}
                 >
-                  savings
+                  {guide.cover_icon}
                 </span>
               </div>
 
               {/* Body */}
-              <div className={styles.body}>
-                <p className={styles.lead} id="intro">
-                  Una cuenta de ahorros no es solo un lugar donde guardar dinero
-                  — es su primer instrumento de construcción de riqueza.
-                  Elegirla mal puede costarte millones en tasas de manejo o
-                  dejarte con rendimientos que no superan la inflación.
-                </p>
-
-                <h2 id="tasas">Entendiendo las tasas de interés E.A.</h2>
-                <p>
-                  La tasa E.A. (Efectiva Anual) es el porcentaje que el banco le
-                  paga sobre el saldo promedio de su cuenta durante un año. A
-                  diferencia de la tasa nominal, ya incorpora la capitalización
-                  de los intereses, por lo que es la cifra que realmente importa
-                  para comparar productos.
-                </p>
-                <p>
-                  En Colombia, las tasas E.A. de cuentas de ahorro varían
-                  enormemente: desde un <strong>0,5 % E.A.</strong> de algunos
-                  bancos tradicionales hasta un <strong>13 % E.A.</strong> que
-                  ofrecen algunos neobancos para saldos hasta cierto monto. La
-                  diferencia, sobre $10 millones, puede ser de más de $1,2
-                  millones anuales.
-                </p>
+              <div className={styles.body} id="contenido">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h2: ({ children }) => {
+                      const text = Children.toArray(children)
+                        .map((child) => reactNodeToText(child))
+                        .join(" ")
+                        .trim();
+                      return <h2 id={slugify(text)}>{children}</h2>;
+                    },
+                    table: ({ children }) => (
+                      <table className={styles.compTable}>{children}</table>
+                    ),
+                    ul: ({ children }) => (
+                      <ul className={styles.markdownList}>{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className={styles.markdownList}>{children}</ol>
+                    ),
+                    blockquote: ({ children }) => (
+                      <blockquote className={styles.markdownQuote}>
+                        {children}
+                      </blockquote>
+                    ),
+                  }}
+                >
+                  {guide.content_markdown}
+                </ReactMarkdown>
 
                 <div className={styles.inlineCta}>
                   <div className={styles.inlineCtaText}>
-                    <h4>Compare tasas de 20 bancos ahora</h4>
+                    <h4>Necesitas comparar productos antes de decidir?</h4>
                     <p>
-                      Actualizamos las tasas de cuentas de ahorro cada 24 horas.
+                      Usa nuestros comparadores para aterrizar las
+                      recomendaciones de esta guia.
                     </p>
                   </div>
                   <Link href="/comparators">
                     <button className={styles.inlineCtaBtn}>
-                      Ver comparador →
+                      Ver comparador
                     </button>
                   </Link>
                 </div>
-
-                <h2 id="comparativa">Bancos tradicionales vs Neobancos</h2>
-                <p>
-                  La elección entre un banco tradicional y un neobanco no es
-                  binaria: cada uno ofrece ventajas concretas según su perfil de
-                  uso.
-                </p>
-
-                <table className={styles.compTable}>
-                  <thead>
-                    <tr>
-                      <th>Criterio</th>
-                      <th>Bancos tradicionales</th>
-                      <th>Neobancos</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Tasa E.A. típica</td>
-                      <td>0,5 % – 4 %</td>
-                      <td className={styles.compBest}>8 % – 13 %</td>
-                    </tr>
-                    <tr>
-                      <td>Red de cajeros</td>
-                      <td className={styles.compBest}>Amplia (ATM propio)</td>
-                      <td>Limitada o alianzas</td>
-                    </tr>
-                    <tr>
-                      <td>Cuota de manejo</td>
-                      <td>$0 – $25.000/mes</td>
-                      <td className={styles.compBest}>Generalmente $0</td>
-                    </tr>
-                    <tr>
-                      <td>Experiencia digital</td>
-                      <td>Variable</td>
-                      <td className={styles.compBest}>
-                        Excelente (nativa digital)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Cobertura Fogafín</td>
-                      <td className={styles.compBest}>Sí (hasta 50 SMMLV)</td>
-                      <td className={styles.compBest}>Sí (hasta 50 SMMLV)</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <h2 id="fogafin">Protección del Fogafín</h2>
-                <p>
-                  El Fondo de Garantías de Instituciones Financieras (Fogafín)
-                  protege sus depósitos en caso de liquidación de una entidad
-                  vigilada. La cobertura es de hasta 50 SMMLV por persona por
-                  entidad — equivalente a aproximadamente $65 millones en 2025.
-                </p>
-
-                <div className={styles.callout}>
-                  <span
-                    className={`material-icons-outlined ${styles.calloutIcon}`}
-                  >
-                    lightbulb
-                  </span>
-                  <div>
-                    <h4>Pro-Tip: La regla de los bolsillos</h4>
-                    <p>
-                      Distribuya sus ahorros en tres "bolsillos" mentales: fondo
-                      de emergencia (3-6 meses de gastos, en cuenta con alta
-                      liquidez), ahorro a corto plazo (meta específica en 6-12
-                      meses) y ahorro a largo plazo (CDTs o fondos con mejor
-                      rentabilidad pero menor liquidez). No mezcle los tres en
-                      la misma cuenta.
-                    </p>
-                  </div>
-                </div>
-
-                <h2 id="consejos">Consejos finales para elegir</h2>
-
-                <ul className={styles.checkList}>
-                  <li>
-                    <span
-                      className={`material-icons-outlined ${styles.checkIcon}`}
-                    >
-                      check_circle
-                    </span>
-                    <span>
-                      <strong>Calcule su tasa real:</strong> Rest la inflación
-                      proyectada (cercana al 4 % en 2025) de la tasa E.A.
-                      ofrecida. Solo si es positiva, su dinero crece en términos
-                      reales.
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      className={`material-icons-outlined ${styles.checkIcon}`}
-                    >
-                      check_circle
-                    </span>
-                    <span>
-                      <strong>Revise los límites de transacciones:</strong>{" "}
-                      Algunos neobancos cobran a partir de cierta cantidad de
-                      retiros mensuales. Si usa efectivo con frecuencia, esto
-                      puede anular la ventaja de la tasa.
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      className={`material-icons-outlined ${styles.checkIcon}`}
-                    >
-                      check_circle
-                    </span>
-                    <span>
-                      <strong>Verifique el saldo mínimo:</strong> Algunos
-                      productos aplican la tasa alta solo hasta un monto máximo.
-                      Consulte el rango efectivo del rendimiento.
-                    </span>
-                  </li>
-                  <li>
-                    <span
-                      className={`material-icons-outlined ${styles.checkIcon}`}
-                    >
-                      check_circle
-                    </span>
-                    <span>
-                      <strong>No olvide el GMF (4x1000):</strong> El gravamen
-                      aplica en retiros. Muchas cuentas tienen exención de un
-                      retiro mensual. Use esa ventaja.
-                    </span>
-                  </li>
-                </ul>
               </div>
             </article>
           </div>
@@ -468,15 +353,15 @@ export default function GuidePage({ params }: GuidePageProps) {
           <section className={styles.related}>
             <h3 className={styles.relatedHeading}>Continúe aprendiendo</h3>
             <div className={styles.relatedGrid}>
-              {relatedGuides.map((guide) => (
+              {sideContent.map((relatedGuide) => (
                 <Link
-                  key={guide.slug}
-                  href={`/guides/${guide.slug}`}
+                  key={relatedGuide.slug}
+                  href={`/guides/${relatedGuide.slug}`}
                   className={styles.relatedCard}
                 >
                   <div
                     className={styles.relatedImageWrapper}
-                    style={{ background: guide.gradient }}
+                    style={{ background: relatedGuide.cover_gradient }}
                   >
                     <span
                       className="material-icons-outlined"
@@ -485,12 +370,16 @@ export default function GuidePage({ params }: GuidePageProps) {
                         color: "rgba(255,255,255,0.2)",
                       }}
                     >
-                      {guide.icon}
+                      {relatedGuide.cover_icon}
                     </span>
                   </div>
                   <div className={styles.relatedBody}>
-                    <p className={styles.relatedCategory}>{guide.category}</p>
-                    <h4 className={styles.relatedTitle}>{guide.title}</h4>
+                    <p className={styles.relatedCategory}>
+                      {relatedGuide.category}
+                    </p>
+                    <h4 className={styles.relatedTitle}>
+                      {relatedGuide.title}
+                    </h4>
                   </div>
                 </Link>
               ))}

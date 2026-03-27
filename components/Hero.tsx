@@ -29,11 +29,11 @@ export function Hero() {
                 arrow_forward
               </span>
             </a>
-            <a className="btn btn--ghost" href="#">
+            <a className="btn btn--ghost" href="/guides">
               <span className="material-icons-outlined" aria-hidden="true">
                 play_circle
               </span>
-              Ver como funciona
+              Ver más información
             </a>
           </div>
           <div className="hero__trust">

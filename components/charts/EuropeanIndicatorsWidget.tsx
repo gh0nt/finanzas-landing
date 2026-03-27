@@ -8,6 +8,7 @@
  *   - EURO STOXX 50
  *   - DAX (Germany)
  *   - German Bund 10Y
+ *   - Bitcoin
  *
  * Shows a spinning sync icon while refreshing and a "last updated" timestamp
  * below the grid.
@@ -18,13 +19,15 @@ import type { IndicatorData } from "@/lib/indicators";
 import { SparklineWidget } from "./SparklineWidget";
 
 const REFRESH_MS = 60_000; // 60 seconds
+const SKELETON_TIMESTAMP = "1970-01-01T00:00:00.000Z";
 
 function makeSkeleton(id: string, label: string): IndicatorData {
   return {
     indicatorId: id,
     label,
     unit: null,
-    lastUpdated: new Date().toISOString(),
+    // Keep a stable timestamp to avoid SSR/CSR hydration mismatches.
+    lastUpdated: SKELETON_TIMESTAMP,
     points: [],
     stale: true,
     error: "Cargando...",
@@ -35,6 +38,7 @@ const INITIAL_SKELETONS: IndicatorData[] = [
   makeSkeleton("euro-stoxx-50", "EURO STOXX 50"),
   makeSkeleton("dax", "DAX (Alemania)"),
   makeSkeleton("german-bund-10y", "Bono Alemán 10A"),
+  makeSkeleton("bitcoin", "Bitcoin"),
 ];
 
 export function EuropeanIndicatorsWidget() {

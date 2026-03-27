@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getPublishedGuides } from "@/lib/cms/guides";
 
 const BASE_URL = "https://www.finanzassinruido.co";
 
@@ -13,17 +14,6 @@ const blogSlugs = [
   "cdts-mejor-rentabilidad-2025",
 ];
 
-// ── Educational guides ─────────────────────────────────
-const guideSlugs = [
-  "guia-completa-cuentas-de-ahorro-colombia",
-  "como-funcionan-los-cdts",
-  "solicitar-credito-hipotecario-colombia",
-  "seguros-indispensables-familia-colombia",
-  "declarar-renta-empleado-colombia",
-  "invertir-acciones-bvc-principiantes",
-  "pensiones-en-colombia-todo-lo-que-debe-saber",
-];
-
 // ── Service detail pages ───────────────────────────────
 const serviceSlugs = [
   "cdts",
@@ -34,8 +24,9 @@ const serviceSlugs = [
   "crypto",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const guidePosts = await getPublishedGuides();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     // Core pages — high priority, updated frequently
@@ -153,12 +144,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const guideRoutes: MetadataRoute.Sitemap = guideSlugs.map((slug) => ({
-    url: `${BASE_URL}/guides/${slug}`,
-    lastModified: now,
+  const guideRoutes: MetadataRoute.Sitemap = guidePosts.map((guide) => ({
+    url: `${BASE_URL}/guides/${guide.slug}`,
+    lastModified: guide.updated_at ? new Date(guide.updated_at) : now,
     changeFrequency: "monthly",
     priority: 0.75,
   }));
+
+  if (!guideRoutes.length) {
+    guideRoutes.push({
+      url: `${BASE_URL}/guides`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    });
+  }
 
   const serviceRoutes: MetadataRoute.Sitemap = serviceSlugs.map((slug) => ({
     url: `${BASE_URL}/services/${slug}`,
