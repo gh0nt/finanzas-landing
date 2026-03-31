@@ -296,12 +296,12 @@ export const serviceProducts: ServiceProduct[] = [
     id: "cdts",
     name: "CDTs Digitales",
     description:
-      "Inversión segura a plazo fijo con las mejores tasas del mercado colombiano. Compara entidades y elige la que más te conviene.",
+      "Inversión segura a plazo fijo con las mejores tasas del mercado Europeo. Compara entidades y elige la que más te conviene.",
     icon: "lock_clock",
     iconBg: "blue",
     badge: "Renta Fija",
     badgeVariant: "accent",
-    features: ["Protegido por Fogafín", "Rentabilidad hasta 14% E.A."],
+    features: ["Protegido por FGD", "Rentabilidad hasta 2%-4% TAE."],
     category: "Renta Fija",
     ctaLabel: "Comparar CDTs",
   },
@@ -422,54 +422,59 @@ export type ServiceArticle = {
 export const serviceArticles: ServiceArticle[] = [
   {
     id: "cdts",
-    headline: "CDTs Digitales: La Inversión Más Segura para tu Patrimonio",
-    tagline: "Rendimientos predecibles, capital protegido por Fogafín",
+    headline: "Depósitos a Plazo Fijo: Ahorro Seguro con Rentabilidad Estable",
+    tagline:
+      "Capital protegido por el FGD y rentabilidad pactada desde el inicio",
     intro:
-      "Los Certificados de Depósito a Término (CDTs) son el instrumento de renta fija más popular de Colombia. Con tasas que pueden alcanzar hasta el 14% E.A. y la garantía del Fondo de Garantías de Instituciones Financieras (Fogafín) de hasta $50 millones de pesos, son la opción ideal para inversores que buscan seguridad y rendimientos competitivos.",
+      "Los depósitos a plazo fijo son uno de los instrumentos de renta fija más utilizados en España para ahorrar con seguridad. En 2026, pueden ofrecer rentabilidades que oscilan entre el 2% y el 4% TAE, dependiendo del plazo y la entidad. Además, cuentan con la protección del Fondo de Garantía de Depósitos (FGD), que cubre hasta 100.000€ por titular y entidad, lo que los convierte en una opción ideal para inversores conservadores.",
     stats: [
-      { label: "Rentabilidad máx.", value: "14% E.A.", icon: "trending_up" },
-      { label: "Plazo mínimo", value: "30 días", icon: "schedule" },
-      { label: "Inversión mínima", value: "$500.000 COP", icon: "payments" },
-      { label: "Garantía Fogafín", value: "$50M COP", icon: "security" },
+      {
+        label: "Rentabilidad estimada",
+        value: "2% - 4% TAE",
+        icon: "trending_up",
+      },
+      { label: "Plazos habituales", value: "3 - 24 meses", icon: "schedule" },
+      { label: "Ejemplo base", value: "10.000€ al 3% TAE", icon: "payments" },
+      { label: "Cobertura FGD", value: "100.000€", icon: "security" },
     ],
     sections: [
       {
-        title: "¿Qué es un CDT?",
-        body: "Un Certificado de Depósito a Término es un producto financiero ofrecido por bancos y entidades financieras vigiladas por la Superintendencia Financiera de Colombia (SFC). Al constituir un CDT, le prestas tu dinero a la entidad financiera por un plazo pactado (30, 60, 90, 180, 360 días o más), y a cambio recibes una tasa de interés fija o variable acordada desde el inicio. Al vencimiento, recuperas tu capital más los intereses pactados.",
+        title: "¿Qué es un depósito a plazo fijo?",
+        body: "Un depósito a plazo fijo es un producto financiero ofrecido por bancos y entidades de crédito en España. Al contratarlo, depositas tu dinero durante un periodo determinado, como 3, 6, 12 o 24 meses, y a cambio recibes una rentabilidad previamente acordada. Durante ese tiempo, el dinero permanece bloqueado salvo excepciones, y al vencimiento recuperas el capital inicial más los intereses generados. Estos productos están regulados por el Banco de España y supervisados dentro del sistema financiero europeo.",
       },
       {
         title: "¿Cómo se calcula el rendimiento?",
-        body: "La rentabilidad de un CDT se expresa en tasa Efectiva Anual (E.A.). Por ejemplo, si inviertes $10.000.000 COP en un CDT al 12% E.A. a 180 días, recibirás aproximadamente $10.566.300 al vencimiento, antes de retención en la fuente. Es importante comparar tasas entre entidades, ya que pueden variar significativamente. En Finanzas Sin Ruido te mostramos en tiempo real las mejores tasas del mercado.",
+        body: "La rentabilidad de un depósito se expresa en TAE (Tasa Anual Equivalente). Por ejemplo, si inviertes 10.000€ en un depósito al 3% TAE durante 12 meses, recibirás aproximadamente 10.300€ al vencimiento, antes de impuestos. Es importante tener en cuenta que el plazo afecta directamente la rentabilidad, algunas tasas son promocionales y no todos los depósitos ofrecen interés compuesto. Comparar entre entidades es clave, ya que las condiciones pueden variar significativamente.",
       },
       {
-        title: "Tributación y retención en la fuente",
-        body: "Los rendimientos de los CDTs están sujetos a una retención en la fuente del 7% sobre los intereses generados. Sin embargo, si el monto total de rendimientos en el año gravable no supera 1.090 UVT (~$46 millones), estás exento de declarar renta por estos ingresos (aplican condiciones). Siempre es recomendable consultar a un asesor tributario según tu situación particular.",
+        title: "Tributación en España",
+        body: "Los intereses generados por depósitos tributan como rendimientos del capital mobiliario en el IRPF. Los tramos actuales son del 19% hasta 6.000€, del 21% entre 6.000€ y 50.000€ y del 23% a partir de 50.000€. El banco aplica una retención automática sobre los intereses generados. Siempre es recomendable consultar con un asesor fiscal para optimizar la carga tributaria según tu caso.",
       },
     ],
     howItWorks: [
       {
         step: "1",
-        title: "Compara tasas",
+        title: "Compara depósitos",
         description:
-          "Usa nuestra tabla comparativa para identificar la entidad con mejor tasa según el plazo que necesitas.",
+          "Utiliza comparadores financieros o revisa ofertas de bancos para identificar la mejor rentabilidad según el plazo.",
       },
       {
         step: "2",
-        title: "Elige y aplica",
+        title: "Elige entidad",
         description:
-          "Selecciona la entidad y completa el proceso de vinculación digital. La mayoría toma menos de 10 minutos.",
+          "Selecciona un banco o plataforma, como banca tradicional o soluciones tipo Raisin, que se adapte a tus necesidades.",
       },
       {
         step: "3",
         title: "Deposita tu capital",
         description:
-          "Transfiere el monto mediante PSE, transferencia bancaria o desde tu cuenta en la misma entidad.",
+          "Transfiere el dinero desde tu cuenta bancaria. Algunas entidades permiten hacerlo de forma completamente digital.",
       },
       {
         step: "4",
         title: "Recibe tus intereses",
         description:
-          "Al vencimiento, recibes tu capital más los intereses acordados. Puedes reinvertir automáticamente.",
+          "Al vencimiento, recibirás el capital inicial más los intereses. En muchos casos, puedes reinvertir automáticamente.",
       },
     ],
     benefits: [
@@ -477,35 +482,35 @@ export const serviceArticles: ServiceArticle[] = [
         icon: "shield",
         title: "Capital protegido",
         description:
-          "Fogafín garantiza hasta $50 millones COP por entidad en caso de liquidación.",
+          "El Fondo de Garantía de Depósitos en España cubre hasta 100.000€ por titular y entidad en caso de insolvencia bancaria.",
       },
       {
         icon: "trending_up",
-        title: "Rentabilidad superior",
+        title: "Rentabilidad estable",
         description:
-          "Tasas sistemáticamente mayores que cuentas de ahorro, hasta 14% E.A.",
+          "Los depósitos ofrecen una rentabilidad superior a muchas cuentas de ahorro tradicionales, sin exposición a los mercados.",
       },
       {
         icon: "event",
         title: "Plazos flexibles",
         description:
-          "Desde 30 días hasta 5 años, adaptado a tu horizonte de inversión.",
+          "Puedes elegir entre plazos desde 3 meses hasta varios años, dependiendo de tu estrategia.",
       },
       {
         icon: "phone_android",
-        title: "100% Digital",
+        title: "Acceso digital",
         description:
-          "Constitución, renovación y liquidación sin salir de casa.",
+          "Muchos bancos permiten contratar depósitos 100% online, sin necesidad de acudir a una oficina.",
       },
     ],
     considerations: [
-      "El dinero queda bloqueado hasta el vencimiento; la liquidación anticipada puede implicar penalidades.",
-      "La retención en la fuente del 7% sobre intereses reduce el rendimiento neto.",
-      "No es una alternativa para fondos de emergencia por la iliquidez.",
-      "Compara siempre el rendimiento efectivo neto, descontando impuestos y comisiones.",
+      "El dinero queda bloqueado hasta el vencimiento; retirarlo antes puede implicar penalizaciones o pérdida de intereses.",
+      "La fiscalidad reduce el rendimiento neto final.",
+      "No es recomendable para fondos de emergencia debido a la falta de liquidez.",
+      "Es fundamental comparar la TAE real y las condiciones del producto.",
     ],
     forWhom:
-      "Ideal para personas con un horizonte de inversión definido (3 meses a 2 años), perfil de riesgo conservador y que buscan tasas superiores a las cuentas de ahorro tradicionales.",
+      "Ideal para personas con perfil conservador, inversores que priorizan seguridad sobre rentabilidad, quienes tienen un horizonte definido de 3 meses a 2 años o más y ahorradores que buscan una alternativa a cuentas bancarias sin interés.",
   },
   {
     id: "fics",

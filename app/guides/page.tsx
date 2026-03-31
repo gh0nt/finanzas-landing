@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Link from "next/link";
@@ -50,6 +51,7 @@ interface Guide {
   levelDots: number;
   gradient: string;
   icon: string;
+  imageUrl: string | null;
 }
 
 function LevelDots({ count, max = 3 }: { count: number; max?: number }) {
@@ -100,6 +102,7 @@ export default async function GuidesPage({ searchParams }: GuidesPageProps) {
     levelDots: levelToDots(guide.level),
     gradient: guide.cover_gradient,
     icon: guide.cover_icon,
+    imageUrl: guide.og_image_url,
   }));
 
   return (
@@ -155,13 +158,24 @@ export default async function GuidesPage({ searchParams }: GuidesPageProps) {
                 href={`/guides/${featuredGuideData.slug}`}
                 className={styles.featuredCard}
               >
-                <div className={styles.featuredImageWrapper}>
-                  <span
-                    className={`material-icons-outlined ${styles.featuredIconBg}`}
-                    style={{ fontSize: "8rem" }}
-                  >
-                    {featuredGuideData.cover_icon}
-                  </span>
+                <div
+                  className={styles.featuredImageWrapper}
+                  style={{ background: featuredGuideData.cover_gradient }}
+                >
+                  {featuredGuideData.og_image_url ? (
+                    <img
+                      src={featuredGuideData.og_image_url}
+                      alt={featuredGuideData.title}
+                      className={styles.featuredCoverImage}
+                    />
+                  ) : (
+                    <span
+                      className={`material-icons-outlined ${styles.featuredIconBg}`}
+                      style={{ fontSize: "8rem" }}
+                    >
+                      {featuredGuideData.cover_icon}
+                    </span>
+                  )}
                   <span className={styles.featuredBadge}>Guía Destacada</span>
                   <span className={styles.featuredLevelBadge}>
                     <span
@@ -179,7 +193,7 @@ export default async function GuidesPage({ searchParams }: GuidesPageProps) {
                       className="material-icons-outlined"
                       style={{ fontSize: "1rem" }}
                     >
-                      savings
+                      {featuredGuideData.cover_icon}
                     </span>
                     {featuredGuideData.category}
                   </div>
@@ -262,11 +276,19 @@ export default async function GuidesPage({ searchParams }: GuidesPageProps) {
                     className={styles.guideImageWrapper}
                     style={{ background: guide.gradient }}
                   >
-                    <span
-                      className={`material-icons-outlined ${styles.guidePlaceholderIcon}`}
-                    >
-                      {guide.icon}
-                    </span>
+                    {guide.imageUrl ? (
+                      <img
+                        src={guide.imageUrl}
+                        alt={guide.title}
+                        className={styles.guideCoverImage}
+                      />
+                    ) : (
+                      <span
+                        className={`material-icons-outlined ${styles.guidePlaceholderIcon}`}
+                      >
+                        {guide.icon}
+                      </span>
+                    )}
                   </div>
                   <div className={styles.guideBody}>
                     <div className={styles.guideMeta}>

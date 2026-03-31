@@ -342,6 +342,15 @@
     align-items: center;
     justify-content: center;
     color: rgba(255, 255, 255, 0.12);
+    position: relative;
+}
+
+.articleHeroImg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Body text */
@@ -615,6 +624,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.relatedCoverImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .relatedBody {

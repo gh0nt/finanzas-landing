@@ -16,6 +16,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { IndicatorData } from "@/lib/indicators";
+import { formatDateTimeValue } from "@/lib/chartUtils";
 import { SparklineWidget } from "./SparklineWidget";
 
 const REFRESH_MS = 60_000; // 60 seconds
@@ -75,13 +76,7 @@ export function EuropeanIndicatorsWidget() {
   }, [fetchData]);
 
   const lastUpdatedLabel = lastRefreshed
-    ? new Intl.DateTimeFormat("es-CO", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(lastRefreshed)
+    ? formatDateTimeValue(lastRefreshed, "es-CO")
     : null;
 
   return (

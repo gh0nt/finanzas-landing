@@ -1,5 +1,9 @@
 import type { IndicatorPoint, Trend } from "./indicators";
 
+function normalizeDateTimeLabel(value: string): string {
+  return value.replace(/[\u00A0\u202F\s]+/gu, " ").trim();
+}
+
 /**
  * Convert an array of IndicatorPoints to an SVG path string
  * suitable for a viewBox="0 0 100 20" sparkline.
@@ -80,11 +84,13 @@ export function formatValue(
 /** Format an ISO timestamp to a human-readable date */
 export function formatDate(iso: string, locale: string = "es-CO"): string {
   try {
-    return new Intl.DateTimeFormat(locale, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(iso));
+    return normalizeDateTimeLabel(
+      new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(iso)),
+    );
   } catch {
     return iso.slice(0, 10);
   }
@@ -93,14 +99,36 @@ export function formatDate(iso: string, locale: string = "es-CO"): string {
 /** Format with time */
 export function formatDateTime(iso: string, locale: string = "es-CO"): string {
   try {
-    return new Intl.DateTimeFormat(locale, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(iso));
+    return normalizeDateTimeLabel(
+      new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(iso)),
+    );
   } catch {
     return iso.slice(0, 16).replace("T", " ");
+  }
+}
+
+/** Format a Date object with time */
+export function formatDateTimeValue(
+  value: Date,
+  locale: string = "es-CO",
+): string {
+  try {
+    return normalizeDateTimeLabel(
+      new Intl.DateTimeFormat(locale, {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(value),
+    );
+  } catch {
+    return value.toISOString().slice(0, 16).replace("T", " ");
   }
 }

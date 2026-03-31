@@ -374,6 +374,23 @@
     border: 1px solid var(--muted-light);
 }
 
+.coverPreviewFallback {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--muted-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.coverPreviewFallbackIcon {
+    font-size: 3rem !important;
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .coverPreviewLink {
     font-size: 0.82rem;
     color: var(--accent);

@@ -191,6 +191,14 @@
     overflow: hidden;
 }
 
+.featuredCoverImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 @media (min-width: 768px) {
     .featuredImageWrapper {
         min-height: 360px;
@@ -368,6 +376,14 @@
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+.guideCoverImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .guidePlaceholderIcon {

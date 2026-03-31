@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import { Children, isValidElement, type ReactNode } from "react";
 import { Navbar } from "@/components/Navbar";
@@ -291,13 +292,24 @@ export default async function GuidePage({ params }: GuidePageProps) {
               </header>
 
               {/* Hero image */}
-              <div className={styles.articleHeroImage}>
-                <span
-                  className="material-icons-outlined"
-                  style={{ fontSize: "6rem" }}
-                >
-                  {guide.cover_icon}
-                </span>
+              <div
+                className={styles.articleHeroImage}
+                style={{ background: guide.cover_gradient }}
+              >
+                {guide.og_image_url ? (
+                  <img
+                    src={guide.og_image_url}
+                    alt={guide.title}
+                    className={styles.articleHeroImg}
+                  />
+                ) : (
+                  <span
+                    className="material-icons-outlined"
+                    style={{ fontSize: "6rem" }}
+                  >
+                    {guide.cover_icon}
+                  </span>
+                )}
               </div>
 
               {/* Body */}
@@ -363,15 +375,23 @@ export default async function GuidePage({ params }: GuidePageProps) {
                     className={styles.relatedImageWrapper}
                     style={{ background: relatedGuide.cover_gradient }}
                   >
-                    <span
-                      className="material-icons-outlined"
-                      style={{
-                        fontSize: "2.5rem",
-                        color: "rgba(255,255,255,0.2)",
-                      }}
-                    >
-                      {relatedGuide.cover_icon}
-                    </span>
+                    {relatedGuide.og_image_url ? (
+                      <img
+                        src={relatedGuide.og_image_url}
+                        alt={relatedGuide.title}
+                        className={styles.relatedCoverImage}
+                      />
+                    ) : (
+                      <span
+                        className="material-icons-outlined"
+                        style={{
+                          fontSize: "2.5rem",
+                          color: "rgba(255,255,255,0.2)",
+                        }}
+                      >
+                        {relatedGuide.cover_icon}
+                      </span>
+                    )}
                   </div>
                   <div className={styles.relatedBody}>
                     <p className={styles.relatedCategory}>

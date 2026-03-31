@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -7,6 +8,7 @@ import styles from "@/app/cms/cms.module.css";
 import {
   estimateChapters,
   estimateReadingMinutes,
+  getGuideCoverTheme,
   slugify,
 } from "@/lib/cms/utils";
 import { STANDARD_GUIDE_CATEGORIES } from "@/lib/cms/categories";
@@ -39,11 +41,14 @@ type EditorState = {
 
 const initialContent = `## Introduccion\n\nEscribe aqui la introduccion de la guia.\n\n## Desarrollo\n\nIncluye comparativas, tablas y recomendaciones practicas.\n\n## Conclusiones\n\nCierra con una recomendacion accionable para el lector.`;
 
+const INITIAL_CATEGORY = "Ahorro";
+const initialCoverTheme = getGuideCoverTheme(INITIAL_CATEGORY);
+
 const initialState: EditorState = {
   title: "",
   slug: "",
   excerpt: "",
-  category: "Ahorro",
+  category: INITIAL_CATEGORY,
   level: "Principiante",
   author_name: "Equipo Editorial",
   author_role: "Analista Financiero",
@@ -51,8 +56,8 @@ const initialState: EditorState = {
   seo_description: "",
   canonical_url: "",
   og_image_url: "",
-  cover_icon: "menu_book",
-  cover_gradient: "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
+  cover_icon: initialCoverTheme.icon,
+  cover_gradient: initialCoverTheme.gradient,
   tags: "",
   featured: false,
   status: "draft",
@@ -71,6 +76,15 @@ let clientPostsCache: {
   fetchedAt: number;
   posts: GuidePost[];
 } | null = null;
+
+function shouldSyncCoverWithCategory(category: string, icon: string, gradient: string) {
+  const defaults = getGuideCoverTheme(category);
+  return (
+    !icon.trim() ||
+    !gradient.trim() ||
+    (icon.trim() === defaults.icon && gradient.trim() === defaults.gradient)
+  );
+}
 
 function FieldBadge({ required }: { required: boolean }) {
   return (
@@ -176,6 +190,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   }
 
   function loadPostForEditing(post: GuidePost) {
+    const coverTheme = getGuideCoverTheme(post.category);
     setState({
       title: post.title,
       slug: post.slug,
@@ -188,8 +203,8 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
       seo_description: post.seo_description,
       canonical_url: post.canonical_url ?? "",
       og_image_url: post.og_image_url ?? "",
-      cover_icon: post.cover_icon,
-      cover_gradient: post.cover_gradient,
+      cover_icon: post.cover_icon || coverTheme.icon,
+      cover_gradient: post.cover_gradient || coverTheme.gradient,
       tags: post.tags.join(", "),
       featured: post.featured,
       status: post.status,
@@ -200,6 +215,24 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     setMessage(`Editando: ${post.title}`);
     setCoverUploadMessage("");
     setSaveStatus("idle");
+  }
+
+  function handleCategoryChange(value: string) {
+    setState((prev) => {
+      const nextTheme = getGuideCoverTheme(value);
+      const syncCover = shouldSyncCoverWithCategory(
+        prev.category,
+        prev.cover_icon,
+        prev.cover_gradient,
+      );
+
+      return {
+        ...prev,
+        category: value,
+        cover_icon: syncCover ? nextTheme.icon : prev.cover_icon,
+        cover_gradient: syncCover ? nextTheme.gradient : prev.cover_gradient,
+      };
+    });
   }
 
   async function fetchPosts(force = false) {
@@ -490,7 +523,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
             <select
               className={styles.textField}
               value={state.category}
-              onChange={(event) => updateField("category", event.target.value)}
+              onChange={(event) => handleCategoryChange(event.target.value)}
               required
             >
               {STANDARD_GUIDE_CATEGORIES.map((category) => (
@@ -596,7 +629,24 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
                 {isRemovingCover ? "Eliminando..." : "Remover imagen"}
               </button>
             </div>
-          ) : null}
+          ) : (
+            <div className={styles.coverPreviewBox}>
+              <div
+                className={styles.coverPreviewFallback}
+                style={{ background: state.cover_gradient }}
+              >
+                <span
+                  className={`material-icons-outlined ${styles.coverPreviewFallbackIcon}`}
+                >
+                  {state.cover_icon}
+                </span>
+              </div>
+              <p className={styles.helperText}>
+                Sin imagen subida. Se usara la portada automatica de la
+                categoria.
+              </p>
+            </div>
+          )}
 
           {coverUploadMessage ? (
             <p

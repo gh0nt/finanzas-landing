@@ -5,6 +5,7 @@ import { getCmsEditableGuides, upsertGuidePost } from "@/lib/cms/guides";
 import {
   estimateChapters,
   estimateReadingMinutes,
+  resolveGuideCoverTheme,
   slugify,
 } from "@/lib/cms/utils";
 import type { GuideLevel, GuideStatus } from "@/lib/cms/types";
@@ -79,6 +80,11 @@ export async function POST(request: Request) {
   const readingMinutes =
     Number(payload.reading_minutes) || estimateReadingMinutes(content);
   const chapters = Number(payload.chapters) || estimateChapters(content);
+  const cover = resolveGuideCoverTheme(
+    category,
+    String(payload.cover_icon ?? ""),
+    String(payload.cover_gradient ?? ""),
+  );
 
   const result = await upsertGuidePost({
     slug,
@@ -87,11 +93,8 @@ export async function POST(request: Request) {
     content_markdown: content,
     category,
     level: validLevel(payload.level),
-    cover_icon: String(payload.cover_icon ?? "menu_book").trim() || "menu_book",
-    cover_gradient:
-      String(
-        payload.cover_gradient ?? "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
-      ).trim() || "linear-gradient(135deg,#1e3a8a,#1d4ed8)",
+    cover_icon: cover.icon,
+    cover_gradient: cover.gradient,
     seo_title: String(payload.seo_title ?? title).trim() || title,
     seo_description:
       String(payload.seo_description ?? excerpt).trim() || excerpt,

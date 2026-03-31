@@ -4,6 +4,7 @@ import {
   getSupabaseConfigInfo,
 } from "@/lib/cms/supabase";
 import type { GuidePost, GuidePostUpsertInput } from "@/lib/cms/types";
+import { resolveGuideCoverTheme } from "@/lib/cms/utils";
 
 type CmsDatabaseStatus = {
   connected: boolean;
@@ -58,6 +59,20 @@ const fallbackGuides: GuidePost[] = [
   },
 ];
 
+function withGuideVisualDefaults(guide: GuidePost): GuidePost {
+  const cover = resolveGuideCoverTheme(
+    guide.category,
+    guide.cover_icon,
+    guide.cover_gradient,
+  );
+
+  return {
+    ...guide,
+    cover_icon: cover.icon,
+    cover_gradient: cover.gradient,
+  };
+}
+
 function mergeWithFallbackGuides(dbGuides: GuidePost[]) {
   const bySlug = new Map<string, GuidePost>();
 
@@ -72,7 +87,7 @@ function mergeWithFallbackGuides(dbGuides: GuidePost[]) {
     }
   }
 
-  return Array.from(bySlug.values());
+  return Array.from(bySlug.values()).map(withGuideVisualDefaults);
 }
 
 function filterByCategory(guides: GuidePost[], category?: string) {
@@ -89,7 +104,7 @@ export async function getPublishedGuides(
   const supabase = getSupabaseReadClient();
 
   if (!supabase) {
-    return filterByCategory(fallbackGuides, category);
+    return filterByCategory(fallbackGuides.map(withGuideVisualDefaults), category);
   }
 
   const query = supabase
@@ -101,7 +116,7 @@ export async function getPublishedGuides(
   const { data, error } = await query;
 
   if (error) {
-    return filterByCategory(fallbackGuides, category);
+    return filterByCategory(fallbackGuides.map(withGuideVisualDefaults), category);
   }
 
   const merged = mergeWithFallbackGuides((data ?? []) as GuidePost[]);
@@ -117,7 +132,9 @@ export async function getGuideBySlug(slug: string): Promise<GuidePost | null> {
   const supabase = getSupabaseReadClient();
 
   if (!supabase) {
-    return fallbackGuides.find((guide) => guide.slug === slug) ?? null;
+    const fallback =
+      fallbackGuides.find((guide) => guide.slug === slug) ?? null;
+    return fallback ? withGuideVisualDefaults(fallback) : null;
   }
 
   const { data } = await supabase
@@ -128,10 +145,12 @@ export async function getGuideBySlug(slug: string): Promise<GuidePost | null> {
     .maybeSingle();
 
   if (!data) {
-    return fallbackGuides.find((guide) => guide.slug === slug) ?? null;
+    const fallback =
+      fallbackGuides.find((guide) => guide.slug === slug) ?? null;
+    return fallback ? withGuideVisualDefaults(fallback) : null;
   }
 
-  return data as GuidePost;
+  return withGuideVisualDefaults(data as GuidePost);
 }
 
 export async function getRelatedGuides(
@@ -145,7 +164,6 @@ export async function getRelatedGuides(
 
 export async function upsertGuidePost(input: GuidePostUpsertInput) {
   const supabase = getSupabaseWriteClient();
-  const config = getSupabaseConfigInfo();
 
   if (!supabase) {
     return {
@@ -290,9 +308,9 @@ export async function getCmsEditableGuides(): Promise<GuidePost[]> {
   }
 
   cmsEditableGuidesCache = {
-    value: fallbackGuides,
+    value: fallbackGuides.map(withGuideVisualDefaults),
     expiresAt: now + CMS_EDITABLE_GUIDES_TTL_MS,
   };
 
-  return fallbackGuides;
+  return fallbackGuides.map(withGuideVisualDefaults);
 }
