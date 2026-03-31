@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { isValidCmsSessionToken, CMS_COOKIE_NAME } from "@/lib/cms/auth";
-import { getCmsEditableGuides, upsertGuidePost } from "@/lib/cms/guides";
+import {
+  deleteGuidePost,
+  getCmsEditableGuides,
+  upsertGuidePost,
+} from "@/lib/cms/guides";
 import {
   estimateChapters,
   estimateReadingMinutes,
@@ -113,6 +117,33 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true, slug: result.slug });
+}
+
+export async function DELETE(request: Request) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(CMS_COOKIE_NAME)?.value;
+
+  if (!isValidCmsSessionToken(token)) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const payload = (await request.json()) as Record<string, unknown>;
+  const slug = String(payload.slug ?? "").trim();
+
+  if (!slug) {
+    return NextResponse.json(
+      { error: "Debes indicar el slug de la guia a eliminar." },
+      { status: 400 },
+    );
+  }
+
+  const result = await deleteGuidePost(slug);
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true, slug: result.slug });

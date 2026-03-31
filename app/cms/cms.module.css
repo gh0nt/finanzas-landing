@@ -282,13 +282,41 @@
     background: rgba(var(--accent-rgb), 0.08);
 }
 
+.postListRow {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.45rem;
+}
+
 .postListButton {
-    width: 100%;
+    flex: 1;
     border: 0;
     background: transparent;
-    padding: 0.6rem;
+    padding: 0.35rem 0.45rem;
     text-align: left;
     cursor: pointer;
+}
+
+.postDeleteButton {
+    border: 1px solid rgba(var(--danger-rgb), 0.28);
+    border-radius: var(--radius-sm);
+    background: rgba(var(--danger-rgb), 0.08);
+    color: var(--danger-dark);
+    padding: 0.35rem 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    align-self: center;
+}
+
+.postDeleteButton:hover {
+    background: rgba(var(--danger-rgb), 0.14);
+}
+
+.postDeleteButtonDisabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .postListTitle {

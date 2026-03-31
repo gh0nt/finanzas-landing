@@ -73,6 +73,10 @@ function withGuideVisualDefaults(guide: GuidePost): GuidePost {
   };
 }
 
+function isFallbackGuideSlug(slug: string) {
+  return fallbackGuides.some((guide) => guide.slug === slug);
+}
+
 function mergeWithFallbackGuides(dbGuides: GuidePost[]) {
   const bySlug = new Map<string, GuidePost>();
 
@@ -196,6 +200,54 @@ export async function upsertGuidePost(input: GuidePostUpsertInput) {
   return {
     ok: true,
     slug: input.slug,
+  };
+}
+
+export async function deleteGuidePost(slug: string) {
+  const normalizedSlug = slug.trim();
+
+  if (!normalizedSlug) {
+    return {
+      ok: false,
+      error: "Debes indicar el slug de la guia a eliminar.",
+    };
+  }
+
+  if (isFallbackGuideSlug(normalizedSlug)) {
+    return {
+      ok: false,
+      error: "La guia base no se puede eliminar desde el CMS.",
+    };
+  }
+
+  const supabase = getSupabaseWriteClient();
+
+  if (!supabase) {
+    return {
+      ok: false,
+      error:
+        "Faltan variables de escritura de Supabase (SERVICE_ROLE_KEY o ANON/PUBLISHABLE key).",
+    };
+  }
+
+  const { error } = await supabase
+    .from("guide_posts")
+    .delete()
+    .eq("slug", normalizedSlug);
+
+  if (error) {
+    return {
+      ok: false,
+      error: error.message ?? "No se pudo eliminar la guia.",
+    };
+  }
+
+  cmsEditableGuidesCache = null;
+  cmsDbStatusCache = null;
+
+  return {
+    ok: true,
+    slug: normalizedSlug,
   };
 }
 

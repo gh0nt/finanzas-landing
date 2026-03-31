@@ -106,6 +106,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   const [message, setMessage] = useState("");
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isRemovingCover, setIsRemovingCover] = useState(false);
+  const [isDeletingSlug, setIsDeletingSlug] = useState<string | null>(null);
   const [coverUploadMessage, setCoverUploadMessage] = useState("");
   const [posts, setPosts] = useState<GuidePost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
@@ -233,6 +234,10 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
         cover_gradient: syncCover ? nextTheme.gradient : prev.cover_gradient,
       };
     });
+  }
+
+  function isFallbackPost(post: GuidePost) {
+    return post.id.startsWith("fallback-");
   }
 
   async function fetchPosts(force = false) {
@@ -422,6 +427,63 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     }
   }
 
+  async function deletePost(post: GuidePost) {
+    if (isFallbackPost(post)) {
+      setSaveStatus("error");
+      setMessage("La guia base no se puede eliminar desde el CMS.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Eliminar "${post.title}"? Esta accion no se puede deshacer.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setIsDeletingSlug(post.slug);
+      setSaveStatus("saving");
+      setMessage(`Eliminando: ${post.title}...`);
+
+      const response = await fetch("/api/cms/guides", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ slug: post.slug }),
+      });
+
+      const data = (await response.json()) as {
+        ok?: boolean;
+        error?: string;
+        slug?: string;
+      };
+
+      if (!response.ok || !data.ok) {
+        setSaveStatus("error");
+        setMessage(data.error ?? "No se pudo eliminar la guia.");
+        return;
+      }
+
+      if (editingSlug === post.slug) {
+        setState(initialState);
+        setCoverUploadMessage("");
+      }
+
+      setSaveStatus("success");
+      setMessage(`Guia eliminada: /guides/${post.slug}`);
+      clientPostsCache = null;
+      await fetchPosts(true);
+    } catch {
+      setSaveStatus("error");
+      setMessage("Ocurrio un error de red eliminando la guia.");
+    } finally {
+      setIsDeletingSlug(null);
+    }
+  }
+
   return (
     <div className={styles.editorShell}>
       <aside className={styles.sidebarPanel}>
@@ -462,16 +524,37 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
                   editingSlug === post.slug ? styles.postListItemActive : ""
                 }`}
               >
-                <button
-                  type="button"
-                  className={styles.postListButton}
-                  onClick={() => loadPostForEditing(post)}
-                >
-                  <p className={styles.postListTitle}>{post.title}</p>
-                  <p className={styles.postListMeta}>
-                    {post.category} · {post.status}
-                  </p>
-                </button>
+                <div className={styles.postListRow}>
+                  <button
+                    type="button"
+                    className={styles.postListButton}
+                    onClick={() => loadPostForEditing(post)}
+                  >
+                    <p className={styles.postListTitle}>{post.title}</p>
+                    <p className={styles.postListMeta}>
+                      {post.category} · {post.status}
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.postDeleteButton} ${
+                      isFallbackPost(post) ? styles.postDeleteButtonDisabled : ""
+                    }`}
+                    onClick={() => deletePost(post)}
+                    disabled={
+                      !canWrite ||
+                      Boolean(isDeletingSlug) ||
+                      isFallbackPost(post)
+                    }
+                    title={
+                      isFallbackPost(post)
+                        ? "La guia base no se puede eliminar"
+                        : "Eliminar post"
+                    }
+                  >
+                    {isDeletingSlug === post.slug ? "..." : "Eliminar"}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
