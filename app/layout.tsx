@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     template: "%s | Finanzas sin Ruido",
-    default: "Finanzas sin Ruido — Comparador Financiero Colombia",
+    default: "Finanzas sin Ruido — Comparador Financiero",
   },
   description:
     "Compara productos financieros, consulta la TRM y tasas de interés en tiempo real, y aprende finanzas personales con la plataforma educativa de referencia en Colombia.",
@@ -51,21 +51,21 @@ export const metadata: Metadata = {
     locale: "es_CO",
     siteName: "Finanzas sin Ruido",
     url: BASE_URL,
-    title: "Finanzas sin Ruido — Comparador Financiero Colombia",
+    title: "Finanzas sin Ruido — Comparador Financiero",
     description:
-      "Compara productos financieros, consulta la TRM y aprende finanzas personales con la plataforma educativa de referencia en Colombia.",
+      "Compara productos financieros, consulta la TRM y aprende finanzas personales con la plataforma educativa de referencia.",
     images: [
       {
         url: "/og-default.png",
         width: 1200,
         height: 630,
-        alt: "Finanzas sin Ruido — Comparador Financiero Colombia",
+        alt: "Finanzas sin Ruido — Comparador Financiero",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Finanzas sin Ruido — Comparador Financiero Colombia",
+    title: "Finanzas sin Ruido — Comparador Financiero",
     description:
       "Compara productos financieros y aprende finanzas personales con datos en tiempo real.",
     images: ["/og-default.png"],
