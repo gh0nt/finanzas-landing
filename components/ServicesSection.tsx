@@ -1,5 +1,6 @@
 import { services } from "@/data/mockContent";
 import { classNames } from "@/lib/classNames";
+import Link from "next/link";
 
 export function ServicesSection() {
   return (
@@ -33,12 +34,12 @@ export function ServicesSection() {
               </div>
               <h3>{service.title}</h3>
               <p className="section-subtitle">{service.description}</p>
-              <a className="accent-link" href="#">
+              <Link className="accent-link" href={service.href}>
                 {service.linkLabel}
                 <span className="material-icons-outlined" aria-hidden="true">
                   arrow_forward_ios
                 </span>
-              </a>
+              </Link>
             </article>
           ))}
         </div>

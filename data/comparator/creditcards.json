@@ -1,0 +1,42 @@
+[
+  {
+    "producto": "Tarjeta Revolut Metal",
+    "banco": "Revolut",
+    "beneficio": "Cashback + perks",
+    "tasa": "Desde 18% APR",
+    "score": 9.3,
+    "url": "https://www.revolut.com"
+  },
+  {
+    "producto": "N26 You Card",
+    "banco": "N26",
+    "beneficio": "Seguros + viajes",
+    "tasa": "Desde 19% APR",
+    "score": 8.9,
+    "url": "https://n26.com"
+  },
+  {
+    "producto": "American Express Gold EU",
+    "banco": "Amex",
+    "beneficio": "Puntos + viajes",
+    "tasa": "20% APR",
+    "score": 9.1,
+    "url": "https://www.americanexpress.com"
+  },
+  {
+    "producto": "Santander Smart Card",
+    "banco": "Santander",
+    "beneficio": "Cuotas + cashback",
+    "tasa": "18% APR",
+    "score": 8.7,
+    "url": "https://www.santander.com"
+  },
+  {
+    "producto": "BBVA Aqua Card",
+    "banco": "BBVA",
+    "beneficio": "Sin números impresos",
+    "tasa": "19% APR",
+    "score": 8.5,
+    "url": "https://www.bbva.com"
+  }
+]

@@ -64,29 +64,35 @@ export function ServicesHighlightSection() {
           {/* Side product cards */}
           <div className="services-hl__side">
             {sideItems.map((product) => (
-              <article className="services-hl__card" key={product.id}>
-                <div className="services-hl__card-icon">
-                  <span className="material-icons-outlined" aria-hidden="true">
-                    {product.icon}
+              <Link
+                href={`/services/${product.id}`}
+                className="services-hl__card"
+                key={product.id}
+                aria-label={`Ver ${product.name}`}
+              >
+                <article style={{ display: "contents" }}>
+                  <div className="services-hl__card-icon">
+                    <span
+                      className="material-icons-outlined"
+                      aria-hidden="true"
+                    >
+                      {product.icon}
+                    </span>
+                  </div>
+                  <div className="services-hl__card-body">
+                    <span className="news-category">{product.badge}</span>
+                    <h4 className="services-hl__card-name">{product.name}</h4>
+                    <p className="services-hl__card-desc">
+                      {product.description}
+                    </p>
+                  </div>
+                  <span className="services-hl__card-link">
+                    <span className="material-icons-outlined" aria-hidden="true">
+                      arrow_forward_ios
+                    </span>
                   </span>
-                </div>
-                <div className="services-hl__card-body">
-                  <span className="news-category">{product.badge}</span>
-                  <h4 className="services-hl__card-name">{product.name}</h4>
-                  <p className="services-hl__card-desc">
-                    {product.description}
-                  </p>
-                </div>
-                <Link
-                  href={`/services/${product.id}`}
-                  className="services-hl__card-link"
-                  aria-label={`Ver ${product.name}`}
-                >
-                  <span className="material-icons-outlined" aria-hidden="true">
-                    arrow_forward_ios
-                  </span>
-                </Link>
-              </article>
+                </article>
+              </Link>
             ))}
           </div>
         </div>

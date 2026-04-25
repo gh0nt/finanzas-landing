@@ -34,6 +34,7 @@ export const services = [
     description:
       "Encuentre la mayor rentabilidad para su dinero. Comparamos tasas E.A., cuotas de manejo y beneficios adicionales.",
     linkLabel: "Ver mejores opciones",
+    href: "/comparator?type=savings",
     icon: "account_balance_wallet",
     variant: "default",
   },
@@ -42,6 +43,7 @@ export const services = [
     description:
       "Beneficios exclusivos, cashback y millas. Analizamos la tasa de interes y cobros ocultos para su tranquilidad.",
     linkLabel: "Comparar tarjetas",
+    href: "/comparator?type=cards",
     icon: "credit_card",
     variant: "accent",
   },
@@ -50,6 +52,7 @@ export const services = [
     description:
       "Creditos de libre inversion y vivienda con tasas desde el 10% E.A. Simule su cuota ideal ahora.",
     linkLabel: "Simular credito",
+    href: "/comparator?type=loans",
     icon: "real_estate_agent",
     variant: "default",
   },

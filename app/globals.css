@@ -1,3 +1,6 @@
+@import "tailwindcss/theme.css";
+@import "tailwindcss/utilities.css";
+
 :root {
   /* ── Base palette ─────────────────────────────── */
   --navy: #0b1f3b;

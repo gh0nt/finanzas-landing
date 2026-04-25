@@ -1,0 +1,37 @@
+[
+  {
+    "producto": "Hipoteca Fija ING",
+    "banco": "ING",
+    "tasa": "Desde 3.10% anual",
+    "score": 9.2,
+    "url": "https://www.ing.com"
+  },
+  {
+    "producto": "Hipoteca Variable Santander",
+    "banco": "Santander",
+    "tasa": "Euribor + 1.2%",
+    "score": 8.8,
+    "url": "https://www.santander.com"
+  },
+  {
+    "producto": "Hipoteca BBVA Europa",
+    "banco": "BBVA",
+    "tasa": "Desde 3.30%",
+    "score": 8.7,
+    "url": "https://www.bbva.com"
+  },
+  {
+    "producto": "Crédito Vivienda Deutsche Bank",
+    "banco": "Deutsche Bank",
+    "tasa": "Desde 3.50%",
+    "score": 8.5,
+    "url": "https://www.db.com"
+  },
+  {
+    "producto": "Hipoteca BNP Paribas",
+    "banco": "BNP Paribas",
+    "tasa": "Desde 3.20%",
+    "score": 8.9,
+    "url": "https://group.bnpparibas"
+  }
+]

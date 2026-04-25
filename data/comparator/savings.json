@@ -1,0 +1,37 @@
+[
+  {
+    "producto": "Cuenta de Ahorro N26",
+    "banco": "N26",
+    "tasa": "2.26% anual",
+    "score": 9.2,
+    "url": "https://n26.com"
+  },
+  {
+    "producto": "Cuenta Orange Bank",
+    "banco": "Orange Bank",
+    "tasa": "2.00% anual",
+    "score": 8.8,
+    "url": "https://www.orangebank.fr"
+  },
+  {
+    "producto": "Cuenta Revolut Savings",
+    "banco": "Revolut",
+    "tasa": "2.50% anual (variable)",
+    "score": 9.0,
+    "url": "https://www.revolut.com"
+  },
+  {
+    "producto": "Cuenta ING Ahorro",
+    "banco": "ING",
+    "tasa": "1.75% anual",
+    "score": 8.5,
+    "url": "https://www.ing.com"
+  },
+  {
+    "producto": "Cuenta BBVA Online Europa",
+    "banco": "BBVA",
+    "tasa": "1.50% anual",
+    "score": 8.2,
+    "url": "https://www.bbva.com"
+  }
+]
