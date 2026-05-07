@@ -16,6 +16,10 @@ import type { GuidePost } from "@/lib/cms/types";
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
 type EditorMode = "markdown" | "assisted";
+type ToastState = {
+  message: string;
+  tone: "success" | "error";
+} | null;
 
 type EditorState = {
   title: string;
@@ -104,6 +108,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   const [showOptionalFields, setShowOptionalFields] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [message, setMessage] = useState("");
+  const [toast, setToast] = useState<ToastState>(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isRemovingCover, setIsRemovingCover] = useState(false);
   const [isDeletingSlug, setIsDeletingSlug] = useState<string | null>(null);
@@ -132,6 +137,10 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     value: EditorState[K],
   ) {
     setState((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function notify(message: string, tone: "success" | "error") {
+    setToast({ message, tone });
   }
 
   function applyToSelection(transform: (selected: string) => string) {
@@ -369,6 +378,18 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    if (!toast) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToast(null);
+    }, 4200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [toast]);
+
   async function save(targetStatus: "draft" | "published") {
     try {
       setSaveStatus("saving");
@@ -408,22 +429,28 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
       };
 
       if (!response.ok || !data.ok || !data.slug) {
+        const errorMessage = data.error ?? "No se pudo guardar la guia.";
         setSaveStatus("error");
-        setMessage(data.error ?? "No se pudo guardar la guia.");
+        setMessage(errorMessage);
+        notify(errorMessage, "error");
         return;
       }
 
-      setSaveStatus("success");
-      setMessage(
+      const successMessage =
         targetStatus === "published"
           ? `Guia publicada: /guides/${data.slug}`
-          : `Borrador guardado: /guides/${data.slug}`,
-      );
+          : `Borrador guardado: /guides/${data.slug}`;
+
+      setSaveStatus("success");
+      setMessage(successMessage);
+      notify(successMessage, "success");
       clientPostsCache = null;
       fetchPosts(true);
     } catch {
+      const errorMessage = "Ocurrio un error de red guardando la guia.";
       setSaveStatus("error");
-      setMessage("Ocurrio un error de red guardando la guia.");
+      setMessage(errorMessage);
+      notify(errorMessage, "error");
     }
   }
 
@@ -431,6 +458,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     if (isFallbackPost(post)) {
       setSaveStatus("error");
       setMessage("La guia base no se puede eliminar desde el CMS.");
+      notify("La guia base no se puede eliminar desde el CMS.", "error");
       return;
     }
 
@@ -462,8 +490,10 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
       };
 
       if (!response.ok || !data.ok) {
+        const errorMessage = data.error ?? "No se pudo eliminar la guia.";
         setSaveStatus("error");
-        setMessage(data.error ?? "No se pudo eliminar la guia.");
+        setMessage(errorMessage);
+        notify(errorMessage, "error");
         return;
       }
 
@@ -474,412 +504,122 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
 
       setSaveStatus("success");
       setMessage(`Guia eliminada: /guides/${post.slug}`);
+      notify(`Guia eliminada: /guides/${post.slug}`, "success");
       clientPostsCache = null;
       await fetchPosts(true);
     } catch {
+      const errorMessage = "Ocurrio un error de red eliminando la guia.";
       setSaveStatus("error");
-      setMessage("Ocurrio un error de red eliminando la guia.");
+      setMessage(errorMessage);
+      notify(errorMessage, "error");
     } finally {
       setIsDeletingSlug(null);
     }
   }
 
+  const parsedTags = state.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+  const saveDisabled = saveStatus === "saving" || !canWrite;
+  const seoPreviewTitle = state.seo_title || state.title || "Post Title";
+  const seoPreviewDescription =
+    state.seo_description ||
+    state.excerpt ||
+    "The search snippet will appear here once you provide a meta description above.";
+
   return (
     <div className={styles.editorShell}>
-      <aside className={styles.sidebarPanel}>
-        <div className={styles.postsListHeader}>
-          <h3>Posts creados</h3>
+      {toast ? (
+        <div
+          className={`${styles.toast} ${
+            toast.tone === "success" ? styles.toastSuccess : styles.toastError
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          <span
+            className={`material-icons-outlined ${styles.toastIcon}`}
+            aria-hidden="true"
+          >
+            {toast.tone === "success" ? "check_circle" : "error"}
+          </span>
+          <p>{toast.message}</p>
           <button
             type="button"
-            className={styles.secondaryButton}
-            onClick={() => fetchPosts(true)}
-          >
-            Recargar
+          className={styles.toastClose}
+          onClick={() => setToast(null)}
+          aria-label="Cerrar notificacion"
+        >
+            <span
+              className={`material-icons-outlined ${styles.toastCloseIcon}`}
+              aria-hidden="true"
+            >
+              close
+            </span>
           </button>
         </div>
+      ) : null}
 
-        <button
-          type="button"
-          className={styles.primaryButton}
-          style={{ width: "100%", marginBottom: "0.65rem" }}
-          onClick={resetToNewPost}
-        >
-          Nuevo post
-        </button>
-
-        {isLoadingPosts ? (
-          <p className={styles.helperText}>Cargando guias...</p>
-        ) : listError ? (
-          <p className={`${styles.feedback} ${styles.feedbackError}`}>
-            {listError}
-          </p>
-        ) : posts.length === 0 ? (
-          <p className={styles.helperText}>No hay guias para editar.</p>
-        ) : (
-          <ul className={styles.postsList}>
-            {posts.map((post) => (
-              <li
-                key={post.slug}
-                className={`${styles.postListItem} ${
-                  editingSlug === post.slug ? styles.postListItemActive : ""
-                }`}
-              >
-                <div className={styles.postListRow}>
-                  <button
-                    type="button"
-                    className={styles.postListButton}
-                    onClick={() => loadPostForEditing(post)}
-                  >
-                    <p className={styles.postListTitle}>{post.title}</p>
-                    <p className={styles.postListMeta}>
-                      {post.category} · {post.status}
-                    </p>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.postDeleteButton} ${
-                      isFallbackPost(post) ? styles.postDeleteButtonDisabled : ""
-                    }`}
-                    onClick={() => deletePost(post)}
-                    disabled={
-                      !canWrite ||
-                      Boolean(isDeletingSlug) ||
-                      isFallbackPost(post)
-                    }
-                    title={
-                      isFallbackPost(post)
-                        ? "La guia base no se puede eliminar"
-                        : "Eliminar post"
-                    }
-                  >
-                    {isDeletingSlug === post.slug ? "..." : "Eliminar"}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </aside>
-
-      <section className={styles.editorPanel}>
-        <div className={styles.sectionHeader}>
-          <h2>Editor SEO</h2>
-          <p>
-            Crea una guia optimizada para buscadores y lista para publicarse en
-            /guides.
-          </p>
-        </div>
-
-        <div className={styles.fieldGrid}>
-          <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Titulo <FieldBadge required />
+      <main className={styles.editorCanvas}>
+        <header className={styles.editorTopbar}>
+          <div className={styles.editorBrand}>
+            <span className={styles.editorLogo} aria-hidden="true">
+              <svg viewBox="0 0 48 48" role="img">
+                <path
+                  d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
+                  fill="currentColor"
+                />
+              </svg>
             </span>
+            <h2>Content Manager</h2>
+          </div>
+          <div className={styles.editorTopbarActions}>
+            <button
+              type="button"
+              className={styles.primaryButton}
+              onClick={() => save("published")}
+              disabled={saveDisabled}
+            >
+              Publish
+            </button>
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={() => save("draft")}
+              disabled={saveDisabled}
+            >
+              Save Draft
+            </button>
+          </div>
+        </header>
+
+        <div className={styles.editorFields}>
+          <label className={styles.fieldLabel}>
+            Post Title
             <input
               className={styles.textField}
               value={state.title}
               onChange={(event) => updateField("title", event.target.value)}
-              placeholder="Ej: Como invertir en CDTs en Colombia en 2026"
+              placeholder="Enter a catchy title..."
               required
             />
           </label>
 
           <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Slug <FieldBadge required={false} />
-            </span>
+            Permalink
             <input
               className={styles.textField}
               value={state.slug}
               onChange={(event) => updateField("slug", event.target.value)}
-              placeholder="se-autogenera-si-lo-dejas-vacio"
             />
             <span className={styles.helperText}>
               Slug final: {derivedSlug || "(pendiente)"}
             </span>
           </label>
-
-          <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Categoria <FieldBadge required />
-            </span>
-            <select
-              className={styles.textField}
-              value={state.category}
-              onChange={(event) => handleCategoryChange(event.target.value)}
-              required
-            >
-              {STANDARD_GUIDE_CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Nivel <FieldBadge required />
-            </span>
-            <select
-              className={styles.textField}
-              value={state.level}
-              onChange={(event) =>
-                updateField("level", event.target.value as EditorState["level"])
-              }
-              required
-            >
-              <option value="Principiante">Principiante</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Avanzado">Avanzado</option>
-            </select>
-          </label>
-
-          <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Autor <FieldBadge required />
-            </span>
-            <input
-              className={styles.textField}
-              value={state.author_name}
-              onChange={(event) =>
-                updateField("author_name", event.target.value)
-              }
-              required
-            />
-          </label>
         </div>
 
-        <label className={styles.fieldLabel}>
-          <span className={styles.fieldLabelRow}>
-            Excerpt <FieldBadge required />
-          </span>
-          <textarea
-            className={styles.textArea}
-            value={state.excerpt}
-            onChange={(event) => updateField("excerpt", event.target.value)}
-            rows={3}
-            placeholder="Resumen corto con palabra clave principal"
-            required
-          />
-        </label>
-
-        <div className={styles.coverUploadBox}>
-          <label className={styles.fieldLabel}>
-            <span className={styles.fieldLabelRow}>
-              Imagen de portada <FieldBadge required={false} />
-            </span>
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/avif"
-              className={styles.coverFileInput}
-              disabled={!canWrite || isUploadingCover || isRemovingCover}
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) {
-                  handleCoverUpload(file);
-                }
-                event.currentTarget.value = "";
-              }}
-            />
-
-            <span className={styles.coverDimensionHint}>
-              Sugerencia: 1600x900 px (16:9). Minimo recomendado: 1200x675 px.
-            </span>
-          </label>
-
-          {state.cover_image_url ? (
-            <div className={styles.coverPreviewBox}>
-              <img
-                src={state.cover_image_url}
-                alt={state.title || "Cover image"}
-                className={styles.coverPreviewImage}
-              />
-              <a
-                href={state.cover_image_url}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.coverPreviewLink}
-              >
-                Ver imagen
-              </a>
-              <button
-                type="button"
-                className={styles.coverRemoveButton}
-                onClick={handleCoverRemove}
-                disabled={!canWrite || isUploadingCover || isRemovingCover}
-              >
-                {isRemovingCover ? "Eliminando..." : "Remover imagen"}
-              </button>
-            </div>
-          ) : (
-            <div className={styles.coverPreviewBox}>
-              <div
-                className={styles.coverPreviewFallback}
-                style={{ background: state.cover_gradient }}
-              >
-                <span
-                  className={`material-icons-outlined ${styles.coverPreviewFallbackIcon}`}
-                >
-                  {state.cover_icon}
-                </span>
-              </div>
-              <p className={styles.helperText}>
-                Sin imagen subida. Se usara la portada automatica de la
-                categoria.
-              </p>
-            </div>
-          )}
-
-          {coverUploadMessage ? (
-            <p
-              className={`${styles.feedback} ${
-                coverUploadMessage.toLowerCase().includes("correctamente")
-                  ? styles.feedbackOk
-                  : styles.feedbackError
-              }`}
-            >
-              {coverUploadMessage}
-            </p>
-          ) : null}
-        </div>
-
-        <div className={styles.optionalFieldsToggleRow}>
-          <button
-            type="button"
-            className={styles.secondaryButton}
-            onClick={() => setShowOptionalFields((prev) => !prev)}
-          >
-            {showOptionalFields
-              ? "Ocultar opciones opcionales"
-              : "Mostrar opciones opcionales"}
-          </button>
-        </div>
-
-        {showOptionalFields ? (
-          <div className={styles.optionalSection}>
-            <div className={styles.fieldGrid}>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  Cargo del autor <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.author_role}
-                  onChange={(event) =>
-                    updateField("author_role", event.target.value)
-                  }
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  Cover icon (Material) <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.cover_icon}
-                  onChange={(event) =>
-                    updateField("cover_icon", event.target.value)
-                  }
-                  placeholder="menu_book"
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  Cover gradient <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.cover_gradient}
-                  onChange={(event) =>
-                    updateField("cover_gradient", event.target.value)
-                  }
-                  placeholder="linear-gradient(135deg,#1e3a8a,#1d4ed8)"
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  SEO title <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.seo_title}
-                  onChange={(event) =>
-                    updateField("seo_title", event.target.value)
-                  }
-                  placeholder="Si queda vacio usa el titulo"
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  SEO description <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.seo_description}
-                  onChange={(event) =>
-                    updateField("seo_description", event.target.value)
-                  }
-                  placeholder="Si queda vacio usa el excerpt"
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  Canonical URL <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.canonical_url}
-                  onChange={(event) =>
-                    updateField("canonical_url", event.target.value)
-                  }
-                  placeholder="https://..."
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  OG image URL <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.og_image_url}
-                  onChange={(event) =>
-                    updateField("og_image_url", event.target.value)
-                  }
-                  placeholder="https://..."
-                />
-              </label>
-              <label className={styles.fieldLabel}>
-                <span className={styles.fieldLabelRow}>
-                  Tags (separadas por coma) <FieldBadge required={false} />
-                </span>
-                <input
-                  className={styles.textField}
-                  value={state.tags}
-                  onChange={(event) => updateField("tags", event.target.value)}
-                  placeholder="ahorro, inversion, trm"
-                />
-              </label>
-            </div>
-
-            <label className={styles.checkboxRow}>
-              <input
-                type="checkbox"
-                checked={state.featured}
-                onChange={(event) =>
-                  updateField("featured", event.target.checked)
-                }
-              />
-              Marcar como guia destacada
-            </label>
-          </div>
-        ) : null}
-
-        <label className={styles.fieldLabel}>
-          <span className={styles.fieldLabelRow}>
-            Contenido <FieldBadge required />
-          </span>
-
+        <label className={`${styles.fieldLabel} ${styles.storyField}`}>
           <div className={styles.editorModeRow}>
             <button
               type="button"
@@ -901,54 +641,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
             </button>
           </div>
 
-          {editorMode === "assisted" ? (
-            <div className={styles.editorAssistBox}>
-              <div className={styles.formatToolbar}>
-                <button
-                  type="button"
-                  className={styles.formatButton}
-                  onClick={() => wrapSelection("**", "**", "negrita")}
-                >
-                  Negrita
-                </button>
-                <button
-                  type="button"
-                  className={styles.formatButton}
-                  onClick={() => insertHeading(1)}
-                >
-                  H1
-                </button>
-                <button
-                  type="button"
-                  className={styles.formatButton}
-                  onClick={() => insertHeading(2)}
-                >
-                  H2
-                </button>
-                <button
-                  type="button"
-                  className={styles.formatButton}
-                  onClick={insertLink}
-                >
-                  Link
-                </button>
-              </div>
-              <p className={styles.formatHint}>
-                Selecciona texto y usa los botones para insertar formato.
-              </p>
-              <textarea
-                ref={contentRef}
-                className={styles.editorArea}
-                value={state.content_markdown}
-                onChange={(event) =>
-                  updateField("content_markdown", event.target.value)
-                }
-                rows={20}
-                placeholder="Escribe el articulo y usa los botones para dar formato"
-                required
-              />
-            </div>
-          ) : (
+          <div className={styles.storyEditorFrame}>
             <textarea
               ref={contentRef}
               className={styles.editorArea}
@@ -957,94 +650,187 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
                 updateField("content_markdown", event.target.value)
               }
               rows={20}
-              placeholder="Escribe el post con H2, listas, tablas y enlaces"
+              placeholder="Write your story here..."
               required
             />
-          )}
+            <div className={styles.formatToolbar}>
+              <button type="button" className={styles.formatButton} onClick={() => wrapSelection("**", "**", "bold")} aria-label="Bold">B</button>
+              <button type="button" className={styles.formatButton} onClick={() => wrapSelection("_", "_", "italic")} aria-label="Italic"><em>I</em></button>
+              <button type="button" className={styles.formatButton} onClick={() => insertHeading(2)} aria-label="List"><span className="material-icons-outlined">format_list_bulleted</span></button>
+              <button type="button" className={styles.formatButton} onClick={insertLink} aria-label="Link"><span className="material-icons-outlined">link</span></button>
+              <button type="button" className={styles.formatButton} onClick={() => wrapSelection("![", "](https://)", "image alt")} aria-label="Image"><span className="material-icons-outlined">image</span></button>
+              <a className={styles.previewButton} href="#cms-preview">Preview</a>
+            </div>
+          </div>
         </label>
 
-        <div className={styles.metricsRow}>
-          <span>{readingMinutes} min lectura</span>
-          <span>{chapters} capitulos detectados (##)</span>
+        <div className={styles.coverUploadBox}>
+          <div className={styles.coverVisual}>
+            {state.cover_image_url ? (
+              <img src={state.cover_image_url} alt={state.title || "Cover image"} className={styles.coverPreviewImage} />
+            ) : (
+              <div className={styles.coverPreviewFallback} style={{ background: state.cover_gradient }}>
+                <span className={`material-icons-outlined ${styles.coverPreviewFallbackIcon}`}>{state.cover_icon}</span>
+              </div>
+            )}
+          </div>
+          <div className={styles.coverUploadContent}>
+            <h3>Featured Image</h3>
+            <p>Drag and drop or click to upload</p>
+            <label className={styles.uploadButton}>
+              <span>{isUploadingCover ? "Uploading..." : "Upload Image"}</span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/avif"
+                className={styles.coverFileInput}
+                disabled={!canWrite || isUploadingCover || isRemovingCover}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    handleCoverUpload(file);
+                  }
+                  event.currentTarget.value = "";
+                }}
+              />
+            </label>
+            {state.cover_image_url ? (
+              <div className={styles.coverActions}>
+                <a href={state.cover_image_url} target="_blank" rel="noreferrer" className={styles.coverPreviewLink}>Ver imagen</a>
+                <button type="button" className={styles.coverRemoveButton} onClick={handleCoverRemove} disabled={!canWrite || isUploadingCover || isRemovingCover}>
+                  {isRemovingCover ? "Eliminando..." : "Remover imagen"}
+                </button>
+              </div>
+            ) : null}
+            <span className={styles.coverDimensionHint}>Sugerencia: 1600x900 px (16:9). Minimo recomendado: 1200x675 px.</span>
+            {coverUploadMessage ? (
+              <p className={`${styles.feedback} ${coverUploadMessage.toLowerCase().includes("correctamente") ? styles.feedbackOk : styles.feedbackError}`}>{coverUploadMessage}</p>
+            ) : null}
+          </div>
         </div>
 
-        <div className={styles.actionRow}>
-          <button
-            type="button"
-            className={styles.secondaryButton}
-            onClick={() => save("draft")}
-            disabled={saveStatus === "saving" || !canWrite}
-          >
-            Guardar borrador
-          </button>
-          <button
-            type="button"
-            className={styles.primaryButton}
-            onClick={() => save("published")}
-            disabled={saveStatus === "saving" || !canWrite}
-          >
-            Publicar en /guides
-          </button>
-        </div>
+        <label className={styles.fieldLabel}>
+          Excerpt
+          <textarea className={styles.textArea} value={state.excerpt} onChange={(event) => updateField("excerpt", event.target.value)} rows={3} placeholder="Resumen corto con palabra clave principal" required />
+        </label>
+
+        <section
+          className={`${styles.settingsSection} ${styles.inlinePreviewSection}`}
+          id="cms-preview"
+        >
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">visibility</span><h3>Vista previa</h3></div>
+          <div className={styles.previewPanel}>
+            <h3 className={styles.previewTitle}>{state.title || "Titulo de la guia"}</h3>
+            <p className={styles.previewExcerpt}>{state.excerpt || "Tu resumen SEO aparecera aqui."}</p>
+            <div className={styles.seoBox}>
+              <p><strong>Meta Title:</strong> {state.seo_title || state.title || "-"}</p>
+              <p><strong>Meta Description:</strong> {state.seo_description || state.excerpt || "-"}</p>
+              <p><strong>Slug:</strong> /guides/{derivedSlug || "..."}</p>
+              {state.cover_image_url ? <p><strong>Cover:</strong> cargada</p> : null}
+            </div>
+            <article className={styles.previewBody}><ReactMarkdown remarkPlugins={[remarkGfm]}>{state.content_markdown}</ReactMarkdown></article>
+          </div>
+        </section>
 
         {!canWrite ? (
-          <p className={`${styles.feedback} ${styles.feedbackError}`}>
-            No hay llave de escritura configurada para Supabase. Define
-            SUPABASE_SERVICE_ROLE_KEY, o habilita policies RLS de insert/update
-            para usar ANON/PUBLISHABLE key.
-          </p>
+          <p className={`${styles.feedback} ${styles.feedbackError}`}>No hay llave de escritura configurada para Supabase. Define SUPABASE_SERVICE_ROLE_KEY, o habilita policies RLS de insert/update para usar ANON/PUBLISHABLE key.</p>
         ) : null}
 
-        <p
-          className={`${styles.feedback} ${
-            saveStatus === "error"
-              ? styles.feedbackError
-              : saveStatus === "success"
-                ? styles.feedbackOk
-                : ""
-          }`}
-        >
-          {message || "Completa los campos y guarda."}
-        </p>
-      </section>
+        <p className={`${styles.feedback} ${saveStatus === "error" ? styles.feedbackError : saveStatus === "success" ? styles.feedbackOk : ""}`}>{message || "Completa los campos y guarda."}</p>
+      </main>
 
-      <section className={styles.previewPanel}>
-        <div className={styles.sectionHeader}>
-          <h2>Vista previa</h2>
-          <p>Render de markdown y metadatos SEO.</p>
-        </div>
+      <aside className={styles.settingsSidebar}>
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">publish</span><h3>Publish Settings</h3></div>
+          <div className={styles.settingsCard}>
+            <label className={styles.fieldLabel}>Status
+              <select className={styles.textField} value={state.status} onChange={(event) => updateField("status", event.target.value as EditorState["status"])}>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
+            <label className={styles.fieldLabel}>Author <FieldBadge required />
+              <input className={styles.textField} value={state.author_name} onChange={(event) => updateField("author_name", event.target.value)} required />
+            </label>
+            <label className={styles.fieldLabel}>Level <FieldBadge required />
+              <select className={styles.textField} value={state.level} onChange={(event) => updateField("level", event.target.value as EditorState["level"])} required>
+                <option value="Principiante">Principiante</option>
+                <option value="Intermedio">Intermedio</option>
+                <option value="Avanzado">Avanzado</option>
+              </select>
+            </label>
+            <label className={styles.checkboxRow}><input type="checkbox" checked={state.featured} onChange={(event) => updateField("featured", event.target.checked)} />Marcar como guia destacada</label>
+            <div className={styles.metricsRow}><span>{readingMinutes} min lectura</span><span>{chapters} capitulos (##)</span></div>
+          </div>
+        </section>
 
-        <h3 className={styles.previewTitle}>
-          {state.title || "Titulo de la guia"}
-        </h3>
-        <p className={styles.previewExcerpt}>
-          {state.excerpt || "Tu resumen SEO aparecera aqui."}
-        </p>
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">category</span><h3>Categories</h3></div>
+          <div className={styles.settingsCard}><div className={styles.categoryList}>
+            {STANDARD_GUIDE_CATEGORIES.map((category) => (
+              <label key={category} className={styles.categoryOption}><input type="checkbox" checked={state.category === category} onChange={() => handleCategoryChange(category)} /><span>{category}</span></label>
+            ))}
+          </div></div>
+        </section>
 
-        <div className={styles.seoBox}>
-          <p>
-            <strong>Meta Title:</strong> {state.seo_title || state.title || "-"}
-          </p>
-          <p>
-            <strong>Meta Description:</strong>{" "}
-            {state.seo_description || state.excerpt || "-"}
-          </p>
-          <p>
-            <strong>Slug:</strong> /guides/{derivedSlug || "..."}
-          </p>
-          {state.cover_image_url ? (
-            <p>
-              <strong>Cover:</strong> cargada
-            </p>
-          ) : null}
-        </div>
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">label</span><h3>Tags</h3></div>
+          <div className={styles.settingsCard}>
+            <input className={styles.textField} value={state.tags} onChange={(event) => updateField("tags", event.target.value)} placeholder="Add tags separated by commas" />
+            {parsedTags.length ? <div className={styles.tagChips}>{parsedTags.map((tag) => <span key={tag}>#{tag} x</span>)}</div> : null}
+          </div>
+        </section>
 
-        <article className={styles.previewBody}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {state.content_markdown}
-          </ReactMarkdown>
-        </article>
-      </section>
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">search</span><h3>SEO Optimization</h3></div>
+          <div className={styles.settingsCard}>
+            <label className={styles.fieldLabel}>SEO Title <FieldBadge required={false} />
+              <input className={styles.textField} value={state.seo_title} onChange={(event) => updateField("seo_title", event.target.value)} placeholder="Si queda vacio usa el titulo" />
+            </label>
+            <label className={styles.fieldLabel}>Meta Description <FieldBadge required={false} />
+              <textarea className={styles.textArea} value={state.seo_description} onChange={(event) => updateField("seo_description", event.target.value)} rows={5} placeholder="Brief summary for search engine results..." />
+              <span className={styles.characterCount}>{state.seo_description.length} / 160 characters</span>
+            </label>
+            <div className={styles.searchSnippet}><p>{seoPreviewTitle} | Content Manager Preview</p><span>cms.example.com/blog/{derivedSlug || "slug-here"}</span><small>{seoPreviewDescription}</small></div>
+          </div>
+        </section>
+
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">article</span><h3>Posts creados</h3></div>
+          <div className={styles.settingsCard}>
+            <div className={styles.postsListHeader}>
+              <button type="button" className={styles.primaryButton} onClick={resetToNewPost}>Nuevo post</button>
+              <button type="button" className={styles.secondaryButton} onClick={() => fetchPosts(true)}>Recargar</button>
+            </div>
+            {isLoadingPosts ? <p className={styles.helperText}>Cargando guias...</p> : listError ? <p className={`${styles.feedback} ${styles.feedbackError}`}>{listError}</p> : posts.length === 0 ? <p className={styles.helperText}>No hay guias para editar.</p> : (
+              <ul className={styles.postsList}>{posts.map((post) => (
+                <li key={post.slug} className={`${styles.postListItem} ${editingSlug === post.slug ? styles.postListItemActive : ""}`}>
+                  <div className={styles.postListRow}>
+                    <button type="button" className={styles.postListButton} onClick={() => loadPostForEditing(post)}><p className={styles.postListTitle}>{post.title}</p><p className={styles.postListMeta}>{post.category} - {post.status}</p></button>
+                    <button type="button" className={`${styles.postDeleteButton} ${isFallbackPost(post) ? styles.postDeleteButtonDisabled : ""}`} onClick={() => deletePost(post)} disabled={!canWrite || Boolean(isDeletingSlug) || isFallbackPost(post)} title={isFallbackPost(post) ? "La guia base no se puede eliminar" : "Eliminar post"}>{isDeletingSlug === post.slug ? "..." : "Eliminar"}</button>
+                  </div>
+                </li>
+              ))}</ul>
+            )}
+          </div>
+        </section>
+
+        <section className={styles.settingsSection}>
+          <div className={styles.settingsHeading}><span className="material-icons-outlined">tune</span><h3>Opciones opcionales</h3></div>
+          <div className={styles.settingsCard}>
+            <button type="button" className={styles.secondaryButton} onClick={() => setShowOptionalFields((prev) => !prev)}>{showOptionalFields ? "Ocultar opciones" : "Mostrar opciones"}</button>
+            {showOptionalFields ? (
+              <div className={styles.optionalSection}>
+                <label className={styles.fieldLabel}>Cargo del autor <FieldBadge required={false} /><input className={styles.textField} value={state.author_role} onChange={(event) => updateField("author_role", event.target.value)} /></label>
+                <label className={styles.fieldLabel}>Cover icon (Material) <FieldBadge required={false} /><input className={styles.textField} value={state.cover_icon} onChange={(event) => updateField("cover_icon", event.target.value)} placeholder="menu_book" /></label>
+                <label className={styles.fieldLabel}>Cover gradient <FieldBadge required={false} /><input className={styles.textField} value={state.cover_gradient} onChange={(event) => updateField("cover_gradient", event.target.value)} placeholder="linear-gradient(135deg,#1e3a8a,#1d4ed8)" /></label>
+                <label className={styles.fieldLabel}>Canonical URL <FieldBadge required={false} /><input className={styles.textField} value={state.canonical_url} onChange={(event) => updateField("canonical_url", event.target.value)} placeholder="https://..." /></label>
+                <label className={styles.fieldLabel}>OG image URL <FieldBadge required={false} /><input className={styles.textField} value={state.og_image_url} onChange={(event) => updateField("og_image_url", event.target.value)} placeholder="https://..." /></label>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+      </aside>
     </div>
   );
 }

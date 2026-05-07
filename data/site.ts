@@ -6,7 +6,6 @@ export const site = {
   location: "Bogota D.C., Colombia",
   navLinks: [
     { label: "Servicios", href: "/services" },
-    { label: "Mercados", href: "/markets" },
     { label: "Educación", href: "/guides" },
     { label: "Comparador", href: "/comparators" },
     { label: "Contacto", href: "/contact" },
@@ -14,7 +13,7 @@ export const site = {
   footer: {
     company: [
       { label: "Sobre nosotros", href: "/company" },
-      { label: "Preсios", href: "/products" },
+      { label: "Precios", href: "/products" },
     ],
     legal: [
       { label: "Términos y condiciones", href: "/legal/terms" },

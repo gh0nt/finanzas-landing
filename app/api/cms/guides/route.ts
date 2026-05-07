@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { isValidCmsSessionToken, CMS_COOKIE_NAME } from "@/lib/cms/auth";
 import {
   deleteGuidePost,
@@ -119,6 +120,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: result.error }, { status: 500 });
   }
 
+  revalidatePath("/guides");
+  revalidatePath(`/guides/${result.slug}`);
+
   return NextResponse.json({ ok: true, slug: result.slug });
 }
 
@@ -145,6 +149,9 @@ export async function DELETE(request: Request) {
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
+
+  revalidatePath("/guides");
+  revalidatePath(`/guides/${result.slug}`);
 
   return NextResponse.json({ ok: true, slug: result.slug });
 }

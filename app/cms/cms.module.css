@@ -1,14 +1,16 @@
 .loginMain {
+    min-height: 100vh;
     padding: 3.5rem 0 5rem;
+    background: #f6f7f8;
 }
 
 .loginCard {
     width: min(100%, 560px);
     margin: 0 auto;
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-lg);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
     background: var(--surface);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
     padding: 2rem;
 }
 
@@ -81,16 +83,25 @@
 .textArea,
 .editorArea {
     width: 100%;
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-md);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
     background: var(--white);
-    color: var(--dark-gray);
-    padding: 0.7rem 0.85rem;
+    color: var(--navy);
+    padding: 0.85rem 0.95rem;
     font: inherit;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.textField:focus,
+.textArea:focus,
+.editorArea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+    outline: none;
 }
 
 .textField {
-    min-height: 48px;
+    min-height: 56px;
 }
 
 .textArea {
@@ -100,7 +111,8 @@
 .editorArea {
     min-height: 320px;
     resize: vertical;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: var(--font-sans);
+    line-height: 1.7;
 }
 
 .helperText {
@@ -111,11 +123,13 @@
 .primaryButton,
 .secondaryButton {
     border: none;
-    border-radius: var(--radius-md);
-    padding: 0.72rem 1rem;
+    border-radius: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0.72rem 1.05rem;
     font-weight: 700;
     font-family: var(--font-sans);
     cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, opacity 0.18s ease;
 }
 
 .primaryButton {
@@ -128,17 +142,18 @@
 }
 
 .secondaryButton {
-    background: rgba(11, 31, 59, 0.07);
-    color: var(--navy);
+    border: 1px solid #d9dee7;
+    background: var(--navy);
+    color: var(--white);
 }
 
 .secondaryButton:hover {
-    background: rgba(11, 31, 59, 0.11);
+    background: #153050;
 }
 
 .loginError {
     margin: 0 0 1rem;
-    border-radius: var(--radius-sm);
+    border-radius: 0.75rem;
     background: rgba(var(--danger-rgb), 0.1);
     border: 1px solid rgba(var(--danger-rgb), 0.25);
     color: var(--danger-dark);
@@ -153,7 +168,14 @@
 }
 
 .cmsMain {
+    min-height: 100vh;
     padding: 2rem 0 4rem;
+    background: #f6f7f8;
+    font-family: var(--font-sans);
+}
+
+.cmsMain :global(.container) {
+    width: min(100% - 2rem, 1440px);
 }
 
 .cmsHeaderRow {
@@ -162,25 +184,32 @@
     justify-content: space-between;
     gap: 1rem;
     margin-bottom: 1rem;
+    border: 1px solid #d9dee7;
+    border-radius: 0.85rem;
+    background: var(--white);
+    padding: 1.25rem;
 }
 
 .cmsTitle {
     margin: 0.35rem 0 0;
     color: var(--navy);
-    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1.15;
 }
 
 .cmsSubtitle {
     margin: 0.5rem 0 0;
     color: var(--muted);
+    max-width: 46rem;
 }
 
 .cmsStatus {
     margin: 0 0 1rem;
-    border-radius: var(--radius-sm);
-    padding: 0.7rem 0.8rem;
+    border-radius: 0.75rem;
+    padding: 0.72rem 0.9rem;
     border: 1px solid transparent;
     font-size: 0.84rem;
+    font-weight: 600;
 }
 
 .cmsStatusOk {
@@ -199,34 +228,35 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+    align-items: start;
 }
 
 .sidebarPanel {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-lg);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
     background: var(--surface);
-    box-shadow: var(--shadow-sm);
     padding: 1rem;
 }
 
 @media (min-width: 1180px) {
     .editorShell {
-        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1fr);
+        grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.55fr) minmax(280px, 0.95fr);
     }
 
     .sidebarPanel {
-        max-height: 78vh;
+        max-height: calc(100vh - 7rem);
         overflow-y: auto;
+        position: sticky;
+        top: 5.5rem;
     }
 }
 
 .editorPanel,
 .previewPanel {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-lg);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
     background: var(--surface);
-    box-shadow: var(--shadow-sm);
-    padding: 1.15rem;
+    padding: 1.25rem;
 }
 
 .sectionHeader h2 {
@@ -242,9 +272,9 @@
 }
 
 .postsListCard {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-md);
-    background: var(--background);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    background: #f6f7f8;
     padding: 0.8rem;
     margin-bottom: 1rem;
 }
@@ -272,14 +302,15 @@
 }
 
 .postListItem {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-sm);
+    border: 1px solid #d9dee7;
+    border-radius: 0.65rem;
     background: var(--white);
+    transition: border-color 0.18s ease, background 0.18s ease;
 }
 
 .postListItemActive {
     border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.08);
+    background: rgba(var(--accent-rgb), 0.1);
 }
 
 .postListRow {
@@ -300,7 +331,7 @@
 
 .postDeleteButton {
     border: 1px solid rgba(var(--danger-rgb), 0.28);
-    border-radius: var(--radius-sm);
+    border-radius: 0.55rem;
     background: rgba(var(--danger-rgb), 0.08);
     color: var(--danger-dark);
     padding: 0.35rem 0.6rem;
@@ -336,34 +367,34 @@
 .fieldGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: 0.85rem;
+    margin-bottom: 0.9rem;
 }
 
 .coverUploadBox {
-    margin: 0.8rem 0;
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-md);
-    padding: 0.8rem;
-    background: var(--background);
+    margin: 1rem 0;
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: #f6f7f8;
 }
 
 .coverFileInput {
     width: 100%;
-    border: 1px dashed var(--muted-light);
-    border-radius: var(--radius-md);
+    border: 1px dashed #cdd5df;
+    border-radius: 0.75rem;
     background: var(--white);
-    color: var(--dark-gray);
-    padding: 0.65rem;
+    color: var(--navy);
+    padding: 0.75rem;
     font: inherit;
 }
 
 .coverFileInput::file-selector-button {
     border: none;
-    border-radius: 999px;
+    border-radius: 0.65rem;
     padding: 0.5rem 0.9rem;
     margin-right: 0.7rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--navy);
     color: var(--white);
     font-weight: 700;
     cursor: pointer;
@@ -398,16 +429,16 @@
     max-width: 320px;
     aspect-ratio: 16 / 9;
     object-fit: cover;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--muted-light);
+    border-radius: 0.75rem;
+    border: 1px solid #d9dee7;
 }
 
 .coverPreviewFallback {
     width: 100%;
     max-width: 320px;
     aspect-ratio: 16 / 9;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--muted-light);
+    border-radius: 0.75rem;
+    border: 1px dashed #cdd5df;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -432,7 +463,7 @@
 
 .coverRemoveButton {
     border: 1px solid rgba(var(--danger-rgb), 0.38);
-    border-radius: var(--radius-sm);
+    border-radius: 0.55rem;
     background: rgba(var(--danger-rgb), 0.08);
     color: var(--danger-dark);
     padding: 0.42rem 0.7rem;
@@ -456,10 +487,10 @@
 }
 
 .optionalSection {
-    border: 1px dashed var(--muted-light);
-    border-radius: var(--radius-md);
-    padding: 0.85rem;
-    background: var(--background);
+    border: 1px dashed #cdd5df;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: #f6f7f8;
 }
 
 .editorModeRow {
@@ -470,8 +501,8 @@
 }
 
 .editorModeButton {
-    border: 1px solid var(--muted-light);
-    border-radius: 999px;
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
     background: var(--white);
     color: var(--navy);
     padding: 0.35rem 0.8rem;
@@ -487,9 +518,9 @@
 }
 
 .editorAssistBox {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-md);
-    background: var(--background);
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    background: #f6f7f8;
     padding: 0.75rem;
 }
 
@@ -500,8 +531,8 @@
 }
 
 .formatButton {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-sm);
+    border: 1px solid #d9dee7;
+    border-radius: 0.55rem;
     background: var(--white);
     color: var(--navy);
     padding: 0.32rem 0.65rem;
@@ -576,6 +607,73 @@
     color: var(--danger-dark);
 }
 
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 80;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: min(100% - 2rem, 28rem);
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    padding: 0.85rem 0.9rem;
+    box-shadow: 0 18px 44px rgba(var(--navy-rgb), 0.16);
+}
+
+.toast p {
+    margin: 0;
+    color: var(--navy);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.toastSuccess {
+    border-color: rgba(var(--success-rgb), 0.28);
+}
+
+.toastSuccess .toastIcon {
+    color: var(--success-dark);
+}
+
+.toastError {
+    border-color: rgba(var(--danger-rgb), 0.28);
+}
+
+.toastError .toastIcon {
+    color: var(--danger-dark);
+}
+
+.toastIcon {
+    font-size: 1.4rem;
+}
+
+.toastClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 0;
+    border-radius: 0.4rem;
+    background: transparent;
+    color: #667085;
+    cursor: pointer;
+}
+
+.toastClose:hover {
+    background: #f0f2f5;
+    color: var(--navy);
+}
+
+.toastCloseIcon {
+    font-size: 1.15rem;
+}
+
 .previewTitle {
     margin: 0.4rem 0 0;
     color: var(--navy);
@@ -589,9 +687,9 @@
 }
 
 .seoBox {
-    border: 1px solid var(--muted-light);
-    border-radius: var(--radius-md);
-    background: var(--background);
+    border: 1px solid #e5e7eb;
+    border-radius: 0.65rem;
+    background: #f9fafb;
     padding: 0.8rem;
     font-size: 0.82rem;
     color: var(--dark-gray);
@@ -599,7 +697,7 @@
 
 .previewBody {
     margin-top: 1rem;
-    border-top: 1px solid var(--muted-light);
+    border-top: 1px solid #d9dee7;
     padding-top: 1rem;
     font-size: 0.95rem;
     line-height: 1.7;
@@ -618,6 +716,608 @@
 
 .previewBody th,
 .previewBody td {
-    border: 1px solid var(--muted-light);
+    border: 1px solid #d9dee7;
     padding: 0.35rem 0.5rem;
+}
+
+.cmsApp {
+    min-height: 100vh;
+    background: #f6f7f8;
+}
+
+.cmsMain {
+    min-height: 100vh;
+    padding: 0;
+    background: #f6f7f8;
+    font-family: var(--font-sans);
+}
+
+.cmsHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.75rem;
+    padding: 0.85rem clamp(1rem, 4vw, 2rem);
+    border-bottom: 1px solid rgba(var(--navy-rgb), 0.08);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 32px rgba(var(--navy-rgb), 0.08);
+    backdrop-filter: blur(14px);
+}
+
+.cmsHeaderEyebrow {
+    margin: 0;
+    color: var(--accent-hover);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cmsHeaderTitle {
+    margin: 0.15rem 0 0;
+    color: var(--navy);
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.logoutButton {
+    border: 1px solid rgba(var(--danger-rgb), 0.3);
+    border-radius: 0.75rem;
+    min-height: 2.6rem;
+    background: rgba(var(--danger-rgb), 0.1);
+    color: var(--danger-dark);
+    padding: 0.65rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.logoutButton:hover {
+    border-color: rgba(var(--danger-rgb), 0.5);
+    background: rgba(var(--danger-rgb), 0.16);
+}
+
+.cmsStatusToast {
+    position: fixed;
+    top: 5.5rem;
+    right: 1rem;
+    z-index: 70;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.8rem;
+    width: min(100% - 2rem, 34rem);
+    border: 1px solid transparent;
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 0.9rem 1rem;
+    box-shadow: 0 18px 44px rgba(var(--navy-rgb), 0.14);
+    backdrop-filter: blur(14px);
+}
+
+.cmsStatusToastOk {
+    border-color: rgba(var(--success-rgb), 0.28);
+}
+
+.cmsStatusToastError {
+    border-color: rgba(var(--danger-rgb), 0.28);
+}
+
+.cmsStatusToastIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+}
+
+.cmsStatusToastOk .cmsStatusToastIcon {
+    background: rgba(var(--success-rgb), 0.12);
+    color: var(--success-dark);
+}
+
+.cmsStatusToastError .cmsStatusToastIcon {
+    background: rgba(var(--danger-rgb), 0.12);
+    color: var(--danger-dark);
+}
+
+.cmsStatusToastIcon .material-icons-outlined {
+    font-size: 1.25rem;
+}
+
+.cmsStatusToastBody {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.cmsStatusToastBody p {
+    margin: 0;
+    color: #536073;
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.cmsStatusToastTitle {
+    color: var(--navy) !important;
+    font-size: 0.9rem !important;
+    font-weight: 800;
+}
+
+.editorShell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 30rem;
+    min-height: 100vh;
+    gap: 0;
+    background: #f6f7f8;
+    padding-top: 4.75rem;
+}
+
+.editorCanvas {
+    min-width: 0;
+    background: #ffffff;
+    padding: 2.5rem clamp(1.5rem, 5vw, 6.25rem) 4rem;
+}
+
+.settingsSidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 0;
+    border-left: 1px solid #d9dee7;
+    background: #f6f7f8;
+    padding: 2rem 1.75rem 4rem;
+}
+
+.editorTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 2rem 1rem;
+    border-bottom: 1px solid #d9dee7;
+    margin-bottom: 1.2rem;
+}
+
+.editorBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--navy);
+}
+
+.editorBrand h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.editorLogo {
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--navy);
+}
+
+.editorLogo svg {
+    width: 100%;
+    height: 100%;
+}
+
+.editorTopbarActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.editorTopbarActions .primaryButton,
+.editorTopbarActions .secondaryButton {
+    min-height: 3.1rem;
+    padding-inline: 1.25rem;
+}
+
+.editorFields {
+    display: grid;
+    gap: 1.45rem;
+    width: min(100%, 35rem);
+    margin: 0 0 1.8rem 1.25rem;
+}
+
+.fieldLabel {
+    gap: 0.55rem;
+    color: var(--navy);
+    font-size: 0.98rem;
+}
+
+.settingsCard .fieldLabel {
+    font-size: 0.92rem;
+    color: #344054;
+}
+
+.textField,
+.textArea {
+    border-color: #d9dee7;
+    border-radius: 0.75rem;
+    color: #001a3d;
+    font-size: 1rem;
+}
+
+.textField::placeholder,
+.textArea::placeholder,
+.editorArea::placeholder {
+    color: #9aa3b2;
+}
+
+.storyField {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0 1.25rem 2rem;
+}
+
+.storyEditorFrame {
+    overflow: hidden;
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    background: #ffffff;
+}
+
+.storyEditorFrame .editorArea {
+    display: block;
+    min-height: 14rem;
+    border: 0;
+    border-radius: 0;
+    padding: 1.35rem 1.25rem;
+    box-shadow: none;
+    resize: vertical;
+}
+
+.storyEditorFrame .editorArea:focus {
+    box-shadow: none;
+}
+
+.storyEditorFrame .formatToolbar {
+    min-height: 3.75rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.1rem 1rem;
+    background: #ffffff;
+}
+
+.formatButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border: 0;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--navy);
+    padding: 0;
+    font-size: 1rem;
+}
+
+.formatButton:hover {
+    background: #f6f7f8;
+}
+
+.formatButton .material-icons-outlined {
+    font-size: 1.25rem;
+}
+
+.previewButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    min-width: 6.5rem;
+    margin-left: auto;
+    border-radius: 0.75rem;
+    background: var(--navy);
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 800;
+}
+
+.coverUploadBox {
+    display: grid;
+    grid-template-columns: minmax(18rem, 34.5rem) minmax(16rem, 1fr);
+    align-items: start;
+    gap: 1.25rem;
+    margin: 0 1.25rem 2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.coverVisual {
+    min-width: 0;
+}
+
+.coverPreviewImage,
+.coverPreviewFallback {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.75rem;
+}
+
+.coverPreviewFallback {
+    border: 1px dashed #a4adb9;
+}
+
+.coverUploadContent {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem 1rem;
+    padding-top: 1rem;
+    color: #5a6677;
+}
+
+.coverUploadContent h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.25rem;
+}
+
+.coverUploadContent p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.uploadButton {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    border-radius: 0.75rem;
+    background: var(--navy);
+    color: #ffffff;
+    padding: 0 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.coverFileInput {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.coverActions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    grid-column: 1 / -1;
+}
+
+.coverDimensionHint,
+.coverUploadContent .feedback {
+    grid-column: 1 / -1;
+}
+
+.settingsSection {
+    display: grid;
+    gap: 1rem;
+}
+
+.settingsHeading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--navy);
+}
+
+.settingsHeading h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.settingsHeading .material-icons-outlined {
+    font-size: 1.5rem;
+}
+
+.settingsCard {
+    display: grid;
+    gap: 1rem;
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    padding: 1rem;
+}
+
+.settingsCard .textField {
+    min-height: 3.25rem;
+}
+
+.settingsCard .textArea {
+    min-height: 7.5rem;
+}
+
+.categoryList {
+    display: grid;
+    gap: 0.55rem;
+    max-height: 15.5rem;
+    overflow: auto;
+}
+
+.categoryOption,
+.checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    color: #26334d;
+    font-size: 0.95rem;
+}
+
+.categoryOption input,
+.checkboxRow input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--accent);
+}
+
+.tagChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tagChips span {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.35rem;
+    background: #f0f2f5;
+    color: #445064;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.78rem;
+}
+
+.characterCount {
+    align-self: end;
+    color: #8b95a7;
+    font-size: 0.72rem;
+}
+
+.searchSnippet {
+    border: 1px solid #eef0f4;
+    border-radius: 0.55rem;
+    background: #f9fafb;
+    padding: 0.8rem;
+}
+
+.searchSnippet p,
+.searchSnippet span,
+.searchSnippet small {
+    display: block;
+    margin: 0;
+}
+
+.searchSnippet p {
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.searchSnippet span {
+    color: #047857;
+    font-size: 0.78rem;
+}
+
+.searchSnippet small {
+    color: #667085;
+    font-size: 0.72rem;
+    line-height: 1.4;
+}
+
+.settingsCard .postsListHeader {
+    margin: 0;
+}
+
+.settingsCard .postsListHeader .primaryButton,
+.settingsCard .postsListHeader .secondaryButton {
+    flex: 1;
+    min-height: 2.5rem;
+}
+
+.settingsCard .optionalSection {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.inlinePreviewSection {
+    margin: 2rem 1.25rem 0;
+}
+
+.previewPanel {
+    border: 1px solid #d9dee7;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    padding: 1rem;
+}
+
+@media (max-width: 1180px) {
+    .editorShell {
+        grid-template-columns: 1fr;
+    }
+
+    .settingsSidebar {
+        border-left: 0;
+        border-top: 1px solid #d9dee7;
+    }
+}
+
+@media (max-width: 760px) {
+    .cmsHeader {
+        position: static;
+    }
+
+    .cmsStatusToast {
+        position: static;
+        width: auto;
+        margin: 1rem;
+    }
+
+    .editorCanvas,
+    .settingsSidebar {
+        padding: 1rem;
+    }
+
+    .editorTopbar,
+    .coverUploadContent {
+        grid-template-columns: 1fr;
+    }
+
+    .editorTopbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding-inline: 0;
+    }
+
+    .editorShell {
+        padding-top: 0;
+    }
+
+    .editorTopbarActions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .editorFields,
+    .storyField,
+    .coverUploadBox,
+    .inlinePreviewSection {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .coverUploadBox {
+        grid-template-columns: 1fr;
+    }
+
+    .uploadButton {
+        grid-row: auto;
+        grid-column: auto;
+        width: 100%;
+    }
 }

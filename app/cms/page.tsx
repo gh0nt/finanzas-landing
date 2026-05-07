@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { GuideEditor } from "@/app/cms/GuideEditor";
 import { CMS_COOKIE_NAME, isValidCmsSessionToken } from "@/lib/cms/auth";
 import { getCmsDatabaseStatus } from "@/lib/cms/guides";
@@ -27,50 +25,57 @@ export default async function CmsPage() {
   const dbStatus = await getCmsDatabaseStatus();
 
   return (
-    <div>
-      <Navbar />
+    <div className={styles.cmsApp}>
       <main className={styles.cmsMain}>
-        <div className="container">
-          <div className={styles.cmsHeaderRow}>
-            <div>
-              <p className={styles.loginEyebrow}>CMS</p>
-              <h1 className={styles.cmsTitle}>Blog Creator - SEO Guides</h1>
-              <p className={styles.cmsSubtitle}>
-                Crea, guarda y publica guias con metadata SEO completa en
-                Supabase.
-              </p>
-            </div>
-            <form method="POST" action="/api/cms/logout">
-              <button type="submit" className={styles.secondaryButton}>
-                Cerrar sesion
-              </button>
-            </form>
+        <header className={styles.cmsHeader}>
+          <div>
+            <p className={styles.cmsHeaderEyebrow}>CMS Privado</p>
+            <h1 className={styles.cmsHeaderTitle}>Content Manager</h1>
           </div>
+          <form method="POST" action="/api/cms/logout">
+            <button type="submit" className={styles.logoutButton}>
+              Cerrar sesion
+            </button>
+          </form>
+        </header>
 
-          <p
-            className={`${styles.cmsStatus} ${
-              dbStatus.connected ? styles.cmsStatusOk : styles.cmsStatusError
-            }`}
-          >
-            {dbStatus.connected ? "DB conectada" : "DB no conectada"}:{" "}
-            {dbStatus.message}
-          </p>
-
-          <p
-            className={`${styles.cmsStatus} ${
-              dbStatus.writeEnabled ? styles.cmsStatusOk : styles.cmsStatusError
-            }`}
-          >
-            {dbStatus.writeEnabled
-              ? "CMS escritura habilitada"
-              : "CMS escritura deshabilitada"}
-            : {dbStatus.writeMessage}
-          </p>
-
-          <GuideEditor canWrite={dbStatus.writeEnabled} />
+        <div
+          className={`${styles.cmsStatusToast} ${
+            dbStatus.connected && dbStatus.writeEnabled
+              ? styles.cmsStatusToastOk
+              : styles.cmsStatusToastError
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          <div className={styles.cmsStatusToastIcon}>
+            <span className="material-icons-outlined" aria-hidden="true">
+              {dbStatus.connected && dbStatus.writeEnabled
+                ? "check_circle"
+                : "error"}
+            </span>
+          </div>
+          <div className={styles.cmsStatusToastBody}>
+            <p className={styles.cmsStatusToastTitle}>
+              {dbStatus.connected && dbStatus.writeEnabled
+                ? "CMS conectado"
+                : "Revisa la conexion del CMS"}
+            </p>
+            <p>
+              {dbStatus.connected ? "DB conectada" : "DB no conectada"}:{" "}
+              {dbStatus.message}
+            </p>
+            <p>
+              {dbStatus.writeEnabled
+                ? "Escritura habilitada"
+                : "Escritura deshabilitada"}
+              : {dbStatus.writeMessage}
+            </p>
+          </div>
         </div>
+
+        <GuideEditor canWrite={dbStatus.writeEnabled} />
       </main>
-      <Footer />
     </div>
   );
 }
