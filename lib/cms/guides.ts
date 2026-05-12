@@ -1,12 +1,12 @@
 import {
   getSupabaseReadClient,
-  getSupabaseWriteClient,
   getSupabaseConfigInfo,
 } from "@/lib/cms/supabase";
+import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
 import type { GuidePost, GuidePostUpsertInput } from "@/lib/cms/types";
 import { resolveGuideCoverTheme } from "@/lib/cms/utils";
 
-type CmsDatabaseStatus = {
+export type CmsDatabaseStatus = {
   connected: boolean;
   message: string;
   writeEnabled: boolean;
@@ -18,6 +18,7 @@ type CmsDatabaseStatus = {
 
 const CMS_DB_STATUS_TTL_MS = 30_000;
 const CMS_EDITABLE_GUIDES_TTL_MS = 20_000;
+const COVER_BUCKET = "posts-cms";
 
 let cmsDbStatusCache: {
   expiresAt: number;
@@ -28,6 +29,37 @@ let cmsEditableGuidesCache: {
   expiresAt: number;
   value: GuidePost[];
 } | null = null;
+
+type DeleteGuideTraceStep = {
+  step: string;
+  ok: boolean;
+  detail?: string;
+};
+
+export type DeleteGuidePostResult =
+  | {
+      ok: true;
+      slug: string;
+      deleted: {
+        id: string;
+        slug: string;
+        title: string;
+      };
+      storagePath: string | null;
+      warnings: string[];
+      trace: DeleteGuideTraceStep[];
+    }
+  | {
+      ok: false;
+      error: string;
+      code:
+        | "missing_slug"
+        | "fallback_post"
+        | "missing_admin_client"
+        | "delete_failed"
+        | "not_deleted";
+      trace: DeleteGuideTraceStep[];
+    };
 
 const fallbackGuides: GuidePost[] = [
   {
@@ -75,6 +107,28 @@ function withGuideVisualDefaults(guide: GuidePost): GuidePost {
 
 function isFallbackGuideSlug(slug: string) {
   return fallbackGuides.some((guide) => guide.slug === slug);
+}
+
+function getCoverStoragePathFromPublicUrl(url: string | null | undefined) {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    const marker = `/storage/v1/object/public/${COVER_BUCKET}/`;
+    const markerIndex = parsedUrl.pathname.indexOf(marker);
+
+    if (markerIndex === -1) {
+      return null;
+    }
+
+    return decodeURIComponent(
+      parsedUrl.pathname.slice(markerIndex + marker.length),
+    );
+  } catch {
+    return null;
+  }
 }
 
 function mergeWithFallbackGuides(dbGuides: GuidePost[]) {
@@ -167,13 +221,14 @@ export async function getRelatedGuides(
 }
 
 export async function upsertGuidePost(input: GuidePostUpsertInput) {
-  const supabase = getSupabaseWriteClient();
+  let supabase: ReturnType<typeof getSupabaseAdminClient>;
 
-  if (!supabase) {
+  try {
+    supabase = getSupabaseAdminClient();
+  } catch (error) {
     return {
       ok: false,
-      error:
-        "Faltan variables de escritura de Supabase (SERVICE_ROLE_KEY o ANON/PUBLISHABLE key).",
+      error: error instanceof Error ? error.message : "No se pudo inicializar Supabase admin.",
     };
   }
 
@@ -203,51 +258,160 @@ export async function upsertGuidePost(input: GuidePostUpsertInput) {
   };
 }
 
-export async function deleteGuidePost(slug: string) {
+export async function deleteGuidePost(
+  slug: string,
+): Promise<DeleteGuidePostResult> {
   const normalizedSlug = slug.trim();
+  const trace: DeleteGuideTraceStep[] = [
+    { step: "normalize_slug", ok: Boolean(normalizedSlug) },
+  ];
 
   if (!normalizedSlug) {
     return {
       ok: false,
       error: "Debes indicar el slug de la guia a eliminar.",
+      code: "missing_slug",
+      trace,
     };
   }
 
   if (isFallbackGuideSlug(normalizedSlug)) {
+    trace.push({
+      step: "fallback_guard",
+      ok: false,
+      detail: "El slug pertenece a una guia base definida en codigo.",
+    });
+
     return {
       ok: false,
       error: "La guia base no se puede eliminar desde el CMS.",
+      code: "fallback_post",
+      trace,
     };
   }
 
-  const supabase = getSupabaseWriteClient();
+  let supabase: ReturnType<typeof getSupabaseAdminClient>;
 
-  if (!supabase) {
+  try {
+    supabase = getSupabaseAdminClient();
+  } catch (error) {
+    trace.push({
+      step: "admin_client",
+      ok: false,
+      detail: error instanceof Error ? error.message : "No se pudo inicializar Supabase admin.",
+    });
+
     return {
       ok: false,
       error:
-        "Faltan variables de escritura de Supabase (SERVICE_ROLE_KEY o ANON/PUBLISHABLE key).",
+        error instanceof Error ? error.message : "No se pudo inicializar Supabase admin.",
+      code: "missing_admin_client",
+      trace,
     };
   }
 
-  const { error } = await supabase
+  trace.push({ step: "admin_client", ok: true });
+
+  const { data: existingPost, error: lookupError } = await supabase
+    .from("guide_posts")
+    .select("slug, og_image_url")
+    .eq("slug", normalizedSlug)
+    .maybeSingle();
+
+  trace.push({
+    step: "lookup_post_before_delete",
+    ok: !lookupError,
+    detail: lookupError
+      ? lookupError.message
+      : existingPost
+        ? "Post visible para el cliente admin."
+        : "No visible antes de eliminar; puede ser RLS de SELECT o slug inexistente.",
+  });
+
+  const storagePath = getCoverStoragePathFromPublicUrl(
+    (existingPost as Pick<GuidePost, "og_image_url"> | null)?.og_image_url,
+  );
+
+  const { data, error } = await supabase
     .from("guide_posts")
     .delete()
-    .eq("slug", normalizedSlug);
+    .eq("slug", normalizedSlug)
+    .select("id, slug, title");
 
   if (error) {
+    trace.push({
+      step: "delete_database_row",
+      ok: false,
+      detail: error.message,
+    });
+
     return {
       ok: false,
       error: error.message ?? "No se pudo eliminar la guia.",
+      code: "delete_failed",
+      trace,
     };
+  }
+
+  const deletedRows = (data ?? []) as Array<{
+    id: string;
+    slug: string;
+    title: string;
+  }>;
+
+  trace.push({
+    step: "delete_database_row",
+    ok: deletedRows.length > 0,
+    detail: `Filas eliminadas: ${deletedRows.length}.`,
+  });
+
+  if (!deletedRows.length) {
+    return {
+      ok: false,
+      error:
+        "No guide was deleted. The slug does not exist or the delete operation did not match any row.",
+      code: "not_deleted",
+      trace,
+    };
+  }
+
+  const warnings: string[] = [];
+
+  if (storagePath) {
+    const { error: storageError } = await supabase.storage
+      .from(COVER_BUCKET)
+      .remove([storagePath]);
+
+    trace.push({
+      step: "delete_cover_storage_object",
+      ok: !storageError,
+      detail: storageError ? storageError.message : storagePath,
+    });
+
+    if (storageError) {
+      warnings.push(
+        `La guia fue eliminada, pero no se pudo borrar la imagen ${storagePath}: ${storageError.message}`,
+      );
+    }
+  } else {
+    trace.push({
+      step: "delete_cover_storage_object",
+      ok: true,
+      detail: "No hay imagen de posts-cms asociada o no es una URL publica del bucket.",
+    });
   }
 
   cmsEditableGuidesCache = null;
   cmsDbStatusCache = null;
+  trace.push({ step: "invalidate_server_cms_cache", ok: true });
 
   return {
     ok: true,
     slug: normalizedSlug,
+    deleted: deletedRows[0],
+    storagePath,
+    warnings,
+    trace,
   };
 }
 
@@ -258,8 +422,15 @@ export async function getCmsDatabaseStatus() {
   }
 
   const readClient = getSupabaseReadClient();
-  const writeClient = getSupabaseWriteClient();
   const config = getSupabaseConfigInfo();
+  let adminClientReady = false;
+
+  try {
+    getSupabaseAdminClient();
+    adminClientReady = true;
+  } catch {
+    adminClientReady = false;
+  }
 
   if (!readClient) {
     const result: CmsDatabaseStatus = {
@@ -287,12 +458,10 @@ export async function getCmsDatabaseStatus() {
     const result: CmsDatabaseStatus = {
       connected: false,
       message: `Sin acceso a guide_posts: ${error.message}`,
-      writeEnabled: Boolean(writeClient),
-      writeMessage: writeClient
-        ? config.hasServiceRoleKey
-          ? "Escritura habilitada via SERVICE_ROLE_KEY."
-          : "Escritura configurada con llave publica; requiere policies RLS de insert/update en Supabase."
-        : "Escritura deshabilitada: faltan llaves de escritura.",
+      writeEnabled: adminClientReady,
+      writeMessage: adminClientReady
+        ? "Escritura CMS habilitada via SUPABASE_SERVICE_ROLE_KEY server-only."
+        : "Escritura CMS deshabilitada: falta SUPABASE_SERVICE_ROLE_KEY.",
       ...config,
     };
 
@@ -307,12 +476,10 @@ export async function getCmsDatabaseStatus() {
   const result: CmsDatabaseStatus = {
     connected: true,
     message: "Lectura conectada a Supabase y tabla guide_posts accesible.",
-    writeEnabled: Boolean(writeClient),
-    writeMessage: writeClient
-      ? config.hasServiceRoleKey
-        ? "Escritura habilitada via SERVICE_ROLE_KEY."
-        : "Escritura configurada con llave publica; requiere policies RLS de insert/update en Supabase."
-      : "Escritura deshabilitada: faltan llaves de escritura.",
+    writeEnabled: adminClientReady,
+    writeMessage: adminClientReady
+      ? "Escritura CMS habilitada via SUPABASE_SERVICE_ROLE_KEY server-only."
+      : "Escritura CMS deshabilitada: falta SUPABASE_SERVICE_ROLE_KEY.",
     ...config,
   };
 
@@ -330,11 +497,11 @@ export async function getCmsEditableGuides(): Promise<GuidePost[]> {
     return cmsEditableGuidesCache.value;
   }
 
-  const writeClient = getSupabaseWriteClient();
   const readClient = getSupabaseReadClient();
 
-  if (writeClient) {
-    const { data, error } = await writeClient
+  try {
+    const adminClient = getSupabaseAdminClient();
+    const { data, error } = await adminClient
       .from("guide_posts")
       .select("*")
       .order("updated_at", { ascending: false });
@@ -347,6 +514,8 @@ export async function getCmsEditableGuides(): Promise<GuidePost[]> {
       };
       return result;
     }
+  } catch {
+    // Fall back to public reads when the server-only service role key is absent.
   }
 
   if (readClient) {

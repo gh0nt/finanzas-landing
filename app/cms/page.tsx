@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { CmsStatusToast } from "@/app/cms/CmsStatusToast";
 import { GuideEditor } from "@/app/cms/GuideEditor";
 import { CMS_COOKIE_NAME, isValidCmsSessionToken } from "@/lib/cms/auth";
 import { getCmsDatabaseStatus } from "@/lib/cms/guides";
@@ -39,40 +40,7 @@ export default async function CmsPage() {
           </form>
         </header>
 
-        <div
-          className={`${styles.cmsStatusToast} ${
-            dbStatus.connected && dbStatus.writeEnabled
-              ? styles.cmsStatusToastOk
-              : styles.cmsStatusToastError
-          }`}
-          role="status"
-          aria-live="polite"
-        >
-          <div className={styles.cmsStatusToastIcon}>
-            <span className="material-icons-outlined" aria-hidden="true">
-              {dbStatus.connected && dbStatus.writeEnabled
-                ? "check_circle"
-                : "error"}
-            </span>
-          </div>
-          <div className={styles.cmsStatusToastBody}>
-            <p className={styles.cmsStatusToastTitle}>
-              {dbStatus.connected && dbStatus.writeEnabled
-                ? "CMS conectado"
-                : "Revisa la conexion del CMS"}
-            </p>
-            <p>
-              {dbStatus.connected ? "DB conectada" : "DB no conectada"}:{" "}
-              {dbStatus.message}
-            </p>
-            <p>
-              {dbStatus.writeEnabled
-                ? "Escritura habilitada"
-                : "Escritura deshabilitada"}
-              : {dbStatus.writeMessage}
-            </p>
-          </div>
-        </div>
+        <CmsStatusToast dbStatus={dbStatus} />
 
         <GuideEditor canWrite={dbStatus.writeEnabled} />
       </main>

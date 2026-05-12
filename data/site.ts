@@ -2,7 +2,7 @@ export const site = {
   name: "Finanzas sin Ruido",
   tagline:
     "Facilitamos la toma de decisiones financieras a traves de datos transparentes y educacion objetiva.",
-  email: "soporte@finanzassinruido.co",
+  email: "contacto@finanzassinruido.com",
   location: "Bogota D.C., Colombia",
   navLinks: [
     { label: "Servicios", href: "/services" },

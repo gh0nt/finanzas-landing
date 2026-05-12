@@ -136,10 +136,20 @@ export async function DELETE(request: Request) {
 
   const payload = (await request.json()) as Record<string, unknown>;
   const slug = String(payload.slug ?? "").trim();
+  const hasServiceRoleKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+  console.info("[cms-guides:delete] request", {
+    slug,
+    hasServiceRoleKey,
+  });
 
   if (!slug) {
     return NextResponse.json(
-      { error: "Debes indicar el slug de la guia a eliminar." },
+      {
+        ok: false,
+        code: "missing_slug",
+        error: "Debes indicar el slug de la guia a eliminar.",
+      },
       { status: 400 },
     );
   }
@@ -147,11 +157,59 @@ export async function DELETE(request: Request) {
   const result = await deleteGuidePost(slug);
 
   if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 400 });
+    console.warn("[cms-guides:delete]", {
+      slug,
+      ok: false,
+      code: result.code,
+      error: result.error,
+      trace: result.trace,
+    });
+
+    const status =
+      result.code === "missing_admin_client" || result.code === "delete_failed"
+        ? 500
+        : result.code === "not_deleted"
+          ? 404
+          : 400;
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error: result.error,
+        code: result.code,
+        trace: result.trace,
+      },
+      { status },
+    );
   }
 
   revalidatePath("/guides");
   revalidatePath(`/guides/${result.slug}`);
 
-  return NextResponse.json({ ok: true, slug: result.slug });
+  const trace = [
+    ...result.trace,
+    { step: "revalidate_frontend_routes", ok: true, detail: "/guides" },
+    {
+      step: "revalidate_frontend_slug_route",
+      ok: true,
+      detail: `/guides/${result.slug}`,
+    },
+  ];
+
+  console.info("[cms-guides:delete]", {
+    slug: result.slug,
+    ok: true,
+    deletedRowCount: 1,
+    storagePath: result.storagePath,
+    warnings: result.warnings,
+    trace,
+  });
+
+  return NextResponse.json({
+    ok: true,
+    deleted: result.deleted,
+    storagePath: result.storagePath,
+    warnings: result.warnings,
+    trace,
+  });
 }

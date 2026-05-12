@@ -674,6 +674,116 @@
     font-size: 1.15rem;
 }
 
+.deleteModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(var(--navy-rgb), 0.46);
+    backdrop-filter: blur(4px);
+}
+
+.deleteModal {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    width: min(100%, 31rem);
+    border: 1px solid rgba(var(--danger-rgb), 0.22);
+    border-radius: 0.85rem;
+    background: #ffffff;
+    padding: 1.15rem;
+    box-shadow: 0 24px 70px rgba(var(--navy-rgb), 0.24);
+}
+
+.deleteModalIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.7rem;
+    background: rgba(var(--danger-rgb), 0.1);
+    color: var(--danger-dark);
+}
+
+.deleteModalIcon .material-icons-outlined {
+    font-size: 1.35rem;
+}
+
+.deleteModalBody {
+    min-width: 0;
+}
+
+.deleteModalEyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--danger-dark);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.deleteModalBody h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.15rem;
+    line-height: 1.25;
+}
+
+.deleteModalBody p {
+    margin: 0.55rem 0 0;
+    color: #536073;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.deleteModalActions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    padding-top: 0.35rem;
+}
+
+.deleteModalCancel,
+.deleteModalConfirm {
+    border-radius: 0.7rem;
+    min-height: 2.55rem;
+    padding: 0.65rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+}
+
+.deleteModalCancel {
+    border: 1px solid #d9dee7;
+    background: #ffffff;
+    color: var(--navy);
+}
+
+.deleteModalCancel:hover {
+    border-color: rgba(var(--navy-rgb), 0.25);
+    background: #f6f7f8;
+}
+
+.deleteModalConfirm {
+    border: 1px solid rgba(var(--danger-rgb), 0.3);
+    background: var(--danger);
+    color: #ffffff;
+}
+
+.deleteModalConfirm:hover {
+    background: var(--danger-dark);
+}
+
+.deleteModalConfirm:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 .previewTitle {
     margin: 0.4rem 0 0;
     color: var(--navy);
@@ -790,7 +900,7 @@
     right: 1rem;
     z-index: 70;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: start;
     gap: 0.8rem;
     width: min(100% - 2rem, 34rem);
@@ -850,6 +960,29 @@
     color: var(--navy) !important;
     font-size: 0.9rem !important;
     font-weight: 800;
+}
+
+.cmsStatusToastClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.55rem;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.cmsStatusToastClose:hover {
+    background: rgba(var(--navy-rgb), 0.08);
+    color: var(--navy);
+}
+
+.cmsStatusToastClose .material-icons-outlined {
+    font-size: 1.15rem;
 }
 
 .editorShell {
@@ -970,6 +1103,41 @@
     background: #ffffff;
 }
 
+.markdownEditor {
+    min-height: 22rem;
+    background: #ffffff;
+    color: var(--navy);
+    font-family: var(--font-sans);
+}
+
+.markdownEditor :global(.mdxeditor-toolbar) {
+    border-bottom: 1px solid #d9dee7;
+    background: #f8fafb;
+    padding: 0.65rem 0.85rem;
+}
+
+.markdownEditor :global(.mdxeditor-toolbar button) {
+    border-radius: 0.45rem;
+    color: var(--navy);
+}
+
+.markdownEditor :global(.mdxeditor-toolbar button:hover) {
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent-hover);
+}
+
+.markdownEditorContent {
+    min-height: 18rem;
+    padding: 1.35rem 1.25rem;
+    color: var(--navy);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.markdownEditorContent:focus {
+    outline: none;
+}
+
 .storyEditorFrame .editorArea {
     display: block;
     min-height: 14rem;
@@ -989,6 +1157,16 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.65rem 1.1rem 1rem;
+    background: #ffffff;
+}
+
+.editorFooter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 3.75rem;
+    padding: 0.65rem 1.1rem 1rem;
+    border-top: 1px solid #edf0f4;
     background: #ffffff;
 }
 

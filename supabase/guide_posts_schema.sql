@@ -80,5 +80,12 @@ to anon
 using (true)
 with check (true);
 
+drop policy if exists "cms anon delete" on public.guide_posts;
+create policy "cms anon delete"
+on public.guide_posts
+for delete
+to anon
+using (true);
+
 -- Writes are done by this app using SUPABASE_SERVICE_ROLE_KEY from server-side routes.
 -- Service role bypasses RLS automatically.

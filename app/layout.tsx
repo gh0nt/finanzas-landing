@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { CookieConsent } from "@/components/CookieConsent";
+import "@mdxeditor/editor/style.css";
 import "./globals.css";
 
 const manrope = Manrope({

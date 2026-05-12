@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { CMS_COOKIE_NAME, isValidCmsSessionToken } from "@/lib/cms/auth";
-import { getSupabaseWriteClient } from "@/lib/cms/supabase";
+import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
 import { slugify } from "@/lib/cms/utils";
 
 const COVER_BUCKET = "posts-cms";
@@ -29,11 +29,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseWriteClient();
+  let supabase: ReturnType<typeof getSupabaseAdminClient>;
 
-  if (!supabase) {
+  try {
+    supabase = getSupabaseAdminClient();
+  } catch (error) {
     return NextResponse.json(
-      { error: "No hay configuracion de escritura para subir imagenes." },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "No hay configuracion de escritura para subir imagenes.",
+      },
       { status: 500 },
     );
   }
@@ -106,11 +113,18 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseWriteClient();
+  let supabase: ReturnType<typeof getSupabaseAdminClient>;
 
-  if (!supabase) {
+  try {
+    supabase = getSupabaseAdminClient();
+  } catch (error) {
     return NextResponse.json(
-      { error: "No hay configuracion de escritura para eliminar imagenes." },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "No hay configuracion de escritura para eliminar imagenes.",
+      },
       { status: 500 },
     );
   }
