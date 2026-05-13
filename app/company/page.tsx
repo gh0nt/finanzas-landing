@@ -16,7 +16,7 @@ const corporateData = {
   matriculaMercantil: "03512398 — Cámara de Comercio de Bogotá",
   tipoSociedad: "Sociedad por Acciones Simplificada",
   direccion: "Calle 93 # 12-34, Oficina 302\nBogotá D.C., Colombia",
-  emailLegal: "legal@finanzassinruido.com",
+  emailLegal: "contacto@finanzassinruido.com",
 };
 
 const complianceSections = [

@@ -38,10 +38,10 @@ const sections = [
           Para ejercer sus derechos o resolver consultas sobre esta política,
           puede contactarnos en:{" "}
           <a
-            href="mailto:datos@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.co"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            datos@finanzassinruido.co
+            contacto@finanzassinruido.co
           </a>
         </p>
       </>
@@ -181,10 +181,10 @@ const sections = [
         <p>
           Para ejercer cualquiera de estos derechos, escríbanos a{" "}
           <a
-            href="mailto:datos@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.co"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            datos@finanzassinruido.co
+            contacto@finanzassinruido.co
           </a>{" "}
           indicando su identificación y la solicitud específica. Atenderemos su
           petición en un plazo máximo de <strong>15 días hábiles</strong>.
@@ -362,7 +362,7 @@ export default function PrivacyPage() {
                 responderemos en un plazo máximo de 15 días hábiles.
               </p>
               <a
-                href="mailto:datos@finanzassinruido.co"
+                href="mailto:contacto@finanzassinruido.co"
                 className={styles.contactCardLink}
               >
                 <span
@@ -371,7 +371,7 @@ export default function PrivacyPage() {
                 >
                   mail
                 </span>
-                datos@finanzassinruido.co
+                contacto@finanzassinruido.co
               </a>
             </div>
           </article>
