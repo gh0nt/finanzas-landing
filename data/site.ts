@@ -3,6 +3,7 @@ export const site = {
   tagline:
     "Facilitamos la toma de decisiones financieras a traves de datos transparentes y educacion objetiva.",
   email: "contacto@finanzassinruido.com",
+  phone: "+573236012543",
   location: "Bogota D.C., Colombia",
   navLinks: [
     { label: "Servicios", href: "/services" },
