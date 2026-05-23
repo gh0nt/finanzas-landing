@@ -2,11 +2,19 @@
 
 import Link from "next/link";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 const STORAGE_KEY = "fsr-cookie-consent";
 const CONSENT_VERSION = 1;
 const CONSENT_EVENT = "fsr-cookie-consent-change";
+const AUTO_DISMISS_MS = 7000;
+const CLOSE_ANIMATION_MS = 260;
 
 type ConsentRecord = {
   analytics: boolean;
@@ -89,17 +97,105 @@ export function CookieConsent({ analyticsEnabled, gaId }: CookieConsentProps) {
     () => null,
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isManageDismissed, setIsManageDismissed] = useState(false);
+  const [isManageClosing, setIsManageClosing] = useState(false);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const manageCloseTimeoutRef = useRef<number | null>(null);
   const consent = parseConsent(consentRaw);
+  const hasDecision = consent !== null;
+
+  const closeBanner = useCallback(() => {
+    if (isClosing) {
+      return;
+    }
+
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+    }
+
+    setIsClosing(true);
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setIsClosing(false);
+      setIsOpen(false);
+      setIsDismissed(true);
+      setIsManageDismissed(false);
+      closeTimeoutRef.current = null;
+    }, CLOSE_ANIMATION_MS);
+  }, [isClosing]);
+
+  const closeManageButton = useCallback(() => {
+    if (isManageClosing) {
+      return;
+    }
+
+    if (manageCloseTimeoutRef.current !== null) {
+      window.clearTimeout(manageCloseTimeoutRef.current);
+    }
+
+    setIsManageClosing(true);
+    manageCloseTimeoutRef.current = window.setTimeout(() => {
+      setIsManageClosing(false);
+      setIsManageDismissed(true);
+      manageCloseTimeoutRef.current = null;
+    }, CLOSE_ANIMATION_MS);
+  }, [isManageClosing]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+
+      if (manageCloseTimeoutRef.current !== null) {
+        window.clearTimeout(manageCloseTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hasDecision || isOpen || isDismissed || isClosing) {
+      return;
+    }
+
+    const autoDismissTimeout = window.setTimeout(() => {
+      closeBanner();
+    }, AUTO_DISMISS_MS);
+
+    return () => {
+      window.clearTimeout(autoDismissTimeout);
+    };
+  }, [closeBanner, hasDecision, isClosing, isDismissed, isOpen]);
 
   function handleConsent(analytics: boolean) {
     writeConsent(analytics);
     setIsOpen(false);
+    setIsDismissed(false);
+    setIsManageDismissed(false);
   }
 
   const analyticsAllowed =
     analyticsEnabled && Boolean(gaId) && consent?.analytics === true;
-  const hasDecision = consent !== null;
-  const shouldShowBanner = !hasDecision || isOpen;
+  const shouldShowBanner = (!hasDecision && !isDismissed) || isOpen || isClosing;
+  const shouldShowManageButton =
+    (((hasDecision || isDismissed) && !isManageDismissed && !isOpen) ||
+      isManageClosing) &&
+    !shouldShowBanner;
+
+  useEffect(() => {
+    if (!shouldShowManageButton || isManageClosing) {
+      return;
+    }
+
+    const autoDismissTimeout = window.setTimeout(() => {
+      closeManageButton();
+    }, AUTO_DISMISS_MS);
+
+    return () => {
+      window.clearTimeout(autoDismissTimeout);
+    };
+  }, [closeManageButton, isManageClosing, shouldShowManageButton]);
 
   return (
     <>
@@ -108,7 +204,9 @@ export function CookieConsent({ analyticsEnabled, gaId }: CookieConsentProps) {
       {shouldShowBanner ? (
         <aside
           aria-label="Preferencias de cookies"
-          className="cookie-consent"
+          className={`cookie-consent ${
+            isClosing ? "cookie-consent--closing" : ""
+          }`}
           role="dialog"
         >
           <div className="cookie-consent__panel">
@@ -119,18 +217,16 @@ export function CookieConsent({ analyticsEnabled, gaId }: CookieConsentProps) {
                   Decide si activas analiticas
                 </h2>
               </div>
-              {hasDecision ? (
-                <button
-                  aria-label="Cerrar preferencias de cookies"
-                  className="cookie-consent__close"
-                  onClick={() => setIsOpen(false)}
-                  type="button"
-                >
-                  <span className="material-icons-outlined" aria-hidden="true">
-                    close
-                  </span>
-                </button>
-              ) : null}
+              <button
+                aria-label="Cerrar preferencias de cookies"
+                className="cookie-consent__close"
+                onClick={closeBanner}
+                type="button"
+              >
+                <span className="material-icons-outlined" aria-hidden="true">
+                  close
+                </span>
+              </button>
             </div>
 
             <p className="cookie-consent__copy">
@@ -193,17 +289,43 @@ export function CookieConsent({ analyticsEnabled, gaId }: CookieConsentProps) {
         </aside>
       ) : null}
 
-      {hasDecision ? (
-        <button
-          className="cookie-manage"
-          onClick={() => setIsOpen(true)}
-          type="button"
+      {shouldShowManageButton ? (
+        <div
+          className={`cookie-manage ${
+            isManageClosing ? "cookie-manage--closing" : ""
+          }`}
         >
-          <span className="material-icons-outlined" aria-hidden="true">
-            cookie
-          </span>
-          Gestionar cookies
-        </button>
+          <button
+            className="cookie-manage__trigger"
+            onClick={() => {
+              if (manageCloseTimeoutRef.current !== null) {
+                window.clearTimeout(manageCloseTimeoutRef.current);
+                manageCloseTimeoutRef.current = null;
+              }
+
+              setIsManageClosing(false);
+              setIsManageDismissed(false);
+              setIsDismissed(false);
+              setIsOpen(true);
+            }}
+            type="button"
+          >
+            <span className="material-icons-outlined" aria-hidden="true">
+              cookie
+            </span>
+            Gestionar cookies
+          </button>
+          <button
+            aria-label="Ocultar gestionar cookies"
+            className="cookie-manage__close"
+            onClick={closeManageButton}
+            type="button"
+          >
+            <span className="material-icons-outlined" aria-hidden="true">
+              close
+            </span>
+          </button>
+        </div>
       ) : null}
     </>
   );
