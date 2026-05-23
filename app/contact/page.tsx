@@ -86,9 +86,6 @@ export default function ContactPage() {
                 ayudamos a encontrar los mejores productos financieros para su
                 situación particular en Colombia.
               </p>
-              <p>
-                <a href="tel:+573236012543">+57 3236012543</a>
-              </p>
             </div>
           </div>
         </section>
