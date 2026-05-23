@@ -8,12 +8,14 @@ export const metadata: Metadata = {
   title: "Aviso Legal | Finanzas sin Ruido",
   description:
     "Aviso legal y descargo de responsabilidad de Finanzas sin Ruido. La información publicada es exclusivamente educativa y no constituye asesoramiento financiero personalizado.",
-  alternates: { canonical: "https://www.finanzassinruido.co/legal/disclaimer" },
+  alternates: {
+    canonical: "https://www.finanzassinruido.com/legal/disclaimer",
+  },
   openGraph: {
     title: "Aviso Legal | Finanzas sin Ruido",
     description:
       "Descargo de responsabilidad y limitaciones de la información publicada por Finanzas sin Ruido S.A.S.",
-    url: "https://www.finanzassinruido.co/legal/disclaimer",
+    url: "https://www.finanzassinruido.com/legal/disclaimer",
     type: "website",
   },
 };
@@ -211,10 +213,10 @@ const sections = [
         <p>
           Para consultas legales adicionales, puede contactarnos en{" "}
           <a
-            href="mailto:legal@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.com"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            legal@finanzassinruido.co
+            contacto@finanzassinruido.com
           </a>
           .
         </p>
@@ -296,7 +298,7 @@ export default function DisclaimerPage() {
                 datos publicados en nuestra plataforma, escríbenos.
               </p>
               <a
-                href="mailto:legal@finanzassinruido.co"
+                href="mailto:contacto@finanzassinruido.com"
                 className={styles.contactCardLink}
               >
                 <span
@@ -305,7 +307,7 @@ export default function DisclaimerPage() {
                 >
                   mail
                 </span>
-                legal@finanzassinruido.co
+                contacto@finanzassinruido.com
               </a>
             </div>
           </article>

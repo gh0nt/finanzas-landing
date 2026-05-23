@@ -36,7 +36,7 @@ export async function generateMetadata({
   const title = guide.seo_title || guide.title;
   const description = guide.seo_description || guide.excerpt;
   const canonical =
-    guide.canonical_url || `https://www.finanzassinruido.co/guides/${slug}`;
+    guide.canonical_url || `https://www.finanzassinruido.com/guides/${slug}`;
 
   return {
     title,

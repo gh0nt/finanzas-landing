@@ -866,7 +866,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://finanzassinruido.com",
+    url: "https://finanzassinruido.comm",
     siteName: "Finanzas sin Ruido",
     images: [
       {
@@ -915,8 +915,8 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Finanzas sin Ruido',
-  url: 'https://finanzassinruido.com',
-  logo: 'https://finanzassinruido.com/logo.png',
+  url: 'https://finanzassinruido.comm',
+  logo: 'https://finanzassinruido.comm/logo.png',
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+57-XXX-XXXXXXX',
@@ -957,7 +957,7 @@ const articleSchema = {
     name: "Finanzas sin Ruido",
     logo: {
       "@type": "ImageObject",
-      url: "https://finanzassinruido.com/logo.png",
+      url: "https://finanzassinruido.comm/logo.png",
     },
   },
 };
@@ -975,7 +975,7 @@ import { blogPosts } from "@/data/blog-posts";
 import { newsArticles } from "@/data/news-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://finanzassinruido.com";
+  const baseUrl = "https://finanzassinruido.comm";
 
   const blogUrls = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
@@ -1029,7 +1029,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/recommendations/", "/api/"],
       },
     ],
-    sitemap: "https://finanzassinruido.com/sitemap.xml",
+    sitemap: "https://finanzassinruido.comm/sitemap.xml",
   };
 }
 ```
@@ -1649,7 +1649,7 @@ export function generateArticleMetadata({
   slug: string;
   section: string;
 }): Metadata {
-  const baseUrl = "https://finanzassinruido.com";
+  const baseUrl = "https://finanzassinruido.comm";
   const url = `${baseUrl}/${section}/${slug}`;
 
   return {
@@ -1685,8 +1685,8 @@ export function generateOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Finanzas sin Ruido",
-    url: "https://finanzassinruido.com",
-    logo: "https://finanzassinruido.com/logo.png",
+    url: "https://finanzassinruido.comm",
+    logo: "https://finanzassinruido.comm/logo.png",
     description: "Información financiera clara para Colombia",
     address: {
       "@type": "PostalAddress",
@@ -1732,7 +1732,7 @@ export function generateArticleJsonLd({
     "@type": "Article",
     headline,
     description,
-    image: image || "https://finanzassinruido.com/default-og.png",
+    image: image || "https://finanzassinruido.comm/default-og.png",
     datePublished,
     dateModified: dateModified || datePublished,
     author: {
@@ -1744,7 +1744,7 @@ export function generateArticleJsonLd({
       name: "Finanzas sin Ruido",
       logo: {
         "@type": "ImageObject",
-        url: "https://finanzassinruido.com/logo.png",
+        url: "https://finanzassinruido.comm/logo.png",
       },
     },
   };
@@ -1869,7 +1869,7 @@ export function generateArticleJsonLd({
 
 1. Connect GitHub repo to Vercel.
 2. Configure environment variables (none needed for UI phase).
-3. Set up custom domain (e.g., finanzassinruido.com).
+3. Set up custom domain (e.g., finanzassinruido.comm).
 4. Enable Vercel Analytics (optional).
 
 ### **Build Settings**

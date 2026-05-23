@@ -141,7 +141,7 @@ export default function ContactPage() {
                     <p>Escríbanos directamente por WhatsApp</p>
                   </div>
                   <a
-                    href="https://wa.me/573001234567"
+                    href="https://wa.me/573236012543"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

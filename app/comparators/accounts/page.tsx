@@ -5,13 +5,13 @@ export const metadata: Metadata = {
   description:
     "Compara las mejores cuentas de ahorro y cuentas corrientes de los bancos colombianos. Encuentra la mayor tasa E.A., sin cuota de manejo y con los mejores beneficios.",
   alternates: {
-    canonical: "https://www.finanzassinruido.co/comparators/accounts",
+    canonical: "https://www.finanzassinruido.com/comparators/accounts",
   },
   openGraph: {
     title: "Comparador de Cuentas de Ahorro Colombia | Finanzas sin Ruido",
     description:
       "Compara tasas, cuotas y beneficios de cuentas de ahorro en los principales bancos de Colombia.",
-    url: "https://www.finanzassinruido.co/comparators/accounts",
+    url: "https://www.finanzassinruido.com/comparators/accounts",
     type: "website",
   },
 };

@@ -747,64 +747,66 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
               />
             ) : (
               <>
-            <textarea
-              ref={contentRef}
-              className={styles.editorArea}
-              value={state.content_markdown}
-              onChange={(event) =>
-                updateField("content_markdown", event.target.value)
-              }
-              rows={20}
-              placeholder="Escriba la publicación aquí..."
-              required
-            />
-            <div className={styles.formatToolbar}>
-              <button
-                type="button"
-                className={styles.formatButton}
-                onClick={() => wrapSelection("**", "**", "bold")}
-                aria-label="Bold"
-              >
-                B
-              </button>
-              <button
-                type="button"
-                className={styles.formatButton}
-                onClick={() => wrapSelection("_", "_", "italic")}
-                aria-label="Italic"
-              >
-                <em>I</em>
-              </button>
-              <button
-                type="button"
-                className={styles.formatButton}
-                onClick={() => insertHeading(2)}
-                aria-label="List"
-              >
-                <span className="material-icons-outlined">
-                  format_list_bulleted
-                </span>
-              </button>
-              <button
-                type="button"
-                className={styles.formatButton}
-                onClick={insertLink}
-                aria-label="Link"
-              >
-                <span className="material-icons-outlined">link</span>
-              </button>
-              <button
-                type="button"
-                className={styles.formatButton}
-                onClick={() => wrapSelection("![", "](https://)", "image alt")}
-                aria-label="Image"
-              >
-                <span className="material-icons-outlined">image</span>
-              </button>
-              <a className={styles.previewButton} href="#cms-preview">
-                Preview
-              </a>
-            </div>
+                <textarea
+                  ref={contentRef}
+                  className={styles.editorArea}
+                  value={state.content_markdown}
+                  onChange={(event) =>
+                    updateField("content_markdown", event.target.value)
+                  }
+                  rows={20}
+                  placeholder="Escriba la publicación aquí..."
+                  required
+                />
+                <div className={styles.formatToolbar}>
+                  <button
+                    type="button"
+                    className={styles.formatButton}
+                    onClick={() => wrapSelection("**", "**", "bold")}
+                    aria-label="Bold"
+                  >
+                    B
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.formatButton}
+                    onClick={() => wrapSelection("_", "_", "italic")}
+                    aria-label="Italic"
+                  >
+                    <em>I</em>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.formatButton}
+                    onClick={() => insertHeading(2)}
+                    aria-label="List"
+                  >
+                    <span className="material-icons-outlined">
+                      format_list_bulleted
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.formatButton}
+                    onClick={insertLink}
+                    aria-label="Link"
+                  >
+                    <span className="material-icons-outlined">link</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.formatButton}
+                    onClick={() =>
+                      wrapSelection("![", "](https://)", "image alt")
+                    }
+                    aria-label="Image"
+                  >
+                    <span className="material-icons-outlined">image</span>
+                  </button>
+                  <a className={styles.previewButton} href="#cms-preview">
+                    Preview
+                  </a>
+                </div>
               </>
             )}
           </div>

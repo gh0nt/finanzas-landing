@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: "Noticias Financieras Colombia",
   description:
     "Últimas noticias sobre el mercado financiero colombiano: banca, inversiones, divisas, economía y regulaciones de la Superintendencia Financiera.",
-  alternates: { canonical: "https://www.finanzassinruido.co/news" },
+  alternates: { canonical: "https://www.finanzassinruido.com/news" },
   openGraph: {
     title: "Noticias Financieras Colombia | Finanzas sin Ruido",
     description:
       "Últimas noticias sobre el mercado financiero colombiano: banca, inversiones y economía.",
-    url: "https://www.finanzassinruido.co/news",
+    url: "https://www.finanzassinruido.com/news",
     type: "website",
   },
 };

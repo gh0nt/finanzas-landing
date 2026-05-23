@@ -14,10 +14,10 @@ export async function generateMetadata({
   return {
     title,
     description: `Noticia sobre ${title} en el mercado financiero colombiano — Finanzas sin Ruido.`,
-    alternates: { canonical: `https://www.finanzassinruido.co/news/${slug}` },
+    alternates: { canonical: `https://www.finanzassinruido.com/news/${slug}` },
     openGraph: {
       title,
-      url: `https://www.finanzassinruido.co/news/${slug}`,
+      url: `https://www.finanzassinruido.com/news/${slug}`,
       type: "article",
     },
     robots: { index: false },

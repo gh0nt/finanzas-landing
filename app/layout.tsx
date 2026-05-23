@@ -10,7 +10,7 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const BASE_URL = "https://www.finanzassinruido.co";
+const BASE_URL = "https://www.finanzassinruido.comm";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

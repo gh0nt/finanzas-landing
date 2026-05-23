@@ -5,13 +5,13 @@ export const metadata: Metadata = {
   description:
     "Compara tasas de créditos de libre inversión, hipotecarios y vehículo en los principales bancos colombianos. Simula tu cuota y elige la mejor opción para tu bolsillo.",
   alternates: {
-    canonical: "https://www.finanzassinruido.co/comparators/loans",
+    canonical: "https://www.finanzassinruido.com/comparators/loans",
   },
   openGraph: {
     title: "Comparador de Créditos Colombia | Finanzas sin Ruido",
     description:
       "Compara tasas de créditos de libre inversión, hipotecarios y de vehículo en Colombia.",
-    url: "https://www.finanzassinruido.co/comparators/loans",
+    url: "https://www.finanzassinruido.com/comparators/loans",
     type: "website",
   },
 };

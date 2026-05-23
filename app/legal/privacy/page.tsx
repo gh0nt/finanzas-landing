@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   title: "Política de Privacidad | Finanzas sin Ruido",
   description:
     "Consulta nuestra política de privacidad y tratamiento de datos personales. Cumplimos con la Ley 1581 de 2012 (Habeas Data) y el Decreto 1377 de 2013 de Colombia.",
-  alternates: { canonical: "https://www.finanzassinruido.co/legal/privacy" },
+  alternates: { canonical: "https://www.finanzassinruido.com/legal/privacy" },
   openGraph: {
     title: "Política de Privacidad | Finanzas sin Ruido",
     description:
       "Tratamiento de datos personales conforme a la Ley 1581 de 2012 — Finanzas sin Ruido S.A.S.",
-    url: "https://www.finanzassinruido.co/legal/privacy",
+    url: "https://www.finanzassinruido.com/legal/privacy",
     type: "website",
   },
 };
@@ -32,16 +32,16 @@ const sections = [
           domiciliada en Calle 93 # 12-34, Oficina 302, Bogotá D.C., Colombia,
           es la empresa responsable del tratamiento de los datos personales
           recopilados a través del sitio web{" "}
-          <strong>www.finanzassinruido.co</strong>.
+          <strong>www.finanzassinruido.com</strong>.
         </p>
         <p>
           Para ejercer sus derechos o resolver consultas sobre esta política,
           puede contactarnos en:{" "}
           <a
-            href="mailto:contacto@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.com"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            contacto@finanzassinruido.co
+            contacto@finanzassinruido.com
           </a>
         </p>
       </>
@@ -181,10 +181,10 @@ const sections = [
         <p>
           Para ejercer cualquiera de estos derechos, escríbanos a{" "}
           <a
-            href="mailto:contacto@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.com"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            contacto@finanzassinruido.co
+            contacto@finanzassinruido.com
           </a>{" "}
           indicando su identificación y la solicitud específica. Atenderemos su
           petición en un plazo máximo de <strong>15 días hábiles</strong>.
@@ -362,7 +362,7 @@ export default function PrivacyPage() {
                 responderemos en un plazo máximo de 15 días hábiles.
               </p>
               <a
-                href="mailto:contacto@finanzassinruido.co"
+                href="mailto:contacto@finanzassinruido.com"
                 className={styles.contactCardLink}
               >
                 <span
@@ -371,7 +371,7 @@ export default function PrivacyPage() {
                 >
                   mail
                 </span>
-                contacto@finanzassinruido.co
+                contacto@finanzassinruido.com
               </a>
             </div>
           </article>

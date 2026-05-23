@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Compara cuentas de ahorro, tarjetas de crédito y créditos hipotecarios por tasa, beneficio, banco y puntaje.",
   alternates: {
-    canonical: "https://www.finanzassinruido.co/comparator",
+    canonical: "https://www.finanzassinruido.com/comparator",
   },
 };
 

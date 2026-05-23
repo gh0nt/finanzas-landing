@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   title: "Términos y Condiciones | Finanzas sin Ruido",
   description:
     "Conoce los términos y condiciones que rigen el uso del sitio web y los servicios de Finanzas sin Ruido. Información clara, transparente y conforme a la legislación colombiana.",
-  alternates: { canonical: "https://www.finanzassinruido.co/legal/terms" },
+  alternates: { canonical: "https://www.finanzassinruido.com/legal/terms" },
   openGraph: {
     title: "Términos y Condiciones | Finanzas sin Ruido",
     description:
       "Términos de uso del sitio web y servicios de Finanzas sin Ruido S.A.S.",
-    url: "https://www.finanzassinruido.co/legal/terms",
+    url: "https://www.finanzassinruido.com/legal/terms",
     type: "website",
   },
 };
@@ -29,9 +29,9 @@ const sections = [
       <>
         <p>
           Los presentes Términos y Condiciones regulan el acceso y uso del sitio
-          web <strong>www.finanzassinruido.co</strong> y los servicios ofrecidos
-          por <strong>Finanzas sin Ruido S.A.S.</strong> (en adelante, "la
-          Empresa"), sociedad domiciliada en Bogotá D.C., Colombia.
+          web <strong>www.finanzassinruido.com</strong> y los servicios
+          ofrecidos por <strong>Finanzas sin Ruido S.A.S.</strong> (en adelante,
+          "la Empresa"), sociedad domiciliada en Bogotá D.C., Colombia.
         </p>
         <p>
           El simple acceso o uso del sitio web implica la aceptación plena,
@@ -236,10 +236,10 @@ const sections = [
           Ante cualquier duda o reclamación, le invitamos a contactarnos en
           primera instancia a través de{" "}
           <a
-            href="mailto:legal@finanzassinruido.co"
+            href="mailto:contacto@finanzassinruido.com"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            legal@finanzassinruido.co
+            contacto@finanzassinruido.com
           </a>{" "}
           antes de iniciar acciones legales.
         </p>
@@ -322,7 +322,7 @@ export default function TermsPage() {
                 consulta sobre el alcance y aplicación de estos términos.
               </p>
               <a
-                href="mailto:legal@finanzassinruido.co"
+                href="mailto:contacto@finanzassinruido.com"
                 className={styles.contactCardLink}
               >
                 <span
@@ -331,7 +331,7 @@ export default function TermsPage() {
                 >
                   mail
                 </span>
-                legal@finanzassinruido.co
+                contacto@finanzassinruido.com
               </a>
             </div>
           </article>

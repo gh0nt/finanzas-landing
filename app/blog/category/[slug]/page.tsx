@@ -24,12 +24,12 @@ export async function generateMetadata({
     title: `${label} — Blog de Finanzas`,
     description: `Artículos y análisis sobre ${label.toLowerCase()} en Colombia. Aprende a tomar mejores decisiones financieras con Finanzas sin Ruido.`,
     alternates: {
-      canonical: `https://www.finanzassinruido.co/blog/category/${slug}`,
+      canonical: `https://www.finanzassinruido.com/blog/category/${slug}`,
     },
     openGraph: {
       title: `${label} — Blog de Finanzas | Finanzas sin Ruido`,
       description: `Artículos sobre ${label.toLowerCase()} en el mercado colombiano.`,
-      url: `https://www.finanzassinruido.co/blog/category/${slug}`,
+      url: `https://www.finanzassinruido.com/blog/category/${slug}`,
       type: "website",
     },
   };

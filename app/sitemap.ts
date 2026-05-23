@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPublishedGuides } from "@/lib/cms/guides";
 
-const BASE_URL = "https://www.finanzassinruido.co";
+const BASE_URL = "https://www.finanzassinruido.com";
 
 // ── Blog posts ─────────────────────────────────────────
 const blogSlugs = [

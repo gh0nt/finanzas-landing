@@ -5,13 +5,13 @@ export const metadata: Metadata = {
   description:
     "Compara las comisiones, productos y servicios de los principales brókers de inversión disponibles en Colombia. Encuentra el bróker ideal para invertir en acciones y ETFs.",
   alternates: {
-    canonical: "https://www.finanzassinruido.co/comparators/brokers",
+    canonical: "https://www.finanzassinruido.com/comparators/brokers",
   },
   openGraph: {
     title: "Comparador de Brókers de Inversión Colombia | Finanzas sin Ruido",
     description:
       "Compara comisiones y servicios de los mejores brókers de inversión en Colombia.",
-    url: "https://www.finanzassinruido.co/comparators/brokers",
+    url: "https://www.finanzassinruido.com/comparators/brokers",
     type: "website",
   },
 };

@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/_next/"],
       },
     ],
-    sitemap: "https://www.finanzassinruido.co/sitemap.xml",
-    host: "https://www.finanzassinruido.co",
+    sitemap: "https://www.finanzassinruido.com/sitemap.xml",
+    host: "https://www.finanzassinruido.com",
   };
 }

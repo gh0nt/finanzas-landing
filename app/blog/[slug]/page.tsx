@@ -61,11 +61,11 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `https://www.finanzassinruido.co/blog/${slug}` },
+    alternates: { canonical: `https://www.finanzassinruido.com/blog/${slug}` },
     openGraph: {
       title,
       description,
-      url: `https://www.finanzassinruido.co/blog/${slug}`,
+      url: `https://www.finanzassinruido.com/blog/${slug}`,
       type: "article",
     },
     twitter: { card: "summary_large_image", title, description },
