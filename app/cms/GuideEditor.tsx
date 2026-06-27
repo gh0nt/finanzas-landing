@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MarkdownEditor } from "@/app/cms/MarkdownEditor";
@@ -96,13 +97,41 @@ function shouldSyncCoverWithCategory(
 }
 
 function FieldBadge({ required }: { required: boolean }) {
+  const tooltip = required
+    ? "Campo obligatorio para guardar o publicar."
+    : "Campo opcional. Si lo dejas vacio, el CMS usa un valor por defecto.";
+
   return (
     <span
-      className={
-        required ? styles.fieldRequiredBadge : styles.fieldOptionalBadge
-      }
+      className={styles.fieldBadgeTooltipWrap}
+      tabIndex={0}
+      aria-label={`${required ? "Obligatorio" : "Opcional"}: ${tooltip}`}
     >
-      {required ? "Obligatorio" : "Opcional"}
+      <span
+        className={
+          required ? styles.fieldRequiredBadge : styles.fieldOptionalBadge
+        }
+      >
+        {required ? "Obligatorio" : "Opcional"}
+      </span>
+      <span className={styles.fieldBadgeTooltip} role="tooltip">
+        {tooltip}
+      </span>
+    </span>
+  );
+}
+
+function FieldHeader({
+  children,
+  required,
+}: {
+  children: ReactNode;
+  required: boolean;
+}) {
+  return (
+    <span className={styles.fieldLabelRow}>
+      <span>{children}</span>
+      <FieldBadge required={required} />
     </span>
   );
 }
@@ -111,6 +140,7 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   const [state, setState] = useState<EditorState>(initialState);
   const [editorMode, setEditorMode] = useState<EditorMode>("assisted");
   const [showOptionalFields, setShowOptionalFields] = useState(false);
+  const [showRequiredHints, setShowRequiredHints] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [message, setMessage] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
@@ -414,7 +444,24 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   }, [isDeletingSlug, postPendingDelete]);
 
   async function save(targetStatus: "draft" | "published") {
+    const missingRequiredFields = [
+      state.title.trim() ? "" : "Titulo de la publicacion",
+      state.excerpt.trim() ? "" : "Excerpt",
+      state.content_markdown.trim() ? "" : "Contenido de la guia",
+      state.author_name.trim() ? "" : "Autor",
+    ].filter(Boolean);
+
+    if (missingRequiredFields.length) {
+      const errorMessage = `Faltan campos obligatorios: ${missingRequiredFields.join(", ")}.`;
+      setShowRequiredHints(true);
+      setSaveStatus("error");
+      setMessage(errorMessage);
+      notify(errorMessage, "error");
+      return;
+    }
+
     try {
+      setShowRequiredHints(false);
       setSaveStatus("saving");
       setMessage(
         targetStatus === "published"
@@ -571,6 +618,12 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     state.seo_description ||
     state.excerpt ||
     "The search snippet will appear here once you provide a meta description above.";
+  const showTitleRequiredHint = showRequiredHints && !state.title.trim();
+  const showExcerptRequiredHint = showRequiredHints && !state.excerpt.trim();
+  const showContentRequiredHint =
+    showRequiredHints && !state.content_markdown.trim();
+  const showAuthorRequiredHint =
+    showRequiredHints && !state.author_name.trim();
 
   return (
     <div className={styles.editorShell}>
@@ -692,18 +745,26 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
 
         <div className={styles.editorFields}>
           <label className={styles.fieldLabel}>
-            Título de la Publicación
+            <FieldHeader required>Titulo de la Publicacion</FieldHeader>
             <input
-              className={styles.textField}
+              className={`${styles.textField} ${
+                showTitleRequiredHint ? styles.fieldInvalid : ""
+              }`}
               value={state.title}
               onChange={(event) => updateField("title", event.target.value)}
               placeholder="Introduce un título atractivo..."
+              aria-invalid={showTitleRequiredHint}
               required
             />
+            {showTitleRequiredHint ? (
+              <span className={styles.fieldMissingHint}>
+                Este campo es obligatorio para guardar o publicar.
+              </span>
+            ) : null}
           </label>
 
           <label className={styles.fieldLabel}>
-            Permalink
+            <FieldHeader required={false}>Permalink</FieldHeader>
             <input
               className={styles.textField}
               value={state.slug}
@@ -716,6 +777,12 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
         </div>
 
         <section className={`${styles.fieldLabel} ${styles.storyField}`}>
+          <FieldHeader required>Contenido de la guia</FieldHeader>
+          {showContentRequiredHint ? (
+            <span className={styles.fieldMissingHint}>
+              El contenido no puede estar vacio.
+            </span>
+          ) : null}
           <div className={styles.editorModeRow}>
             <button
               type="button"
@@ -749,13 +816,16 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
               <>
                 <textarea
                   ref={contentRef}
-                  className={styles.editorArea}
+                  className={`${styles.editorArea} ${
+                    showContentRequiredHint ? styles.fieldInvalid : ""
+                  }`}
                   value={state.content_markdown}
                   onChange={(event) =>
                     updateField("content_markdown", event.target.value)
                   }
                   rows={20}
                   placeholder="Escriba la publicación aquí..."
+                  aria-invalid={showContentRequiredHint}
                   required
                 />
                 <div className={styles.formatToolbar}>
@@ -886,15 +956,23 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
         </div>
 
         <label className={styles.fieldLabel}>
-          Excerpt
+          <FieldHeader required>Excerpt</FieldHeader>
           <textarea
-            className={styles.textArea}
+            className={`${styles.textArea} ${
+              showExcerptRequiredHint ? styles.fieldInvalid : ""
+            }`}
             value={state.excerpt}
             onChange={(event) => updateField("excerpt", event.target.value)}
             rows={3}
             placeholder="Resumen corto con palabra clave principal"
+            aria-invalid={showExcerptRequiredHint}
             required
           />
+          {showExcerptRequiredHint ? (
+            <span className={styles.fieldMissingHint}>
+              Este resumen es obligatorio y tambien se usa como fallback SEO.
+            </span>
+          ) : null}
         </label>
 
         <section
@@ -977,18 +1055,26 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
               </select>
             </label>
             <label className={styles.fieldLabel}>
-              Autor <FieldBadge required />
+              <FieldHeader required>Autor</FieldHeader>
               <input
-                className={styles.textField}
+                className={`${styles.textField} ${
+                  showAuthorRequiredHint ? styles.fieldInvalid : ""
+                }`}
                 value={state.author_name}
                 onChange={(event) =>
                   updateField("author_name", event.target.value)
                 }
+                aria-invalid={showAuthorRequiredHint}
                 required
               />
+              {showAuthorRequiredHint ? (
+                <span className={styles.fieldMissingHint}>
+                  Este campo es obligatorio para guardar o publicar.
+                </span>
+              ) : null}
             </label>
             <label className={styles.fieldLabel}>
-              Nivel <FieldBadge required />
+              <FieldHeader required>Nivel</FieldHeader>
               <select
                 className={styles.textField}
                 value={state.level}
@@ -1071,8 +1157,11 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
             <h3>Optimización SEO</h3>
           </div>
           <div className={styles.settingsCard}>
+            <p className={styles.helperText}>
+              Estos campos mejoran el snippet, pero no bloquean la publicacion.
+            </p>
             <label className={styles.fieldLabel}>
-              Título SEO <FieldBadge required={false} />
+              <FieldHeader required={false}>Titulo SEO</FieldHeader>
               <input
                 className={styles.textField}
                 value={state.seo_title}
@@ -1081,9 +1170,12 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
                 }
                 placeholder="Si queda vacio usa el titulo"
               />
+              <span className={styles.helperText}>
+                Opcional. Si queda vacio, se usara el titulo de la publicacion.
+              </span>
             </label>
             <label className={styles.fieldLabel}>
-              Descripción Meta <FieldBadge required={false} />
+              <FieldHeader required={false}>Descripcion Meta</FieldHeader>
               <textarea
                 className={styles.textArea}
                 value={state.seo_description}
@@ -1093,6 +1185,9 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
                 rows={5}
                 placeholder="Resumen breve para los resultados del motor de búsqueda..."
               />
+              <span className={styles.helperText}>
+                Opcional. Si queda vacia, se usara el excerpt.
+              </span>
               <span className={styles.characterCount}>
                 {state.seo_description.length} / 160 characters
               </span>

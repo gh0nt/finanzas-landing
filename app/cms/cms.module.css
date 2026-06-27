@@ -79,6 +79,50 @@
     color: var(--accent-hover);
 }
 
+.fieldBadgeTooltipWrap {
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+    outline: none;
+}
+
+.fieldBadgeTooltip {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.45rem);
+    z-index: 20;
+    width: min(18rem, 72vw);
+    border: 1px solid rgba(var(--navy-rgb), 0.12);
+    border-radius: 0.55rem;
+    background: #101828;
+    color: #ffffff;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.25rem);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.fieldBadgeTooltipWrap:hover .fieldBadgeTooltip,
+.fieldBadgeTooltipWrap:focus-visible .fieldBadgeTooltip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fieldInvalid {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 3px rgba(var(--danger-rgb), 0.12);
+}
+
+.fieldMissingHint {
+    color: var(--danger-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 .textField,
 .textArea,
 .editorArea {
@@ -988,7 +1032,6 @@
 .editorShell {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 30rem;
-    min-height: 100vh;
     gap: 0;
     background: #f6f7f8;
     padding-top: 4.75rem;
@@ -1108,6 +1151,13 @@
     background: #ffffff;
     color: var(--navy);
     font-family: var(--font-sans);
+}
+
+.markdownEditor:global(.mdxeditor-popup-container) {
+    min-height: 0;
+    height: 0;
+    overflow: visible;
+    background: transparent;
 }
 
 .markdownEditor :global(.mdxeditor-toolbar) {

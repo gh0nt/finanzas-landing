@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
@@ -27,9 +27,22 @@ type MarkdownEditorProps = {
   onChange: (markdown: string) => void;
 };
 
+function subscribeToClientMount() {
+  return () => {};
+}
+
+function useIsClientMounted() {
+  return useSyncExternalStore(
+    subscribeToClientMount,
+    () => true,
+    () => false,
+  );
+}
+
 export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
   const editorRef = useRef<MDXEditorMethods>(null);
   const currentValueRef = useRef(value);
+  const isMounted = useIsClientMounted();
 
   useEffect(() => {
     if (value === currentValueRef.current) {
@@ -39,6 +52,18 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     currentValueRef.current = value;
     editorRef.current?.setMarkdown(value);
   }, [value]);
+
+  if (!isMounted) {
+    return (
+      <textarea
+        className={`${styles.editorArea} ${styles.markdownEditorContent}`}
+        value={value}
+        readOnly
+        rows={20}
+        aria-label="Editor de markdown"
+      />
+    );
+  }
 
   return (
     <MDXEditor
