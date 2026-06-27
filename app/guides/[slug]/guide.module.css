@@ -404,6 +404,40 @@
     text-underline-offset: 3px;
 }
 
+.body .markdownButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    max-width: 100%;
+    margin: 0.25rem 0 1.25rem;
+    padding: 0.78rem 1.35rem;
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: var(--white);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.body .markdownButton:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.body .markdownButtonWide {
+    display: flex;
+    width: fit-content;
+    min-height: 54px;
+    margin: 0.5rem auto 1.5rem;
+    padding: 0.95rem 1.4rem;
+}
+
 /* Lead */
 .lead {
     font-size: 1.12rem;

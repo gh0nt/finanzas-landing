@@ -13,6 +13,11 @@ import {
   getGuideCoverTheme,
   slugify,
 } from "@/lib/cms/utils";
+import {
+  CMS_BUTTON_LINK_TITLE,
+  CMS_WIDE_BUTTON_LINK_TITLE,
+  parseCmsButtonSegments,
+} from "@/lib/cms/markdownButtons";
 import { STANDARD_GUIDE_CATEGORIES } from "@/lib/cms/categories";
 import type { GuidePost } from "@/lib/cms/types";
 
@@ -136,6 +141,20 @@ function FieldHeader({
   );
 }
 
+function isExternalHttpUrl(href: string) {
+  return href.startsWith("http://") || href.startsWith("https://");
+}
+
+function isCmsButtonTitle(title: string | null | undefined) {
+  return (
+    title === CMS_BUTTON_LINK_TITLE || title === CMS_WIDE_BUTTON_LINK_TITLE
+  );
+}
+
+function escapeShortcodeAttribute(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
 export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   const [state, setState] = useState<EditorState>(initialState);
   const [editorMode, setEditorMode] = useState<EditorMode>("assisted");
@@ -151,6 +170,8 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     null,
   );
   const [coverUploadMessage, setCoverUploadMessage] = useState("");
+  const [wideButtonTitle, setWideButtonTitle] = useState("");
+  const [wideButtonHref, setWideButtonHref] = useState("");
   const [posts, setPosts] = useState<GuidePost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [listError, setListError] = useState("");
@@ -228,6 +249,45 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
       const label = selected.trim() || "texto del enlace";
       return `[${label}](${href.trim()})`;
     });
+  }
+
+  function insertWideButton() {
+    const title = wideButtonTitle.trim();
+    const href = wideButtonHref.trim();
+
+    if (!title || !href) {
+      notify("Completa el titulo y el enlace del boton.", "error");
+      return;
+    }
+
+    const shortcode = `\n\n[button href="${escapeShortcodeAttribute(
+      href,
+    )}" variant="wide"]${title.replace(/\[\/?button[^\]]*\]/gi, "")}[/button]\n\n`;
+    const textarea = contentRef.current;
+
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const full = state.content_markdown;
+      const next = full.slice(0, start) + shortcode + full.slice(end);
+
+      updateField("content_markdown", next);
+
+      const cursor = start + shortcode.length;
+      requestAnimationFrame(() => {
+        textarea.focus();
+        textarea.setSelectionRange(cursor, cursor);
+      });
+    } else {
+      updateField(
+        "content_markdown",
+        `${state.content_markdown.trimEnd()}${shortcode}`,
+      );
+    }
+
+    setWideButtonTitle("");
+    setWideButtonHref("");
+    notify("Boton ancho insertado en el contenido.", "success");
   }
 
   function resetToNewPost() {
@@ -618,6 +678,10 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
     state.seo_description ||
     state.excerpt ||
     "The search snippet will appear here once you provide a meta description above.";
+  const previewContentSegments = useMemo(
+    () => parseCmsButtonSegments(state.content_markdown),
+    [state.content_markdown],
+  );
   const showTitleRequiredHint = showRequiredHints && !state.title.trim();
   const showExcerptRequiredHint = showRequiredHints && !state.excerpt.trim();
   const showContentRequiredHint =
@@ -801,6 +865,37 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
               onClick={() => setEditorMode("markdown")}
             >
               Markdown
+            </button>
+          </div>
+
+          <div className={styles.cmsButtonBuilder}>
+            <label className={styles.cmsButtonField}>
+              <span>Titulo del boton</span>
+              <input
+                className={styles.textField}
+                value={wideButtonTitle}
+                onChange={(event) => setWideButtonTitle(event.target.value)}
+                placeholder="Ej. Comparar opciones"
+              />
+            </label>
+            <label className={styles.cmsButtonField}>
+              <span>Link del boton</span>
+              <input
+                className={styles.textField}
+                value={wideButtonHref}
+                onChange={(event) => setWideButtonHref(event.target.value)}
+                placeholder="/comparators"
+              />
+            </label>
+            <button
+              type="button"
+              className={styles.cmsButtonInsert}
+              onClick={insertWideButton}
+            >
+              <span className="material-icons-outlined" aria-hidden="true">
+                add_link
+              </span>
+              Insertar boton
             </button>
           </div>
 
@@ -1009,9 +1104,70 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
               ) : null}
             </div>
             <article className={styles.previewBody}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {state.content_markdown}
-              </ReactMarkdown>
+              {previewContentSegments.map((segment, index) => {
+                if (segment.type === "button") {
+                  return (
+                    <a
+                      key={`${segment.href}-${index}`}
+                      href={segment.href}
+                      className={`${styles.markdownButton} ${
+                        segment.wide ? styles.markdownButtonWide : ""
+                      }`}
+                      target={
+                        isExternalHttpUrl(segment.href) ? "_blank" : undefined
+                      }
+                      rel={
+                        isExternalHttpUrl(segment.href)
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                    >
+                      {segment.label}
+                    </a>
+                  );
+                }
+
+                return (
+                  <ReactMarkdown
+                    key={`markdown-${index}`}
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({ href, title, children }) => {
+                        if (!isCmsButtonTitle(title) || !href) {
+                          return (
+                            <a href={href} title={title}>
+                              {children}
+                            </a>
+                          );
+                        }
+
+                        return (
+                          <a
+                            href={href}
+                            className={`${styles.markdownButton} ${
+                              title === CMS_WIDE_BUTTON_LINK_TITLE
+                                ? styles.markdownButtonWide
+                                : ""
+                            }`}
+                            target={
+                              isExternalHttpUrl(href) ? "_blank" : undefined
+                            }
+                            rel={
+                              isExternalHttpUrl(href)
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                          >
+                            {children}
+                          </a>
+                        );
+                      },
+                    }}
+                  >
+                    {segment.value}
+                  </ReactMarkdown>
+                );
+              })}
             </article>
           </div>
         </section>

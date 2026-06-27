@@ -10,6 +10,11 @@ import remarkGfm from "remark-gfm";
 import styles from "./guide.module.css";
 import { extractMarkdownHeadings, slugify } from "@/lib/cms/utils";
 import {
+  CMS_BUTTON_LINK_TITLE,
+  CMS_WIDE_BUTTON_LINK_TITLE,
+  parseCmsButtonSegments,
+} from "@/lib/cms/markdownButtons";
+import {
   getGuideBySlug,
   getPublishedGuides,
   getRelatedGuides,
@@ -83,6 +88,20 @@ function reactNodeToText(node: ReactNode): string {
   return "";
 }
 
+function isInternalRoute(href: string) {
+  return href.startsWith("/") && !href.startsWith("//");
+}
+
+function isExternalHttpUrl(href: string) {
+  return href.startsWith("http://") || href.startsWith("https://");
+}
+
+function isCmsButtonTitle(title: string | null | undefined) {
+  return (
+    title === CMS_BUTTON_LINK_TITLE || title === CMS_WIDE_BUTTON_LINK_TITLE
+  );
+}
+
 export default async function GuidePage({ params }: GuidePageProps) {
   const { slug } = await params;
   const guide = await getGuideBySlug(slug);
@@ -105,6 +124,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const sideContent = relatedGuides.length
     ? relatedGuides
     : allGuides.filter((item) => item.slug !== guide.slug).slice(0, 3);
+  const guideContentSegments = parseCmsButtonSegments(guide.content_markdown);
 
   return (
     <div>
@@ -314,34 +334,117 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
               {/* Body */}
               <div className={styles.body} id="contenido">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h2: ({ children }) => {
-                      const text = Children.toArray(children)
-                        .map((child) => reactNodeToText(child))
-                        .join(" ")
-                        .trim();
-                      return <h2 id={slugify(text)}>{children}</h2>;
-                    },
-                    table: ({ children }) => (
-                      <table className={styles.compTable}>{children}</table>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className={styles.markdownList}>{children}</ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className={styles.markdownList}>{children}</ol>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className={styles.markdownQuote}>
-                        {children}
-                      </blockquote>
-                    ),
-                  }}
-                >
-                  {guide.content_markdown}
-                </ReactMarkdown>
+                {guideContentSegments.map((segment, index) => {
+                  if (segment.type === "button") {
+                    const buttonClassName = `${styles.markdownButton} ${
+                      segment.wide ? styles.markdownButtonWide : ""
+                    }`;
+
+                    if (isInternalRoute(segment.href)) {
+                      return (
+                        <Link
+                          key={`${segment.href}-${index}`}
+                          href={segment.href}
+                          className={buttonClassName}
+                        >
+                          {segment.label}
+                        </Link>
+                      );
+                    }
+
+                    return (
+                      <a
+                        key={`${segment.href}-${index}`}
+                        href={segment.href}
+                        className={buttonClassName}
+                        target={
+                          isExternalHttpUrl(segment.href) ? "_blank" : undefined
+                        }
+                        rel={
+                          isExternalHttpUrl(segment.href)
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                      >
+                        {segment.label}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <ReactMarkdown
+                      key={`markdown-${index}`}
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h2: ({ children }) => {
+                          const text = Children.toArray(children)
+                            .map((child) => reactNodeToText(child))
+                            .join(" ")
+                            .trim();
+                          return <h2 id={slugify(text)}>{children}</h2>;
+                        },
+                        table: ({ children }) => (
+                          <table className={styles.compTable}>{children}</table>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className={styles.markdownList}>{children}</ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className={styles.markdownList}>{children}</ol>
+                        ),
+                        blockquote: ({ children }) => (
+                          <blockquote className={styles.markdownQuote}>
+                            {children}
+                          </blockquote>
+                        ),
+                        a: ({ href, title, children }) => {
+                          if (!isCmsButtonTitle(title) || !href) {
+                            return (
+                              <a href={href} title={title}>
+                                {children}
+                              </a>
+                            );
+                          }
+
+                          const buttonClassName = `${
+                            styles.markdownButton
+                          } ${
+                            title === CMS_WIDE_BUTTON_LINK_TITLE
+                              ? styles.markdownButtonWide
+                              : ""
+                          }`;
+
+                          if (isInternalRoute(href)) {
+                            return (
+                              <Link href={href} className={buttonClassName}>
+                                {children}
+                              </Link>
+                            );
+                          }
+
+                          return (
+                            <a
+                              href={href}
+                              className={buttonClassName}
+                              target={
+                                isExternalHttpUrl(href) ? "_blank" : undefined
+                              }
+                              rel={
+                                isExternalHttpUrl(href)
+                                  ? "noopener noreferrer"
+                                  : undefined
+                              }
+                            >
+                              {children}
+                            </a>
+                          );
+                        },
+                      }}
+                    >
+                      {segment.value}
+                    </ReactMarkdown>
+                  );
+                })}
 
                 <div className={styles.inlineCta}>
                   <div className={styles.inlineCtaText}>
