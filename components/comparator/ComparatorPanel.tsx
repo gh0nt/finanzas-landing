@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type { AssetCategory, InstrumentQuote } from "@/lib/comparator/types";
 import { CategoryNav } from "./CategoryNav";
 import { ComparatorTable } from "./ComparatorTable";
@@ -36,33 +36,45 @@ const CATEGORY_DESCRIPTIONS: Record<AssetCategory, string> = {
 };
 
 function useQuotes(category: AssetCategory) {
-  const [quotes, setQuotes] = useState<InstrumentQuote[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async (cat: AssetCategory) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/v1/compare?category=${cat}`);
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: "Error de red" }));
-        throw new Error(body.error ?? `HTTP ${res.status}`);
-      }
-      const body = await res.json();
-      setQuotes(body.data);
-    } catch (e) {
-      setError(String(e));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [result, setResult] = useState<{
+    category: AssetCategory;
+    quotes: InstrumentQuote[] | null;
+    error: string | null;
+  } | null>(null);
 
   useEffect(() => {
-    load(category);
-  }, [category, load]);
+    let ignore = false;
 
-  return { quotes, loading, error };
+    async function load() {
+      try {
+        const res = await fetch(`/api/v1/compare?category=${category}`);
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({ error: "Error de red" }));
+          throw new Error(body.error ?? `HTTP ${res.status}`);
+        }
+        const body = await res.json();
+        if (!ignore) {
+          setResult({ category, quotes: body.data, error: null });
+        }
+      } catch (error) {
+        if (!ignore) {
+          setResult({ category, quotes: null, error: String(error) });
+        }
+      }
+    }
+
+    void load();
+    return () => {
+      ignore = true;
+    };
+  }, [category]);
+
+  const currentResult = result?.category === category ? result : null;
+  return {
+    quotes: currentResult?.quotes ?? null,
+    loading: currentResult === null,
+    error: currentResult?.error ?? null,
+  };
 }
 
 export function ComparatorPanel() {

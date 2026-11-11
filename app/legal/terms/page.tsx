@@ -31,7 +31,7 @@ const sections = [
           Los presentes Términos y Condiciones regulan el acceso y uso del sitio
           web <strong>www.finanzassinruido.com</strong> y los servicios
           ofrecidos por <strong>Finanzas sin Ruido S.A.S.</strong> (en adelante,
-          "la Empresa"), sociedad domiciliada en Bogotá D.C., Colombia.
+          &quot;la Empresa&quot;), sociedad domiciliada en Bogotá D.C., Colombia.
         </p>
         <p>
           El simple acceso o uso del sitio web implica la aceptación plena,

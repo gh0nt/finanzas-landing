@@ -178,10 +178,10 @@ export default function ServicesPage() {
                   </li>
                 ))}
               </ul>
-              <a href="/guides" className={styles.eligCta}>
+              <Link href="/guides" className={styles.eligCta}>
                 Ver guía de inicio
                 <span className="material-icons-outlined">arrow_forward</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

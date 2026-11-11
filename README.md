@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Use Node.js 26 LTS, matching the version declared in `package.json` for Vercel.
+Install the locked dependencies with `npm ci`.
+
 First, run the development server:
 
 ```bash
@@ -15,6 +18,17 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+Before deploying, run `npm run lint`, `npm run typecheck`, and `npm run build`.
+
+ESLint stays on the latest 9.x release because the React, import, and
+accessibility plugins used by `eslint-config-next` do not support ESLint 10 yet.
+TypeScript stays on 6.0.x because `typescript-eslint` requires TypeScript <6.1.
+Recheck those peer dependency ranges before upgrading either major version.
+
+The scoped `minimatch` override fixes GHSA-g3hv-75wg-m249 in the TypeScript
+ESLint parser. The parser only uses `minimatch()` with `dot: true`, which is
+supported in 11.x. Remove the override when the parser adopts a patched version.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

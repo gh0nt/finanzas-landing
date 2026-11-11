@@ -88,6 +88,32 @@ let clientPostsCache: {
   posts: GuidePost[];
 } | null = null;
 
+async function loadGuidePosts(force = false): Promise<GuidePost[]> {
+  if (
+    !force &&
+    clientPostsCache &&
+    Date.now() - clientPostsCache.fetchedAt < CLIENT_POSTS_CACHE_TTL_MS
+  ) {
+    return clientPostsCache.posts;
+  }
+
+  const response = await fetch("/api/cms/guides", {
+    method: "GET",
+    cache: "no-store",
+  });
+  const data = (await response.json()) as {
+    error?: string;
+    posts?: GuidePost[];
+  };
+
+  if (!response.ok || !Array.isArray(data.posts)) {
+    throw new Error(data.error ?? "No se pudo cargar la lista de guias.");
+  }
+
+  clientPostsCache = { fetchedAt: Date.now(), posts: data.posts };
+  return data.posts;
+}
+
 function shouldSyncCoverWithCategory(
   category: string,
   icon: string,
@@ -348,41 +374,14 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   }
 
   async function fetchPosts(force = false) {
-    if (
-      !force &&
-      clientPostsCache &&
-      Date.now() - clientPostsCache.fetchedAt < CLIENT_POSTS_CACHE_TTL_MS
-    ) {
-      setPosts(clientPostsCache.posts);
-      setIsLoadingPosts(false);
-      return;
-    }
-
     setIsLoadingPosts(true);
     setListError("");
     try {
-      const response = await fetch("/api/cms/guides", {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      const data = (await response.json()) as {
-        error?: string;
-        posts?: GuidePost[];
-      };
-
-      if (!response.ok || !Array.isArray(data.posts)) {
-        setListError(data.error ?? "No se pudo cargar la lista de guias.");
-        return;
-      }
-
-      setPosts(data.posts);
-      clientPostsCache = {
-        fetchedAt: Date.now(),
-        posts: data.posts,
-      };
-    } catch {
-      setListError("No se pudo cargar la lista de guias.");
+      setPosts(await loadGuidePosts(force));
+    } catch (error) {
+      setListError(
+        error instanceof Error ? error.message : "No se pudo cargar la lista de guias.",
+      );
     } finally {
       setIsLoadingPosts(false);
     }
@@ -473,7 +472,24 @@ export function GuideEditor({ canWrite = true }: GuideEditorProps) {
   }
 
   useEffect(() => {
-    fetchPosts();
+    let ignore = false;
+    loadGuidePosts()
+      .then((loadedPosts) => {
+        if (!ignore) setPosts(loadedPosts);
+      })
+      .catch((error: unknown) => {
+        if (!ignore) {
+          setListError(
+            error instanceof Error ? error.message : "No se pudo cargar la lista de guias.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!ignore) setIsLoadingPosts(false);
+      });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   useEffect(() => {

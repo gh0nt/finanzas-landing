@@ -14,7 +14,7 @@
  * below the grid.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import type { IndicatorData } from "@/lib/indicators";
 import { formatDateTimeValue } from "@/lib/chartUtils";
 import { SparklineWidget } from "./SparklineWidget";
@@ -46,34 +46,45 @@ export function EuropeanIndicatorsWidget() {
   const [indicators, setIndicators] =
     useState<IndicatorData[]>(INITIAL_SKELETONS);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const fetchData = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      const res = await fetch("/api/indicators/european", {
-        // Always ask for fresh data from the server (the server handles caching)
-        cache: "no-store",
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: IndicatorData[] = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setIndicators(data);
-        setLastRefreshed(new Date());
-      }
-    } catch {
-      // Keep previous data on network error; next tick will retry
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, []);
+  const [isRefreshing, setIsRefreshing] = useState(true);
 
   // Initial fetch + auto-refresh interval
   useEffect(() => {
-    fetchData();
-    const id = setInterval(fetchData, REFRESH_MS);
-    return () => clearInterval(id);
-  }, [fetchData]);
+    const controller = new AbortController();
+
+    function fetchData() {
+      return fetch("/api/indicators/european", {
+        cache: "no-store",
+        signal: controller.signal,
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json() as Promise<IndicatorData[]>;
+        })
+        .then((data) => {
+          if (!controller.signal.aborted && Array.isArray(data) && data.length > 0) {
+            setIndicators(data);
+            setLastRefreshed(new Date());
+          }
+        })
+        .catch(() => {
+          // Keep previous data on network error; next tick will retry.
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setIsRefreshing(false);
+        });
+    }
+
+    void fetchData();
+    const id = setInterval(() => {
+      setIsRefreshing(true);
+      void fetchData();
+    }, REFRESH_MS);
+    return () => {
+      controller.abort();
+      clearInterval(id);
+    };
+  }, []);
 
   const lastUpdatedLabel = lastRefreshed
     ? formatDateTimeValue(lastRefreshed, "es-CO")

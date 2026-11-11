@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { heroTrust } from "@/data/mockContent";
 
 export function Hero() {
@@ -23,18 +24,18 @@ export function Hero() {
             educacion economica. Decisiones claras para un futuro solido.
           </p>
           <div className="hero__actions">
-            <a className="btn btn--primary" href="/contact">
+            <Link className="btn btn--primary" href="/contact">
               Agendar diagnostico gratuito
               <span className="material-icons-outlined" aria-hidden="true">
                 arrow_forward
               </span>
-            </a>
-            <a className="btn btn--ghost" href="/guides">
+            </Link>
+            <Link className="btn btn--ghost" href="/guides">
               <span className="material-icons-outlined" aria-hidden="true">
                 play_circle
               </span>
               Ver más información
-            </a>
+            </Link>
           </div>
           <div className="hero__trust">
             {heroTrust.map((item) => (
